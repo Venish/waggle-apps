@@ -20,8 +20,7 @@ Turborepo와 pnpm workspaces 기반의 모노레포 구조로 사용자 서비�
 1. 필수 참조 스킬셋 및 아키텍처 가이드 (Mandatory Skills & Docs)
 
 모든 코드 생성 시 아래 규칙을 반드시 준수하십시오.
-- **영구 보존 커스텀 스킬 (`.agents/skills/`)**: `antigravity-kit` 재설치와 무관하게 영구 보존되는 프로젝트 핵심 스킬셋입니다.
-- **순정 Kit 스킬 (`.agent/skills/`)**: `antigravity-kit` 기본 제공 스킬셋입니다.
+- **통합 스킬 디렉터리 (`.agents/skills/`)**: 최신 `ag-kit` 기본 스킬(47종)과 코아누리/와글 영구 보존 커스텀 스킬(9종)이 통합 관리됩니다 (`manifest.lock.json`에 의해 업데이트 시에도 커스텀 스킬 영구 보존).
 
 ### 1.1 코어 아키텍처 스킬 (`.agents/skills/` — 코아누리 커스텀 보존 7종)
 - **Monorepo (Operator)**: `.agents/skills/turborepo-pnpm-workspace/SKILL.md` (Turborepo v2 `tasks`, 물리 구조, 거버넌스)
@@ -42,8 +41,13 @@ Turborepo와 pnpm workspaces 기반의 모노레포 구조로 사용자 서비�
 ### 1.3 필수 참조 아키텍처 문서 (`.docs/`)
 - **Sheet & Swipe Layout (공통 쉘 & 모달 좌우/상하 스와이프 표준)**: [`.docs/architecture/APP_SHEET_FRAME_GUIDE.md`](file:///.docs/architecture/APP_SHEET_FRAME_GUIDE.md) (`AppSheetFrame` 3단 쉘, 430px 모바일 프레임, `GlobalOverlayProvider` 좌우/상하 스프링 스와이프, `useModalHistory` iOS 엣지 스와이프/안드로이드 뒤로가기 방어, 닫힘 시 리소스 킬 의무화)
 - **Data & Zustand Sync**: [`.docs/architecture/DATA_LOADING_AND_ZUSTAND_SYNC.md`](file:///.docs/architecture/DATA_LOADING_AND_ZUSTAND_SYNC.md) (RSC 1회 페칭 + Zustand `isLoaded` 캐시 & 0ms 낙관적 업데이트)
-- **Design System**: [`.docs/architecture/DESIGN.md`](file:///.docs/architecture/DESIGN.md) & [`.docs/specs/design-theme-guide.md`](file:///.docs/specs/design-theme-guide.md)
+- **Design System (Gate Override)**: [`.docs/architecture/DESIGN.md`](file:///.docs/architecture/DESIGN.md) & [`.docs/specs/design-theme-guide.md`](file:///.docs/specs/design-theme-guide.md) (루트에 중복 `DESIGN.md` 생성을 금지하며 반드시 `.docs/architecture/DESIGN.md`를 SSOT로 참조)
 - **Waggle 도메인 기획/명세**: `.docs/specs/` 하위 요구사항 정의서 및 화면설계서 참조
+
+### 1.4 AG-Kit 에이전트 라우팅 & 운영 오버라이드 규칙 (`.agents/rules/00-project-overrides.md`)
+- **Specialist Routing**: `apps/web` (430px 모바일 웹앱) 및 `apps/admin`은 React Native가 아닌 **Next.js 16 + Tailwind v4 웹 애플리케이션**이므로 모든 UI/UX 작업은 `mobile-developer`가 아닌 **`frontend-specialist`**로 라우팅합니다.
+- **Pragmatic Clarification Gate**: 요구사항이나 `.docs/specs/` 명세가 명확한 경우 불필요한 3문항 질문(Socratic Gate)으로 작업을 지연시키지 않고 즉시 구현합니다.
+- **AG-Kit 업데이트 유지보수**: 향후 `pnpm dlx @vudovn/ag-kit init` 실행 후 순정 룰(`.agents/rules/*.md`)이 초기화될 경우, [`.agents/rules/00-project-overrides.md`](file:///.agents/rules/00-project-overrides.md) 기준으로 경로(`.docs/architecture/*`) 및 `uv run` 규칙을 동기화합니다.
 
 ---
 
@@ -51,10 +55,9 @@ Turborepo와 pnpm workspaces 기반의 모노레포 구조로 사용자 서비�
 
 | 구분 | 워크스페이스 명칭 | 포트 / 역할 | 의존성 및 패키지 참조 |
 |---|---|---|---|
-| `apps/web` | `@repo/web` | `:3000` (사용자 모바일 웹앱 & 랜딩) | `@repo/db`, `@repo/types`, `@repo/ui` |
-| `apps/admin` | `@repo/admin` | `:3001` (관리자 콘솔) | `@repo/db`, `@repo/types`, `@repo/ui` |
-| `packages/db` | `@repo/db` | Drizzle Schema / DAL & Mock JSON | Drizzle ORM, Drizzle Kit |
-| `packages/types` | `@repo/types` | 전역 공통 도메인/Action 타입 | Zod, TypeScript Shared Types |
+| `apps/web` | `@repo/web` | `:3000` (사용자 모바일 웹앱 & 랜딩) | `@repo/db`, `@repo/ui` |
+| `apps/admin` | `@repo/admin` | `:3001` (관리자 콘솔) | `@repo/db`, `@repo/ui` |
+| `packages/db` | `@repo/db` | Drizzle Schema / DAL / 도메인 타입 & 공통 규격(`ActionResult`, `AppError`) | Drizzle ORM, Drizzle Kit, Zod |
 | `packages/ui` | `@repo/ui` | 공통 UI 컴포넌트 / 테마 | Tailwind v4, shadcn/ui |
 
 ---
@@ -71,7 +74,7 @@ Turborepo와 pnpm workspaces 기반의 모노레포 구조로 사용자 서비�
 │   │   │   ├── 02_hooks/           # 커스텀 훅 (비즈니스 로직 SSOT, useModalHistory.ts)
 │   │   │   ├── 03_actions/         # Server Actions (Zod 검증, ActionResult 반환)
 │   │   │   ├── 04_services/        # server-only 비즈니스 서비스 (*MasterService / my*Service)
-│   │   │   ├── 05_types/           # Web 전용 인터페이스
+│   │   │   ├── 05_types/           # Web 전용 UI/View 인터페이스
 │   │   │   ├── components/         # Web 전용 UI 컴포넌트 (AppSheetFrame, GlobalOverlayProvider 등)
 │   │   │   ├── app/                # Next.js App Router
 │   │   │   │   ├── api/auth/session-expired/route.ts # 무한 리다이렉트 방지 세션 정리
@@ -88,21 +91,14 @@ Turborepo와 pnpm workspaces 기반의 모노레포 구조로 사용자 서비�
 │       └── tsconfig.json
 │
 ├── packages/
-│   ├── db/                         # @repo/db (Drizzle ORM 스키마 & DAL 계층)
+│   ├── db/                         # @repo/db (Drizzle 스키마 + DAL + 도메인 타입 + 공통 ActionResult/AppError)
 │   │   ├── src/
+│   │   │   ├── common/             # 공통 응답/에러 규격 (action.ts: ActionResult<T>, error.ts: AppError)
 │   │   │   ├── data/               # DAL (mock/*.json + repos/*Repo.ts)
-│   │   │   ├── schema/             # Drizzle 테이블 스키마 정의 (Type 추출 및 실서버 공용)
+│   │   │   ├── schema/             # Drizzle 테이블 스키마 정의 (도메인 엔티티 타입 SSOT 추출)
 │   │   │   ├── client.ts           # 실서버 Drizzle DB Client (실제 DB 연결용 원형 보존)
-│   │   │   └── index.ts
+│   │   │   └── index.ts            # 단일 진입점 export
 │   │   ├── drizzle.config.ts
-│   │   ├── package.json
-│   │   └── tsconfig.json
-│   │
-│   ├── types/                      # @repo/types (공통 ActionResult, 에러, 도메인 타입)
-│   │   ├── src/
-│   │   │   ├── action.ts           # ActionResult<T> 공통 규격
-│   │   │   ├── error.ts            # AppError 클래스
-│   │   │   └── index.ts
 │   │   ├── package.json
 │   │   └── tsconfig.json
 │   │
@@ -111,8 +107,7 @@ Turborepo와 pnpm workspaces 기반의 모노레포 구조로 사용자 서비�
 │       ├── package.json
 │       └── tsconfig.json
 │
-├── .agent/                         # 순정 antigravity-kit (언제든 재설치 가능)
-├── .agents/skills/                 # 코아누리/와글 영구 보존 커스텀 스킬 12종
+├── .agents/                        # AG-Kit 런타임 & 통합 스킬셋 (커스텀 9종 + 순정 47종)
 ├── .docs/                          # 아키텍처 표준(architecture/) 및 기획 명세(specs/)
 ├── pnpm-workspace.yaml             # pnpm 워크스페이스 선언
 ├── turbo.json                      # Turborepo 파이프라인 & Strict Env 규칙
@@ -124,12 +119,12 @@ Turborepo와 pnpm workspaces 기반의 모노레포 구조로 사용자 서비�
 
 4. 모노레포 거버넌스 및 규칙 (Governance & Cross-Import Policy)
 
-- **Naming Rule**: 모든 내부 공유 패키지는 반드시 **`@repo/*`** 네임스페이스를 사용합니다.
+- **Naming Rule**: 모든 내부 공유 패키지는 반드시 **`@repo/*`** 네임스페이스를 사용합니다 (`@repo/db`, `@repo/ui`).
 - **Internal Reference Protocol**: 패키지 간 참조는 반드시 **`workspace:*`** 프로토콜을 사용합니다.
   ```json
   "dependencies": {
     "@repo/db": "workspace:*",
-    "@repo/types": "workspace:*"
+    "@repo/ui": "workspace:*"
   }
   ```
 - **Cross-Import 금지**: `apps/web` ↔ `apps/admin` 간의 직접 import는 원천 금지합니다. 공통 모듈은 반드시 `packages/*`로 추출하여 공유합니다.
@@ -184,8 +179,8 @@ Turborepo와 pnpm workspaces 기반의 모노레포 구조로 사용자 서비�
 
 6. 에러 핸들링 및 응답 표준 (Error Handling)
 
-- **AppError Class**: 전역 에러 클래스를 정의하여 HTTP 상태 코드와 사용자 메시지를 구조화 (`@repo/types`).
-- **ActionResult**: 모든 Server Action은 아래의 공통 인터페이스를 반환합니다.
+- **AppError Class**: 전역 에러 클래스를 정의하여 HTTP 상태 코드와 사용자 메시지를 구조화 (`@repo/db`).
+- **ActionResult**: 모든 Server Action은 아래의 공통 인터페이스를 반환합니다 (`@repo/db`).
   ```typescript
   export type ActionResult<T = void> = 
     | { success: true; data: T }
@@ -250,6 +245,19 @@ Turborepo와 pnpm workspaces 기반의 모노레포 구조로 사용자 서비�
   - UI 컴포넌트나 비즈니스 서비스(`04_services`)에서 JSON 파일을 직접 파싱하거나 저수준 메모리 변이를 수행하는 것을 엄격히 금지합니다.
 - **단방향 의존성 흐름 & Zero-Code-Change 실서버 전환**:
   - `03_actions` ➡️ `04_services` (비즈니스 규칙/IDOR 검증) ➡️ `packages/db/data` (순수 DAL) & `00_lib/session` 단방향 호출 흐름을 준수합니다.
+
+8.2 와글(Waggle) 핵심 도메인 5대 불변 규칙 (Domain Invariants)
+`04_services` 및 `packages/db/src/data/repos` 작성 시 아래 도메인 정합성 규칙을 엄격히 준수합니다.
+1. **포인트 원장(Ledger) 정합성 & 음수 잔액 금지**:
+   - 유저의 보유 포인트(`pointBalance`)를 단순 덮어쓰기하지 않으며, 모든 적립(`EARN`)/사용(`USE`)/환불(`REFUND`)은 반드시 `points` 원장 레코드 추가와 동시에 원자적으로 합산 갱신합니다 (`pointBalance < 0` 절대 불가).
+2. **미션 중복 보상 차단 (Idempotency)**:
+   - 일일/주간/상시 미션 완료 및 포인트 지급 시 `userId + missionId + periodKey(예: YYYY-MM-DD)` 조합을 검증하여 동일 기간 내 중복 적립을 원천 차단합니다.
+3. **반려견 프로필 소유권 및 대표견(Primary Dog) 유지**:
+   - 모든 반려견(`dogs`) 데이터 수정/삭제는 본인 소유(`userId`) 여부를 검증하며, 산책·교육·맞춤 미션의 기준이 되는 대표 반려견이 최소 1마리 지정되도록 유지합니다.
+4. **산책(Walk) 및 미디어 연동의 Web-First 심플 구현 (KISS)**:
+   - 산책 트래킹(거리/시간/경로) 및 사진/영상 인증은 복잡한 네이티브 브릿지 의존성 없이 **웹 표준 API(`navigator.geolocation`, HTML5 File/Media API) 및 로컬 시뮬레이션(Mock 모드)**으로 우선 동작하도록 직관적으로 구현합니다.
+5. **포인트샵 주문 및 재고/잔액 검증**:
+   - 상품 교환/주문 시 ① 상품 판매 상태 및 재고 확인 ➡️ ② 유저 포인트 잔액 검증 ➡️ ③ 포인트 차감 원장 기록 및 주문 생성 순서를 엄격히 준수합니다.
 
 ---
 
