@@ -5,10 +5,21 @@
 
 ---
 
-## 1. 코어 레이아웃 & 모바일 뷰포트 규격
+## 1. 코어 레이아웃 & 440px 기준 Fluid REM 뷰포트 규격
 
-- **430px 앱 뷰포트 컨테이너**: `max-w-[430px] w-full mx-auto min-h-[100dvh] bg-theme-app relative overflow-x-hidden shadow-2xl`
-- **Concentric Border Radius (동심원 곡률)**: `Inner Radius = Outer Radius - Padding` 비례 유지
+- **440px 앱 전용 뷰포트 컨테이너**:
+  ```html
+  w-full max-w-[440px] mx-auto min-h-dvh bg-background relative overflow-x-clip shadow-2xl
+  ```
+- **440px 기준 Fluid Root REM 반응형 스케일 (`globals.css`)**:
+  - 기본 디자인 기준 폭을 **`440px` (`1rem = 16px`)**로 고정하고, 화면이 `440px`보다 작아지면(`360px ~ 439px`) `html` 루트 폰트 사이즈가 **1:1 정비례(`16 / 440 * 100 = 3.63636vw`)로 축소**되어 모든 `rem` 단위 UI(폰트, 패딩, 높이, 간격, 아이콘)가 레이아웃 깨짐 없이 완벽히 정비례 반응형으로 동작합니다.
+  ```css
+  /* 440px 이상: 16px 고정 | 440px 미만: 기기 폭에 맞춰 1:1 정비례 축소 (최소 12.5px 방어) */
+  html {
+    font-size: clamp(12.5px, 3.6364vw, 16px);
+  }
+  ```
+- **Concentric Border Radius (동심원 곡률)**: `Inner Radius = Outer Radius - Padding` 비례 유지 (`rem` 기반 Tailwind 유틸리티 사용)
   - 대형 카드/모달: `rounded-3xl` (24px)
   - 인풋/중형 버튼/서브 카드: `rounded-2xl` (16px)
   - 소형 버튼/아이콘 박스: `rounded-xl` (12px)

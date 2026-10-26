@@ -1,29 +1,32 @@
 # AppSheetFrame & Global Overlay Navigation 표준 가이드
 
 > **문서 상태:** 활성 (Active SSOT)  
-> **적용 범위:** 와글(Waggle) `apps/web` 내 모든 서브 화면, 슬라이드 시트, 바텀시트, 온보딩, 상세 뷰 및 430px 모바일 앱 프레임
+> **적용 범위:** 와글(Waggle) `apps/web` 내 모든 서브 화면, 슬라이드 시트, 바텀시트, 온보딩, 상세 뷰 및 440px 앱 전용 프레임
 
 ---
 
 ## 1. 도입 배경 및 철학 (KISS & Single Source of Layout)
 
-모바일 웹앱에서 화면마다 개별적으로 `fixed inset-0`, 인라인 패딩, safe-area(`pt-safe`, `pb-safe`), 헤더 높이를 따로 작성하면서 발생하는 문제를 원천 차단하기 위해 **430px 모바일 프레임 + 0ms 네이티브 오버레이(`GlobalOverlayProvider`) + 3단 쉘(`AppSheetFrame`) + 3중 히스토리 가드(`useModalHistory`)**로 아키텍처를 일원화합니다.
+모바일 웹앱에서 화면마다 개별적으로 `fixed inset-0`, 인라인 패딩, safe-area(`pt-safe`, `pb-safe`), 헤더 높이를 따로 작성하면서 발생하는 문제를 원천 차단하기 위해 **440px(Fluid REM) 앱 전용 프레임 + 0ms 네이티브 오버레이(`GlobalOverlayProvider`) + 3단 쉘(`AppSheetFrame`) + 3중 히스토리 가드(`useModalHistory`)**로 아키텍처를 일원화합니다.
 
 ---
 
-## 2. 430px 앱 프레임 & 0ms 좌우/상하 스와이프 오버레이 아키텍처
+## 2. 440px 앱 프레임 (Fluid REM) & 0ms 좌우/상하 스와이프 오버레이 아키텍처
 
-### 2.1 기본 430px 뷰포트 컨테이너 (`Base Layout`)
+### 2.1 기본 440px 뷰포트 컨테이너 & Fluid REM 반응형 (`Base Layout`)
 ```
 +-------------------------------------------------------------+
-| [430px Frame Container] (max-w-[430px] mx-auto min-h-[100dvh])|
+| [440px Frame Container] (w-full max-w-[440px] mx-auto min-h-dvh)|
 |                                                             |
-| 1. Top Header Bar (h-[56px], z-20)                           |
+| 1. Top Header Bar (h-[3.5rem], z-20)                         |
 | 2. Main Scrollable Content Area (flex-1, pb-24, z-10)        |
 | 3. Fixed Bottom Navigation Bar (z-30)                        |
 +-------------------------------------------------------------+
 ```
-- **컨테이너 클래스**: `max-w-[430px] w-full mx-auto min-h-[100dvh] bg-theme-app relative overflow-x-hidden shadow-2xl`
+- **컨테이너 클래스**: `w-full max-w-[440px] mx-auto min-h-dvh bg-background relative overflow-x-clip shadow-2xl`
+- **440px 기준 Fluid REM 스케일링 (`globals.css`)**:
+  - 기본 기준 폭 `440px`에서 `1rem = 16px`이며, `440px` 미만 기기에서는 `html { font-size: clamp(12.5px, 3.6364vw, 16px); }`에 의해 전체 UI가 `rem` 단위로 1:1 정비례 축소됩니다.
+  - 따라서 컴포넌트 작성 시 하드코딩 `px` 대신 **Tailwind `rem` 기반 유틸리티(`p-4`, `h-14`, `text-base`, `rounded-2xl` 등)**를 사용해야 화면 폭이 줄어들 때 자동으로 반응형 축소됩니다.
 
 ### 2.2 전역 Z-Index 계층 스택 (`Z-Index Stacking Context`)
 
@@ -45,10 +48,10 @@
 - **상하 바텀시트 (`y: "100%" -> 0`)**: 필터, 빠른 입력, 액션 시트
 
 ```tsx
-// GlobalOverlayProvider: 430px 마스킹 프레임 내부에서만 x: 100% -> 0 또는 y: 100% -> 0 슬라이드
+// GlobalOverlayProvider: 440px 마스킹 프레임 내부에서만 x: 100% -> 0 또는 y: 100% -> 0 슬라이드
 <motion.div
   style={{ zIndex: 40 + index * 5 }}
-  className="fixed inset-0 max-w-[430px] mx-auto flex items-end justify-center pointer-events-none overflow-hidden"
+  className="fixed inset-0 w-full max-w-[440px] mx-auto flex items-end justify-center pointer-events-none overflow-hidden"
 >
   {/* 백드롭 */}
   <motion.div
@@ -61,7 +64,7 @@
     animate={isSlideUp ? { y: 0 } : { x: 0 }}
     exit={isSlideUp ? { y: "100%" } : { x: "100%" }}
     transition={{ type: "spring", stiffness: 380, damping: 36, mass: 0.9 }}
-    className="w-full h-full bg-theme-app relative overflow-y-auto no-scrollbar pointer-events-auto z-10"
+    className="w-full h-full bg-background relative overflow-y-auto no-scrollbar pointer-events-auto z-10"
   >
     {modal.content}
   </motion.div>

@@ -39,13 +39,13 @@ Turborepo와 pnpm workspaces 기반의 모노레포 구조로 사용자 서비�
 - **Simplify Code (AG-Kit 내장)**: `.agents/skills/simplify-code/SKILL.md` (오버엔지니어링 제거 및 KISS 원칙 강제)
 
 ### 1.3 필수 참조 아키텍처 문서 (`.docs/`)
-- **Sheet & Swipe Layout (공통 쉘 & 모달 좌우/상하 스와이프 표준)**: [`.docs/architecture/APP_SHEET_FRAME_GUIDE.md`](file:///.docs/architecture/APP_SHEET_FRAME_GUIDE.md) (`AppSheetFrame` 3단 쉘, 430px 모바일 프레임, `GlobalOverlayProvider` 좌우/상하 스프링 스와이프, `useModalHistory` iOS 엣지 스와이프/안드로이드 뒤로가기 방어, 닫힘 시 리소스 킬 의무화)
+- **Sheet & Swipe Layout (공통 쉘 & 모달 좌우/상하 스와이프 표준)**: [`.docs/architecture/APP_SHEET_FRAME_GUIDE.md`](file:///.docs/architecture/APP_SHEET_FRAME_GUIDE.md) (`AppSheetFrame` 3단 쉘, 440px 기준 Fluid REM 모바일 프레임, `GlobalOverlayProvider` 좌우/상하 스프링 스와이프, `useModalHistory` iOS 엣지 스와이프/안드로이드 뒤로가기 방어, 닫힘 시 리소스 킬 의무화)
 - **Data & Zustand Sync**: [`.docs/architecture/DATA_LOADING_AND_ZUSTAND_SYNC.md`](file:///.docs/architecture/DATA_LOADING_AND_ZUSTAND_SYNC.md) (RSC 1회 페칭 + Zustand `isLoaded` 캐시 & 0ms 낙관적 업데이트)
 - **Design System (Gate Override)**: [`.docs/architecture/DESIGN.md`](file:///.docs/architecture/DESIGN.md) & [`.docs/specs/design-theme-guide.md`](file:///.docs/specs/design-theme-guide.md) (루트에 중복 `DESIGN.md` 생성을 금지하며 반드시 `.docs/architecture/DESIGN.md`를 SSOT로 참조)
 - **Waggle 도메인 기획/명세**: `.docs/specs/` 하위 요구사항 정의서 및 화면설계서 참조
 
 ### 1.4 AG-Kit 에이전트 라우팅 & 운영 오버라이드 규칙 (`.agents/rules/00-project-overrides.md`)
-- **Specialist Routing**: `apps/web` (430px 모바일 웹앱) 및 `apps/admin`은 React Native가 아닌 **Next.js 16 + Tailwind v4 웹 애플리케이션**이므로 모든 UI/UX 작업은 `mobile-developer`가 아닌 **`frontend-specialist`**로 라우팅합니다.
+- **Specialist Routing**: `apps/web` (440px 앱 전용 모바일 웹앱) 및 `apps/admin`은 React Native가 아닌 **Next.js 16 + Tailwind v4 웹 애플리케이션**이므로 모든 UI/UX 작업은 `mobile-developer`가 아닌 **`frontend-specialist`**로 라우팅합니다.
 - **Pragmatic Clarification Gate**: 요구사항이나 `.docs/specs/` 명세가 명확한 경우 불필요한 3문항 질문(Socratic Gate)으로 작업을 지연시키지 않고 즉시 구현합니다.
 - **AG-Kit 업데이트 유지보수**: 향후 `pnpm dlx @vudovn/ag-kit init` 실행 후 순정 룰(`.agents/rules/*.md`)이 초기화될 경우, [`.agents/rules/00-project-overrides.md`](file:///.agents/rules/00-project-overrides.md) 기준으로 경로(`.docs/architecture/*`) 및 `uv run` 규칙을 동기화합니다.
 
@@ -270,8 +270,11 @@ Turborepo와 pnpm workspaces 기반의 모노레포 구조로 사용자 서비�
 - **비동기 포커스 제어 (`useRef` + `setTimeout`)**: 입력값 누락 시 `setTimeout(() => ref.current?.focus(), 50)`으로 포커싱합니다.
 - **배경 클릭 닫힘 방지 (`closeOnOverlayClick={false}`)**: 공통 `<Alert />`의 배경 클릭 닫힘을 차단하여 후속 콜백 유실을 방지합니다.
 
-9.2 430px 모바일 프레임 & `AppSheetFrame` 좌우/상하 모달 스와이프 표준 (★필수★)
+9.2 440px 앱 프레임(Fluid REM) & `AppSheetFrame` 좌우/상하 모달 스와이프 표준 (★필수★)
 - 상세 구현 명세는 [`.docs/architecture/APP_SHEET_FRAME_GUIDE.md`](file:///.docs/architecture/APP_SHEET_FRAME_GUIDE.md)를 따릅니다.
+- **440px 고정 프레임 & Fluid Root REM 반응형**:
+  - 최외곽 앱 컨테이너는 `w-full max-w-[440px] mx-auto min-h-dvh bg-background relative overflow-x-clip shadow-2xl`로 고정합니다.
+  - 기본 기준 폭 `440px`에서 `1rem = 16px`이며, 화면 폭이 `440px` 미만으로 줄어들면 `html { font-size: clamp(12.5px, 3.6364vw, 16px); }`에 의해 전체 레이아웃과 타이포그래피가 `rem` 비례로 자동 축소됩니다. 따라서 컴포넌트 크기는 하드코딩 `px` 대신 반드시 `rem` 기반 Tailwind 유틸리티를 사용합니다.
 - **App-Like Global Overlay (`GlobalOverlayProvider`)**: 서브 페이지, 상세 화면, 설정, 체크인 등 모달/시트 뷰는 라우트 전체를 언마운트하지 않고 대시보드가 100% 유지되는 Framer Motion 전역 오버레이(`useModalStore`)를 사용합니다 (`x: "100%" -> 0` 좌우 슬라이드 또는 `y: "100%" -> 0` 바텀시트).
 - **`AppSheetFrame` 3단 쉘**: 모든 시트와 서브 화면은 `header` (`subHeader` 포함) + `children` (본문 스크롤) + `bottom` (하단 고정 CTA, `pb-safe-bottom` 단일 제어)의 3단 쉘 구조를 사용하며, 자식 컴포넌트 내부에 임의로 `fixed bottom-0`이나 `pt-safe`/`pb-safe`를 중복 작성하지 않습니다.
 - **3중 모바일 네비게이션 가드 (`useModalHistory`)**:
