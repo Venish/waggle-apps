@@ -8,316 +8,180 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-🏗️ Corenuri Standard Framework: Waggle Monorepo (Turborepo & pnpm Workspaces)
-<!-- [Pending] Firebase / Real DB Architecture -->
+🏗️ Corenuri Standard Framework: Waggle Monorepo
+<!-- Turborepo v2 & pnpm Workspaces | Next.js 16.2.6 + Tailwind v4 + PostgreSQL 18 Drizzle DAL -->
 
-본 지침은 와글(Waggle — 반려견 라이프로그·산책·교육·미션/리워드·포인트샵 통합 서비스) 웹/앱 서비스를 위한 단일 진실 공급원(SSOT)입니다.
-Turborepo와 pnpm workspaces 기반의 모노레포 구조로 사용자 서비스(`apps/web`)와 관리자 콘솔(`apps/admin`)을 분리하고, DB 및 비즈니스 레이어(`packages/*`)를 공유하는 AI-Native 프레임워크 표준을 정의합니다.
-현재 인증 및 데이터 연동은 **Mock 데이터/Mock Auth (DAL 패턴)** 기준으로 동작하며, 추후 실서버 DB 전환 시에도 상위 코드 수정 없이 DAL 내부만 교체합니다.
-
----
-
-1. 필수 참조 스킬셋 및 아키텍처 가이드 (Mandatory Skills & Docs)
-
-모든 코드 생성 시 아래 규칙을 반드시 준수하십시오.
-- **통합 스킬 디렉터리 (`.agents/skills/`)**: 최신 `ag-kit` 기본 스킬(47종)과 코아누리/와글 영구 보존 커스텀 스킬(9종)이 통합 관리됩니다 (`manifest.lock.json`에 의해 업데이트 시에도 커스텀 스킬 영구 보존).
-
-### 1.1 코어 아키텍처 스킬 (`.agents/skills/` — 코아누리 커스텀 보존 7종)
-- **Monorepo (Operator)**: `.agents/skills/turborepo-pnpm-workspace/SKILL.md` (Turborepo v2 `tasks`, 물리 구조, 거버넌스)
-- **Action (Gateway)**: `.agents/skills/nextjs-server-actions/SKILL.md` (`03_actions` Zod 검증 및 `ActionResult<T>` 반환)
-- **Service (Isolation)**: `.agents/skills/server-only-services/SKILL.md` (`04_services` `server-only` 격리 및 Public/Private IDOR 방어)
-- **Next.js (Expert)**: `.agents/skills/nextjs-expert/SKILL.md` (Next.js 16 App Router 및 `proxy.ts` 3-Tier 가드)
-- **State (Client)**: `.agents/skills/zustand-state-management/SKILL.md` (`01_store` Zustand `isLoaded` 캐시, `useAlert`, `useModalStore`)
-- **Design (Styling)**: `.agents/skills/tailwind-v4-standard/SKILL.md` (Tailwind v4 `@theme` 및 무경계/정적 클래스 표준)
-- **UI (Components)**: `.agents/skills/shadcn/SKILL.md` (shadcn/ui 기반 `@repo/ui` 컴포넌트 확장)
-
-### 1.2 UI 엔지니어링 & 최신 AG-Kit 핵심 스킬 (`.agents/skills/`)
-- **UI Polish (커스텀 보존)**: `.agents/skills/make-interfaces-feel-better/SKILL.md` (동심원 곡률, `tabular-nums`, `scale(0.96)`, 스프링 트랜지션)
-- **Color OKLCH (커스텀 보존)**: `.agents/skills/oklch-skill/SKILL.md` (Tailwind v4 OKLCH 컬러 토큰 및 다크모드 명도 대비)
-- **Frontend Design (AG-Kit 내장)**: `.agents/skills/frontend-design/SKILL.md` (Anti-Slop 디자인, `style-minimalist.md`, `redesign.md` 통합본)
-- **Next/React Perf (AG-Kit 내장)**: `.agents/skills/nextjs-react-expert/SKILL.md` (Vercel 공식 58개 성능 최적화 규칙)
-- **Simplify Code (AG-Kit 내장)**: `.agents/skills/simplify-code/SKILL.md` (오버엔지니어링 제거 및 KISS 원칙 강제)
-
-### 1.3 필수 참조 아키텍처 문서 (`.docs/`)
-- **Sheet & Swipe Layout (공통 쉘 & 모달 좌우/상하 스와이프 표준)**: [`.docs/architecture/APP_SHEET_FRAME_GUIDE.md`](file:///.docs/architecture/APP_SHEET_FRAME_GUIDE.md) (`AppSheetFrame` 3단 쉘, 440px 기준 Fluid REM 모바일 프레임, `GlobalOverlayProvider` 좌우/상하 스프링 스와이프, `useModalHistory` iOS 엣지 스와이프/안드로이드 뒤로가기 방어, 닫힘 시 리소스 킬 의무화)
-- **Data & Zustand Sync**: [`.docs/architecture/DATA_LOADING_AND_ZUSTAND_SYNC.md`](file:///.docs/architecture/DATA_LOADING_AND_ZUSTAND_SYNC.md) (RSC 1회 페칭 + Zustand `isLoaded` 캐시 & 0ms 낙관적 업데이트)
-- **Design System (Gate Override)**: [`.docs/architecture/DESIGN.md`](file:///.docs/architecture/DESIGN.md) & [`.docs/specs/design-theme-guide.md`](file:///.docs/specs/design-theme-guide.md) (루트에 중복 `DESIGN.md` 생성을 금지하며 반드시 `.docs/architecture/DESIGN.md`를 SSOT로 참조)
-- **Waggle 도메인 기획/명세**: `.docs/specs/` 하위 요구사항 정의서 및 화면설계서 참조
-
-### 1.4 AG-Kit 에이전트 라우팅 & 운영 오버라이드 규칙 (`.agents/rules/00-project-overrides.md`)
-- **Specialist Routing**: `apps/web` (440px 앱 전용 모바일 웹앱) 및 `apps/admin`은 React Native가 아닌 **Next.js 16 + Tailwind v4 웹 애플리케이션**이므로 모든 UI/UX 작업은 `mobile-developer`가 아닌 **`frontend-specialist`**로 라우팅합니다.
-- **Pragmatic Clarification Gate**: 요구사항이나 `.docs/specs/` 명세가 명확한 경우 불필요한 3문항 질문(Socratic Gate)으로 작업을 지연시키지 않고 즉시 구현합니다.
-- **AG-Kit 업데이트 유지보수**: 향후 `pnpm dlx @vudovn/ag-kit init` 실행 후 순정 룰(`.agents/rules/*.md`)이 초기화될 경우, [`.agents/rules/00-project-overrides.md`](file:///.agents/rules/00-project-overrides.md) 기준으로 경로(`.docs/architecture/*`) 및 `uv run` 규칙을 동기화합니다.
+본 지침은 와글(Waggle — 반려견 교육·데일리 기록·포인트/결제·포인트샵 통합 서비스) 웹/앱 및 운영 백오피스의 단일 진실 공급원(SSOT)입니다.
+초기 단일 서버 운영 효율과 추후 확장을 모두 잡기 위해, **Turborepo + pnpm workspaces 모노레포 위에 단일 Next.js 앱(`apps/web`: 3 Route Group — `(www)` 소개 · `(mobile)` `/app/*` · `(admin)` `/admin/*`)**과 3개 공용 패키지(`@repo/db`, `@repo/types`, `@repo/ui`)를 구성합니다. 각 영역은 **독립 Root Layout · 전용 CSS(`styles/web.css` vs `styles/admin.css`) · `web/` vs `admin/` 폴더 경계**로 100% 물리 격리하여, 추후 서버 증설 시 `apps/admin`으로 무중단 분리할 수 있도록 설계합니다.
 
 ---
 
-2. 모노레포 앱 및 패키지 구성 (App & Package Structure)
+## 1. 필수 참조 스킬셋 및 `.docs/` 5대 문서 거버넌스 (Mandatory Skills & Docs)
+
+### 1.1 코어 아키텍처 및 UI 스킬 (`.agents/skills/`)
+- **Monorepo**: `.agents/skills/turborepo-pnpm-workspace/SKILL.md` (Turborepo v2 `tasks`, 패키지 거버넌스)
+- **Next.js 16**: `.agents/skills/nextjs-expert/SKILL.md` (`proxy.ts` 3-Tier 세션 가드 및 만료 루프 방지)
+- **Server Actions**: `.agents/skills/nextjs-server-actions/SKILL.md` (`03_actions` Zod 검증 및 `ActionResult<T>`)
+- **Services**: `.agents/skills/server-only-services/SKILL.md` (`04_services` `server-only`, Public/Private 분리 및 IDOR 차단)
+- **State**: `.agents/skills/zustand-state-management/SKILL.md` (`01_store` Zustand `isLoaded` 캐시, 낙관적 업데이트, `useAlert`, `useModalStore`)
+- **User UI (`(www)` · `(mobile)`)**: `.agents/skills/make-interfaces-feel-better/SKILL.md`, `.agents/skills/oklch-skill/SKILL.md`, `.agents/skills/frontend-design/SKILL.md`
+- **Admin Console UI (`(admin)`)**: `.agents/skills/corenuri-ui-standards/SKILL.md` (사이드바, 고밀도 데이터 테이블, 다중 필터, 우측 `Sheet` 드로어)
+- **Styling & Primitives**: `.agents/skills/tailwind-v4-standard/SKILL.md`, `.agents/skills/shadcn/SKILL.md`
+- **Coding, Perf & Typing**: `.agents/skills/coding-standard/SKILL.md`, `.agents/skills/typescript-pro/SKILL.md`, `.agents/skills/nextjs-react-expert/SKILL.md`, `.agents/skills/simplify-code/SKILL.md`
+
+### 1.2 `.docs/` 5대 표준 디렉터리 (경량 SSOT 구성)
+1. **`architecture/`** — 시스템 활성 표준만 유지 (일회성 기획안/플랜·`HISTORY.md` 생성 절대 금지)
+   - [`.docs/architecture/DESIGN.md`](file:///.docs/architecture/DESIGN.md): 디자인 분리 게이트 허브 — 사용자(`(www)`·`(mobile)`) 전용 [`.docs/architecture/DESIGN_WEB.md`](file:///.docs/architecture/DESIGN_WEB.md) (Clean Neo-Pop · `styles/web.css`) · 관리자(`(admin)`) 전용 [`.docs/architecture/DESIGN_ADMIN.md`](file:///.docs/architecture/DESIGN_ADMIN.md) (Atlas Precision Studio · `styles/admin.css`) 100% 물리 분리 (루트에 중복 `DESIGN.md` 생성 금지)
+   - [`.docs/architecture/APP_SHEET_FRAME_GUIDE.md`](file:///.docs/architecture/APP_SHEET_FRAME_GUIDE.md): `app/` 모바일 뷰포트 프레임, `AppSheetFrame` 3단 쉘, `GlobalOverlayProvider` 및 `useModalHistory` 3중 방어
+   - [`.docs/architecture/DATA_LOADING_AND_ZUSTAND_SYNC.md`](file:///.docs/architecture/DATA_LOADING_AND_ZUSTAND_SYNC.md): RSC 1회 페칭 + Zustand `isLoaded` 캐시 & 낙관적 UI 규격
+   - [`.docs/architecture/IMAGE_ASSET_GUIDE.md`](file:///.docs/architecture/IMAGE_ASSET_GUIDE.md): WebP 해상도/용량 기준 및 `<SafeImage />` 표준
+   - [`.docs/architecture/CODEBASE.md`](file:///.docs/architecture/CODEBASE.md): 핵심 Action / Route Handler / Service / Repo 시그니처 맵
+   - [`.docs/architecture/FLOWS.md`](file:///.docs/architecture/FLOWS.md): 인증·결제·배치 및 핵심 도메인 상태 전이 흐름
+2. **`specs/`** — 와글 신규 도메인 명세([`.docs/specs/00_WAGGLE_마스터_설계서.md`](file:///.docs/specs/00_WAGGLE_마스터_설계서.md)) 및 인덱스([`.docs/specs/index.md`](file:///.docs/specs/index.md)). 구버전 기획서 24종은 **`.docs/specs/legacy/`**에 격리(참고 전용 — 직접 추종 금지).
+3. **`data/`** — 기준정보 원본(견종/공통코드/커리큘럼/상품 샘플 CSV·XLSX) 및 물리 DB 테이블 정의서([`.docs/data/README.md`](file:///.docs/data/README.md)).
+4. **`plan/`** — 설계서·구현 플랜(`YYYY-MM-DD_제목.md`) 및 마스터 인덱스([`.docs/plan/index.md`](file:///.docs/plan/index.md)). 필요 시 `plan/details/`(태스크보드·`GRILL_ME` 결정대장) 확장 가능.
+5. **`history/`** — 일자별 변경 이력(`YYYY-MM-DD.md`) 및 마스터 인덱스([`.docs/history/index.md`](file:///.docs/history/index.md)).
+
+---
+
+## 2. 모노레포 앱 및 패키지 구성 (1-App + 3-Domain / 3-Package)
+
+> 초기 단일 서버 배포를 위해 `apps/web` 단일 앱으로 통합하되, 3개 Route Group과 `web/`·`admin/` 내부 폴더를 철저히 격리하여 추후 서버 증설 시 `apps/admin`으로 즉시 분리 가능하게 유지합니다.
 
 | 구분 | 워크스페이스 명칭 | 포트 / 역할 | 의존성 및 패키지 참조 |
-|---|---|---|---|
-| `apps/web` | `@repo/web` | `:3000` (사용자 모바일 웹앱 & 랜딩) | `@repo/db`, `@repo/ui` |
-| `apps/admin` | `@repo/admin` | `:3001` (관리자 콘솔) | `@repo/db`, `@repo/ui` |
-| `packages/db` | `@repo/db` | Drizzle Schema / DAL / 도메인 타입 & 공통 규격(`ActionResult`, `AppError`) | Drizzle ORM, Drizzle Kit, Zod |
-| `packages/ui` | `@repo/ui` | 공통 UI 컴포넌트 / 테마 | Tailwind v4, shadcn/ui |
+| :--- | :--- | :--- | :--- |
+| `apps/web` | `@repo/web` | `:3000` — **`(www)` 소개**(`www.*` / `/`) + **`(mobile)` 웹앱**(`app.*` / `/app/*`) + **`(admin)` 운영 콘솔**(`admin.*` / `/admin/*`, `proxy.ts` 3도메인 Host 리라이트 지원) | `@repo/db`, `@repo/types`, `@repo/ui` |
+| `packages/db` | `@repo/db` | PostgreSQL 18 Drizzle Schema (`pg-core`) / DAL Repositories (`src/repos/*Repo.ts`) | `@repo/types`, Drizzle ORM, `pg`, Drizzle Kit, Zod |
+| `packages/types` | `@repo/types` | 공통 응답(`ActionResult`, `AppError`) 및 `web`↔`admin` 교차 계약(세션·결제·원장·주문 상태 타입) | Zod, TypeScript Shared Types |
+| `packages/ui` | `@repo/ui` | 테마 수치가 없는 공통 구조/접근성 UI 프리미티브 (`Sheet`, `Dialog`, `Table`, `Alert` 등) | Tailwind v4, shadcn/ui |
 
 ---
 
-3. 모노레포 디렉터리 구조 (Monorepo Anatomy)
+## 3. 모노레포 디렉터리 구조 (Monorepo Anatomy — 추후 `apps/admin` 분리 대비)
 
-```
+```text
 <repo-root>/
 ├── apps/
-│   ├── web/                        # 사용자 서비스 (:3000)
-│   │   ├── src/
-│   │   │   ├── 00_lib/             # App 전용 클라이언트 초기화 (session.ts, mock-auth.ts 등)
-│   │   │   ├── 01_store/           # 전역 상태 관리 (Zustand, useAlert.ts, useModalStore.ts)
-│   │   │   ├── 02_hooks/           # 커스텀 훅 (비즈니스 로직 SSOT, useModalHistory.ts)
-│   │   │   ├── 03_actions/         # Server Actions (Zod 검증, ActionResult 반환)
-│   │   │   ├── 04_services/        # server-only 비즈니스 서비스 (*MasterService / my*Service)
-│   │   │   ├── 05_types/           # Web 전용 UI/View 인터페이스
-│   │   │   ├── components/         # Web 전용 UI 컴포넌트 (AppSheetFrame, GlobalOverlayProvider 등)
-│   │   │   ├── app/                # Next.js App Router
-│   │   │   │   ├── api/auth/session-expired/route.ts # 무한 리다이렉트 방지 세션 정리
-│   │   │   │   └── ...
-│   │   │   └── proxy.ts            # Next 16 미들웨어 (middleware.ts 대신 proxy.ts)
-│   │   ├── next.config.ts
-│   │   ├── package.json
-│   │   └── tsconfig.json
-│   │
-│   └── admin/                      # 관리자 콘솔 (:3001)
-│       ├── src/                    # (web과 동일한 6단계 레이어 아키텍처 + proxy.ts)
-│       ├── next.config.ts
-│       ├── package.json
-│       └── tsconfig.json
+│   └── web/                        # 단일 Next.js 16 앱 (:3000 — www + app + admin)
+│       ├── src/
+│       │   ├── styles/
+│       │   │   ├── web.css         # 사용자 전용 Clean Neo-Pop 테마 ((www)/(mobile) 전용 import)
+│       │   │   └── admin.css       # 관리자 전용 Atlas Precision Studio 테마 ((admin) 전용 import)
+│       │   ├── 00_lib/             # DB 세션 검증(session.ts), userSessionConfig.ts, adminSessionConfig.ts
+│       │   ├── 01_store/           # 클라이언트 전역 상태 (Zustand: web/ · admin/ 구분)
+│       │   ├── 02_hooks/           # 커스텀 훅 (useModalHistory 등)
+│       │   ├── 03_actions/         # Server Actions (web/ · admin/ 폴더 격리, Zod 검증 + ActionResult<T>)
+│       │   ├── 04_services/        # server-only 비즈니스 서비스 (web/ · admin/ 폴더 격리)
+│       │   ├── 05_types/           # 화면 전용 폼·필터·모달 인터페이스 (web/ · admin/ 폴더 격리)
+│       │   ├── components/         # UI 컴포넌트 (web/ · admin/ 폴더 격리 — 상호 import 금지)
+│       │   ├── app/                # Next.js 16 App Router (최상위 layout.tsx 없이 Route Group별 독립 <html>)
+│       │   │   ├── (www)/          # 독립 layout.tsx (styles/web.css) — 공개 소개·마케팅 랜딩
+│       │   │   ├── (mobile)/       # 독립 layout.tsx (styles/web.css) — /app/* 보호된 모바일 웹앱 + /login
+│       │   │   ├── (admin)/        # 독립 layout.tsx (styles/admin.css) — /admin/* 운영 콘솔 + /admin/login
+│       │   │   └── api/            # 예외 HTTP 진입점 (auth/session-expired, auth/callback/*, webhooks/*, upload/*, cron/*)
+│       │   └── proxy.ts            # Next 16 미들웨어 (3도메인 Host 분기 + 쿠키 검증 + 슬라이딩 재발급 + 운영 /admin 호스트 가드)
+│       └── package.json
 │
 ├── packages/
-│   ├── db/                         # @repo/db (Drizzle 스키마 + DAL + 도메인 타입 + 공통 ActionResult/AppError)
-│   │   ├── src/
-│   │   │   ├── common/             # 공통 응답/에러 규격 (action.ts: ActionResult<T>, error.ts: AppError)
-│   │   │   ├── data/               # DAL (mock/*.json + repos/*Repo.ts)
-│   │   │   ├── schema/             # Drizzle 테이블 스키마 정의 (도메인 엔티티 타입 SSOT 추출)
-│   │   │   ├── client.ts           # 실서버 Drizzle DB Client (실제 DB 연결용 원형 보존)
-│   │   │   └── index.ts            # 단일 진입점 export
-│   │   ├── drizzle.config.ts
-│   │   ├── package.json
-│   │   └── tsconfig.json
-│   │
-│   └── ui/                         # @repo/ui (공통 테마 토큰 & 공용 컴포넌트)
-│       ├── src/
-│       ├── package.json
-│       └── tsconfig.json
+│   ├── db/                         # @repo/db (PostgreSQL 18 Drizzle 스키마 + DAL Repositories)
+│   │   └── src/
+│   │       ├── repos/              # 도메인별 순수 DAL Repository (*Repo.ts)
+│   │       ├── schema/             # Drizzle pg-core 테이블 스키마 (SSOT)
+│   │       ├── client.ts           # PostgreSQL 18 직접 연결 Drizzle Client (node-postgres / pg)
+│   │       └── index.ts
+│   ├── types/                      # @repo/types (ActionResult, AppError, web↔admin 교차 계약)
+│   └── ui/                         # @repo/ui (테마 없는 shadcn/ui 구조 프리미티브)
 │
-├── .agents/                        # AG-Kit 런타임 & 통합 스킬셋 (커스텀 9종 + 순정 47종)
-├── .docs/                          # 아키텍처 표준(architecture/) 및 기획 명세(specs/)
-├── pnpm-workspace.yaml             # pnpm 워크스페이스 선언
-├── turbo.json                      # Turborepo 파이프라인 & Strict Env 규칙
-├── package.json                    # 루트 통합 스크립트
-└── tsconfig.json                   # 루트 기본 TSConfig
+├── .agents/                        # AG-Kit 런타임 & 통합 스킬셋
+├── .docs/                          # 5대 표준 문서 (architecture / specs / data / plan / history)
+├── .scratch/                       # 일회성 Python(uv) 및 외부/레거시 참조(references/) 격리 폴더 (Git 제외, 직접 import 금지)
+├── .node-version                   # Node.js 버전 고정 (v24.14.1)
+├── .env                            # 모노레포 단일 환경변수 (PostgreSQL/외부키 — Git 제외)
+├── .env.example                    # 환경변수 템플릿 (Git 커밋 대상)
+├── pnpm-workspace.yaml
+├── turbo.json
+└── package.json
 ```
 
 ---
 
-4. 모노레포 거버넌스 및 규칙 (Governance & Cross-Import Policy)
+## 4. 거버넌스, 인증(`proxy.ts`) 및 세션 이원화 표준
 
-- **Naming Rule**: 모든 내부 공유 패키지는 반드시 **`@repo/*`** 네임스페이스를 사용합니다 (`@repo/db`, `@repo/ui`).
-- **Internal Reference Protocol**: 패키지 간 참조는 반드시 **`workspace:*`** 프로토콜을 사용합니다.
-  ```json
-  "dependencies": {
-    "@repo/db": "workspace:*",
-    "@repo/ui": "workspace:*"
-  }
-  ```
-- **Cross-Import 금지**: `apps/web` ↔ `apps/admin` 간의 직접 import는 원천 금지합니다. 공통 모듈은 반드시 `packages/*`로 추출하여 공유합니다.
-- **Circular Dependency 금지**: 패키지 간의 순환 참조(`A -> B -> A`)는 빌드 타임에서 원천 차단합니다.
-- **Strict Typing**: `any` 사용을 절대 금지하며, `pnpm exec tsc --noEmit`을 통해 모든 패키지의 타입 안정성을 보장합니다.
-
----
-
-5. 핵심 아키텍처: 6단계 레이어 (Core Layers - App Level)
-
-관심사 분리와 AI 컨텍스트 최적화를 위해 각 App(`apps/web`, `apps/admin`) 내 `src/` 하위 구조를 다음과 같이 엄격히 준수합니다.
-
-1. **`00_lib/`**: SDK 및 라이브러리 초기화 (Mock Client, 세션 가드 등)
-2. **`01_store/`**: 클라이언트 전역 상태 관리 (Zustand, 전역 `useAlert`, `useModalStore`)
-3. **`02_hooks/`**: 재사용 가능한 비즈니스 로직 및 상태 연동 (Custom Hooks, `useModalHistory`)
-4. **`03_actions/`**: 서버 진입점 (Zod 유효성 검사, 에러 핸들링, `ActionResult` 반환)
-5. **`04_services/`**: 순수 비즈니스 로직 (**server-only**, Mock/DB Service)
-6. **`05_types/`**: App 전용 타입 및 인터페이스 정의
-
-5.1 `04_services` 이원화 및 JWT/세션 보안 가드 표준 (Public Master vs Private My)
-비즈니스 서비스 계층은 보안(IDOR 취약점 차단) 및 캐싱 전략의 분리를 위해 다음과 같이 2개 축으로 엄격히 이원화합니다.
-
-1. **공용/마스터 서비스 (`*MasterService.ts` / Public)**:
-   - 모든 사용자에게 동일한 불변/공통 데이터 (교육 콘텐츠 목록, 미션 카탈로그, 포인트샵 상품 목록, 약관 등).
-   - 인증 없이도 접근 가능하며 CDN/서버 메모리 캐싱(`revalidate`) 적극 활용.
-2. **개인화 서비스 (`my*Service.ts` / Private & Strict Auth)**:
-   - 특정 유저 본인의 데이터 (내 반려견 프로필, 산책 기록, 미션 달성 내역, 포인트 원장, 주문 내역 등).
-   - **IDOR 방어 강제**: 외부 파라미터로 `userId`를 받지 않고, 내부에서 **JWT/세션 토큰을 검증(`getAuthenticatedUser`)**하여 추출된 본인 `userId`로만 DB 작업을 수행.
-   - 캐시 절대 금지 (`no-store` / 즉시 DB 동기화).
+- **패키지 & 폴더 경계 분리 거버넌스**: 내부 패키지는 `@repo/*` + `"workspace:*"`만 사용하며 `any` 사용을 금지합니다. `apps/web/src/` 내부의 `web/`(사용자)과 `admin/`(관리자) 폴더 및 `styles/web.css` ↔ `styles/admin.css` 간 직접 import를 엄격히 금지하여, 추후 `apps/admin` 분리 시 1:1 이동이 가능하도록 유지합니다.
+- **세션 쿠키 & Path 물리 분리**:
+  - 사용자: `WAGGLE_APP_SESSION` (`path: "/"`)
+  - 관리자: `WAGGLE_ADMIN_SESSION` · `WAGGLE_ADMIN_OTP` (**`path: "/admin"`** — 사용자 페이지 요청에 관리자 쿠키 노출 차단)
+- **공통 DB SHA-256 세션 엔진 ([`.scratch/references/2026-11-16_LOGIN_PROCESS_STANDARD.md`](file:///.scratch/references/2026-11-16_LOGIN_PROCESS_STANDARD.md))**:
+  - 로그인 성공 시 **32바이트 무작위 키**를 쿠키(`HttpOnly; Secure; SameSite=Lax`)에 저장하고 DB에는 **SHA-256(hex)**만 저장합니다.
+  - 정책 상수는 `00_lib/userSessionConfig.ts` · `00_lib/adminSessionConfig.ts` 단일 파일에만 둡니다(숫자 하드코딩 금지).
+- **사용자/관리자 세션 이원화 규칙**:
+  1. **`(mobile)` `/app/*` 사용자**:
+     - **로그인 수단**: 이메일 + 소셜 로그인 (카카오/Apple 등).
+     - **중복 로그인 금지 (`singleSession: true`)**: 새 로그인 시 기존 활성 세션을 `revoked_reason = 'DUPLICATE_LOGIN'`으로 즉시 종료하고, 기존 기기 요청 시 `/api/auth/session-expired?reason=duplicate`를 거쳐 로그인 화면에서 `useAlert`로 안내합니다.
+     - **자동 로그아웃 제한 없음 (`idleMs: null`, `absoluteMs: null`)**: DB 세션 자체는 만료되지 않으며, 브라우저 400일 쿠키 상한을 고려해 쿠키 `maxAge`를 `365일`로 설정하고 방문 시 `proxy.ts`에서 주기적으로 슬라이딩 재발급합니다.
+     - **강제 무효화 트리거**: 비밀번호 변경 · 계정 정지(`SUSPENDED`) · 회원 탈퇴 시 해당 유저의 활성 DB 세션을 즉시 `SECURITY_RESET`으로 폐기합니다.
+  2. **`(admin)` `/admin/*` 관리자 (`ADMIN` / `TRAINER`)**:
+     - `LOGIN_PROCESS_STANDARD` 100% 준수: ID/PW ➔ **2단계 문자 인증번호(OTP)** ➔ **30분 슬라이딩 만료** · **단일 세션** · 비밀번호/OTP 합계 **5회 오답 시 계정 잠금**.
+- **Next.js 16 `proxy.ts` & 3-Tier Guard**:
+  1. `src/proxy.ts`: 3도메인 Host 분기(`app.*` ➔ `/app/*`, `admin.*` ➔ `/admin/*` rewrite; 운영 환경에서 `admin.*` 외 호스트의 `/admin` 직접 접근은 404 차단), 세션 쿠키 유무 확인 및 슬라이딩 쿠키 재발급.
+  2. `layout.tsx` / `page.tsx`: React `cache()` 기반 `getCurrentSession()` DB 검증 (만료/중복 폐기 쿠키는 `/api/auth/session-expired`로 정리하여 무한 리다이렉트 원천 차단).
+  3. `03_actions` & `04_services`: 외부 입력의 `userId`를 신뢰하지 않고 검증된 세션의 `userId`/`adminId`만 강제 주입합니다 (IDOR 원천 차단). `04_services`는 Public(`*MasterService.ts`)과 Private(`my*Service.ts`) 및 `admin/`으로 분리합니다.
 
 ---
 
-5.2 App Router 라우팅 패턴 가이드 (프로젝트 목적별 선택)
+## 5. 데이터 레이어(PostgreSQL 18 직접 연결), ACID 결제 · Cron 표준 및 불변 규칙
 
-- **타입 A. 단일 웹 전용 패턴 (Flat Web Pattern)**
-  - `src/app/` 바로 아래에 `layout.tsx`와 `page.tsx`, `sub-page/page.tsx`를 플랫하게 배치.
-- **타입 B. 웹+앱 이원화 패턴 (Subpath Separation Pattern — 마케팅 + 보호 서비스 웹앱)**
-  - 공개 마케팅 영역은 `(marketing)` Route Group으로, 실제 보호 서비스 웹앱은 `/app` 하위 서브패스로 명확히 격리.
-  ```
-  src/app/
-  ├── layout.tsx              # Root Layout (<html>, <body>, 폰트, 전역 Alert 등 최소화)
-  ├── (marketing)/            # 🌐 공개 웹 영역 (마케팅 GNB + 랜딩 푸터 + SEO)
-  │   ├── layout.tsx
-  │   └── page.tsx            # 👉 https://domain.com/ (랜딩 메인)
-  ├── login/page.tsx          # 🔑 로그인 페이지 (👉 https://domain.com/login)
-  └── app/                    # 📱 서비스 웹앱 영역 (430px 프레임 + GlobalOverlayProvider + 세션 가드)
-      ├── layout.tsx          # 2차 세션 가드 & 앱 쉘 레이아웃
-      └── page.tsx            # 👉 https://domain.com/app (앱 서비스 메인)
-  ```
+개발 및 운영 환경 모두 **PostgreSQL 18(`drizzle-orm/node-postgres` + `pg`)에 직접 연결**하며(Mock DB 사용 안 함), 모든 쿼리는 `packages/db/src/repos/*Repo.ts` 내부에만 캡슐화하고 환경변수는 **루트 `.env` 단 한 곳**에서 통합 로드합니다.
 
----
+- **별도 API / Worker / Redis 서버 제거 원칙 (KISS)**:
+  - 별도 NestJS 서버, Redis, BullMQ `worker` 프로세스를 두지 않습니다.
+  - 일반 CRUD 및 결제·포인트 정산은 **`03_actions` ➔ `04_services` ➔ PostgreSQL `db.transaction`**으로 처리합니다.
+  - 외부 HTTP 진입점이 필수인 경우만 예외적으로 **Next.js Route Handlers (`app/api/*`)**를 사용합니다:
+    1. **결제 웹훅 (`/api/webhooks/*`)**: 서명 검증 ➔ PG 재조회 대조 ➔ **단일 PostgreSQL ACID 트랜잭션**(`payment_event_logs` UNIQUE 멱등 + 주문 `PAID` + `point_ledgers` INSERT + 잔액 UPDATE) ➔ 응답 후 Next.js `after()`로 단건 알림.
+    2. **소셜 OAuth 콜백 (`/api/auth/callback/*`)** 및 **파일 업로드/Presign (`/api/upload/*`)**.
+    3. **Firebase/GCP Cloud Scheduler 정기 배치 (`/api/cron/*`)**: 포인트 일일 소멸·SLA 체크 등은 Cloud Scheduler가 `CRON_SECRET` 헤더(또는 OIDC 토큰)로 `/api/cron/*`을 직통 호출합니다.
 
-6. 에러 핸들링 및 응답 표준 (Error Handling)
-
-- **AppError Class**: 전역 에러 클래스를 정의하여 HTTP 상태 코드와 사용자 메시지를 구조화 (`@repo/db`).
-- **ActionResult**: 모든 Server Action은 아래의 공통 인터페이스를 반환합니다 (`@repo/db`).
-  ```typescript
-  export type ActionResult<T = void> = 
-    | { success: true; data: T }
-    | { success: false; error: string; code?: string };
-  ```
-- **Zod 기반 검증**: 입구(Action)에서 `z.safeParse()`를 사용하여 데이터 유효성을 검증합니다.
-- **Gateway Handling**: `03_actions`에서 모든 에러를 포착하여 `ActionResult` 포맷으로 변환합니다.
+### 핵심 도메인 불변 규칙 (Domain Invariants)
+1. **참조 데이터 삭제 원천 차단 & 소프트 삭제 복원 (`is_deleted` + `audit_logs`)**:
+   - 하위 결제·주문·원장 등 연결 내역이 있는 데이터는 삭제 자체를 원천 차단합니다.
+   - 허용된 삭제 건은 물리 `DELETE` 대신 **`is_deleted = true`(`deleted_at`, `deleted_by`)로 `UPDATE`**하여 일반 조회·집계에서 100% 제외하고 `audit_logs`에 기록해 관리자 `[삭제 이력 / 복원]`에서만 복원합니다 (PostgreSQL 네이티브 부분 유니크 인덱스 `WHERE is_deleted = false`로 재등록 충돌 방지).
+2. **포인트 원장(Ledger) 정합성 & 음수 잔액 금지**:
+   - 잔액 단순 덮어쓰기를 금지하며 모든 충전/적립/사용/환불/소멸은 `point_ledgers` 원장 기록과 잔액 갱신을 단일 `db.transaction`으로 원자적 처리합니다 (`balance < 0` 절대 불가).
+3. **중복 지급·결제 차단 (Idempotency)**:
+   - 외부 결제 웹훅, 리워드/미션 지급은 DB `UNIQUE` 멱등키(`event_id` 또는 `user_id + target_id + period_key`)로 중복 실행을 원천 차단합니다.
+4. **반려견 프로필 소유권 및 대표견 유지**:
+   - 모든 반려견 데이터 수정/삭제는 세션 본인(`userId`) 소유를 검증하며 대표 반려견(`is_primary`) 정합성을 유지합니다.
+5. **포인트샵 주문 및 재고/잔액 원자적 검증**:
+   - 주문 생성 시 ① 판매 상태·재고 확인 ➔ ② 잔액 검증 ➔ ③ 재고/포인트 차감 원장 기록 및 주문 생성을 단일 트랜잭션으로 처리합니다.
 
 ---
 
-7. 인증, 세션 & 쿠키 표준 (Mock Auth & Next 16 Proxy)
+## 6. UI/UX 핵심 표준 (사용자/관리자 분리 & 전역 MD 수치 기록 금지)
 
-7.1 Web / Admin 세션 쿠키 분리
-- 브라우저 쿠키는 포트(`:3000`, `:3001`)를 구분하지 않으므로 쿠키 이름을 엄격히 분리합니다.
-  - `apps/web`: `WAGGLE_APP_SESSION`
-  - `apps/admin`: `WAGGLE_ADMIN_SESSION`
-
-7.2 Next.js 16 `proxy.ts` 표준
-- Next.js 16부터 `middleware.ts` 대신 **`proxy.ts`** 파일과 **`export function proxy(req: NextRequest)`** 함수를 사용합니다.
-- **쿠키 존재 여부만 검증**: `proxy.ts`는 무거운 데이터 조회를 수행하지 않고 오직 **세션 쿠키 존재 여부**만 확인하여 리다이렉트합니다.
-
-7.3 다단계 가드 (3-Tier Guard Pattern)
-1. **`proxy.ts`**: 쿠키 존재 여부만 확인 (로그인 사용자가 `/login` 접근 시 서비스 페이지로 리다이렉트)
-2. **`layout.tsx` & `page.tsx`**: React `cache()` 기반 세션 검증 (헤더 조작 및 직접 URL 접근 차단)
-3. **`03_actions/*`**: 모든 Server Action 진입부에서 독립적으로 세션 및 권한 재검증
-
-7.4 무한 리다이렉트 방지 (`/api/auth/session-expired` Route Handler)
-- 쿠키는 남아있으나 세션이 만료/무효화된 경우, `proxy`와 페이지 가드가 서로를 무한 호출하는 루프 에러를 방지하기 위해 전용 정리 라우트를 경유합니다.
+- **전역 MD 시각 수치 기록 금지 (Visual Token SSOT)**: `AGENTS.md` · `.agents/rules/*` · `.agents/memory/*` · `DESIGN.md` 허브 등 전역 문서에는 **폰트 스타일(폰트명·크기·굵기)·`px`/`rem` 치수·패딩/마진·컬러 코드·라운드·모션 수치를 직접 기록하지 않습니다.** 모든 시각 스펙은 오직 전용 SSOT([`DESIGN_WEB.md`](file:///.docs/architecture/DESIGN_WEB.md) · [`DESIGN_ADMIN.md`](file:///.docs/architecture/DESIGN_ADMIN.md) · [`APP_SHEET_FRAME_GUIDE.md`](file:///.docs/architecture/APP_SHEET_FRAME_GUIDE.md))와 각 영역 CSS(`styles/web.css`, `styles/admin.css`)에만 단일 관리합니다.
+- **사용자 ↔ 관리자 디자인 100% 물리 분리 (독립 Root Layout + 전용 CSS)**:
+  - **사용자 (`(www)` + `(mobile)` `/app/*`)**: Clean Neo-Pop 전용 SSOT([`DESIGN_WEB.md`](file:///.docs/architecture/DESIGN_WEB.md)) + `styles/web.css` + 모바일 쉘([`APP_SHEET_FRAME_GUIDE.md`](file:///.docs/architecture/APP_SHEET_FRAME_GUIDE.md)) 적용.
+  - **관리자 (`(admin)` `/admin/*`)**: Atlas Precision Studio 전용 SSOT([`DESIGN_ADMIN.md`](file:///.docs/architecture/DESIGN_ADMIN.md)) + `styles/admin.css` + `corenuri-ui-standards` 적용. 사용자 스타일 혼입 금지.
+  - **`@repo/ui`**: 색상·치수 하드코딩 없이 각 영역 CSS 변수 슬롯만 소비하는 구조/접근성 프리미티브만 공유합니다.
+- **전 영역 공통 가드레일**:
+  - **UI 내 유니코드 이모지 전면 금지**: 전 화면에서 `lucide-react` 단색 SVG 또는 커스텀 브랜드 SVG만 사용합니다.
+  - **선언된 `rem` 토큰 & 정적 Tailwind 전용**: 인라인 스타일 및 임의 수치/색상 하드코딩, 동적 Tailwind 클래스 조합을 금지하고 선언된 `rem` 스케일·시맨틱 토큰만 사용합니다.
+  - **폼 & 전역 Alert**: `<html lang="ko" suppressHydrationWarning>`, `<form noValidate>`, `window.alert()` 대신 Zustand `useAlert`(`closeOnOverlayClick={false}`) 및 `useRef` + 비동기 포커스 제어를 적용합니다.
+  - **수치 가독성 & 인터랙션**: 동적 수치 `tabular-nums` 필수 · 비흰색 컨테이너 무경계 원칙 · 터치 피드백 및 접근성 명암비(WCAG) 준수.
 
 ---
 
-8. 데이터 레이어 표준 (Drizzle ORM Schema & Mock Data) & Next.js DAL 패턴
+## 7. 런타임·코어 버전 표준 및 작업 완료 프로토콜
 
-- **실서버 Drizzle Client (`client.ts`) 보존**: `packages/db/src/client.ts`는 실제 DB 연결 클라이언트로 원형을 유지하며 Mock 데이터로 덮어쓰지 않습니다.
-- **Type-safe 스키마 SSOT**: `packages/db/src/schema/*.ts`에서 테이블 스키마를 정의하고 `typeof table.$inferSelect`를 통해 Mock 데이터셋 및 실서버의 타입을 통일합니다.
-
-8.1 Next.js 공식 DAL (Data Access Layer) & Repository 패턴 규격 (★필수 수칙★)
-- **물리 디렉터리 분리 표준 (`packages/db/src/data/`)**:
-  ```
-  packages/db/src/data/
-  ├── mock/                       # 📂 순수 Mock JSON 데이터 전용 (데이터 작업자 영역)
-  │   ├── users.json
-  │   ├── dogs.json
-  │   ├── walks.json
-  │   ├── missions.json
-  │   ├── points.json
-  │   └── shop_items.json
-  │
-  ├── repos/                      # 📂 순수 TS Repository 함수 전용 (개발자 DAL 영역)
-  │   ├── userRepo.ts
-  │   ├── dogRepo.ts
-  │   ├── walkRepo.ts
-  │   ├── missionRepo.ts
-  │   ├── pointRepo.ts
-  │   ├── shopRepo.ts
-  │   └── index.ts
-  │
-  └── index.ts                    # 단일 진입점 re-export hub (export * from "./repos")
-  ```
-- **DAL(Data Access Layer) 격리 원칙**:
-  - 모든 데이터 입출력(CRUD, In-Memory/JSON find/upsert, Drizzle ORM SQL)은 반드시 `packages/db/src/data/repos/*Repo.ts`에 모듈화하여 배치합니다.
-  - UI 컴포넌트나 비즈니스 서비스(`04_services`)에서 JSON 파일을 직접 파싱하거나 저수준 메모리 변이를 수행하는 것을 엄격히 금지합니다.
-- **단방향 의존성 흐름 & Zero-Code-Change 실서버 전환**:
-  - `03_actions` ➡️ `04_services` (비즈니스 규칙/IDOR 검증) ➡️ `packages/db/data` (순수 DAL) & `00_lib/session` 단방향 호출 흐름을 준수합니다.
-
-8.2 와글(Waggle) 핵심 도메인 5대 불변 규칙 (Domain Invariants)
-`04_services` 및 `packages/db/src/data/repos` 작성 시 아래 도메인 정합성 규칙을 엄격히 준수합니다.
-1. **포인트 원장(Ledger) 정합성 & 음수 잔액 금지**:
-   - 유저의 보유 포인트(`pointBalance`)를 단순 덮어쓰기하지 않으며, 모든 적립(`EARN`)/사용(`USE`)/환불(`REFUND`)은 반드시 `points` 원장 레코드 추가와 동시에 원자적으로 합산 갱신합니다 (`pointBalance < 0` 절대 불가).
-2. **미션 중복 보상 차단 (Idempotency)**:
-   - 일일/주간/상시 미션 완료 및 포인트 지급 시 `userId + missionId + periodKey(예: YYYY-MM-DD)` 조합을 검증하여 동일 기간 내 중복 적립을 원천 차단합니다.
-3. **반려견 프로필 소유권 및 대표견(Primary Dog) 유지**:
-   - 모든 반려견(`dogs`) 데이터 수정/삭제는 본인 소유(`userId`) 여부를 검증하며, 산책·교육·맞춤 미션의 기준이 되는 대표 반려견이 최소 1마리 지정되도록 유지합니다.
-4. **산책(Walk) 및 미디어 연동의 Web-First 심플 구현 (KISS)**:
-   - 산책 트래킹(거리/시간/경로) 및 사진/영상 인증은 복잡한 네이티브 브릿지 의존성 없이 **웹 표준 API(`navigator.geolocation`, HTML5 File/Media API) 및 로컬 시뮬레이션(Mock 모드)**으로 우선 동작하도록 직관적으로 구현합니다.
-5. **포인트샵 주문 및 재고/잔액 검증**:
-   - 상품 교환/주문 시 ① 상품 판매 상태 및 재고 확인 ➡️ ② 유저 포인트 잔액 검증 ➡️ ③ 포인트 차감 원장 기록 및 주문 생성 순서를 엄격히 준수합니다.
-
----
-
-9. UI, 모달 스와이프 및 폼 검증 표준 (Tailwind v4, AppSheetFrame & Global Alert)
-
-9.1 공통 Alert & 입력 폼 검증 표준
-- **Hydration 불일치 차단 (`suppressHydrationWarning`)**: 모든 Root Layout의 `<html lang="ko" suppressHydrationWarning>` 속성 지정을 강제합니다.
-- **Zustand 전역 Alert 사용 의무**: 브라우저 기본 `window.alert()`를 금지하고 `useAlert` 훅을 통한 단일 인스턴스 전역 팝업을 사용합니다.
-- **HTML5 검증 차단 (`noValidate`)**: 모든 폼에 `<form noValidate>` 속성을 주입하여 커스텀 얼럿과 충돌하지 않도록 합니다.
-- **비동기 포커스 제어 (`useRef` + `setTimeout`)**: 입력값 누락 시 `setTimeout(() => ref.current?.focus(), 50)`으로 포커싱합니다.
-- **배경 클릭 닫힘 방지 (`closeOnOverlayClick={false}`)**: 공통 `<Alert />`의 배경 클릭 닫힘을 차단하여 후속 콜백 유실을 방지합니다.
-
-9.2 440px 앱 프레임(Fluid REM) & `AppSheetFrame` 좌우/상하 모달 스와이프 표준 (★필수★)
-- 상세 구현 명세는 [`.docs/architecture/APP_SHEET_FRAME_GUIDE.md`](file:///.docs/architecture/APP_SHEET_FRAME_GUIDE.md)를 따릅니다.
-- **440px 고정 프레임 & Fluid Root REM 반응형**:
-  - 최외곽 앱 컨테이너는 `w-full max-w-[440px] mx-auto min-h-dvh bg-background relative overflow-x-clip shadow-2xl`로 고정합니다.
-  - 기본 기준 폭 `440px`에서 `1rem = 16px`이며, 화면 폭이 `440px` 미만으로 줄어들면 `html { font-size: clamp(12.5px, 3.6364vw, 16px); }`에 의해 전체 레이아웃과 타이포그래피가 `rem` 비례로 자동 축소됩니다. 따라서 컴포넌트 크기는 하드코딩 `px` 대신 반드시 `rem` 기반 Tailwind 유틸리티를 사용합니다.
-- **App-Like Global Overlay (`GlobalOverlayProvider`)**: 서브 페이지, 상세 화면, 설정, 체크인 등 모달/시트 뷰는 라우트 전체를 언마운트하지 않고 대시보드가 100% 유지되는 Framer Motion 전역 오버레이(`useModalStore`)를 사용합니다 (`x: "100%" -> 0` 좌우 슬라이드 또는 `y: "100%" -> 0` 바텀시트).
-- **`AppSheetFrame` 3단 쉘**: 모든 시트와 서브 화면은 `header` (`subHeader` 포함) + `children` (본문 스크롤) + `bottom` (하단 고정 CTA, `pb-safe-bottom` 단일 제어)의 3단 쉘 구조를 사용하며, 자식 컴포넌트 내부에 임의로 `fixed bottom-0`이나 `pt-safe`/`pb-safe`를 중복 작성하지 않습니다.
-- **3중 모바일 네비게이션 가드 (`useModalHistory`)**:
-  1) CSS `overscroll-behavior-x: none; touch-action: pan-y;`로 iOS 좌우 엣지 스와이프 브라우저 뒤로가기 차단
-  2) 모달 오픈 시 `history.pushState` + `popstate` 인터셉트로 안드로이드 물리 뒤로가기 클릭 시 라우트 이탈 없이 모달만 안전하게 닫힘 처리
-  3) 모달 닫힘 시 내부 타이머(`setInterval`, `setTimeout`), 애니메이션, GPS/오디오 등 모든 백그라운드 리소스 즉시 클린업
-
-9.3 Core UI 엔지니어링 가드레일
-- **Static Tailwind Classes Only**: `grid-cols-${n}` 같은 동적 클래스 문자열 조합 금지.
-- **Concentric Border Radius**: `innerRadius = outerRadius - padding` 동심원 곡률 유지.
-- **Tabular Numbers**: 동적 수치/포인트/타이머에 `tabular-nums` 필수 적용.
-- **Micro-Interactions**: 클릭/터치 요소에 `active:scale-[0.96] transition-transform` 및 최소 터치 타겟 `44px` 보장.
-- **Non-White Container Borderless Principle**: 배경색이 순수 흰색(`bg-white`)이 아닌 컨테이너(`bg-gray-50`, 파스텔 틴트 박스 등)에는 테두리(`border`)를 적용하지 않고 무경계(Borderless)로 제작합니다. 테두리는 순수 `bg-white` 카드에만 미세 헤어라인으로 허용합니다.
-- **Z-Index Scale**: `z-10` (메인 대시보드) ➔ `z-20` (상단 헤더) ➔ `z-30` (하단 탭바) ➔ `z-40` (1차 오버레이 시트) ➔ `z-45` (2차 중첩 시트) ➔ `z-60` (최상위 시스템 Alert/Popup).
-
----
-
-10. 전역 스크립트 및 Turborepo 파이프라인 (Root Scripts & Turbo Strict Env)
-
-```json
-{
-  "scripts": {
-    "dev": "turbo dev",
-    "dev:web": "turbo dev --filter=@repo/web",
-    "dev:admin": "turbo dev --filter=@repo/admin",
-    "build": "turbo build",
-    "lint": "turbo lint",
-    "typecheck": "turbo typecheck",
-    "clean": "turbo clean"
-  }
-}
-```
-- 새 환경변수 추가 시 반드시 `turbo.json`의 `env` 배열에 등록합니다.
-
----
-
-11. 개발 규칙 및 제약 사항
-
-- **Package Manager Principle (★pnpm 전용 원칙★)**: 모든 의존성 관리 및 스크립트 실행은 반드시 **`pnpm`**만을 사용합니다 (`npm`, `yarn` 금지).
-- **Python Utility**: 파이썬 스크립트 실행 및 관리는 반드시 **`uv`**(`uv run`, `uv add`)를 사용합니다.
-- **Strict Typing & TS 검증 의무**: `any` 사용을 절대 금지하며, 코드 변경 완료 후 반드시 `pnpm typecheck`으로 컴파일 유효성을 검증합니다.
-- **브라우저 실행 제약**: 브라우저 실행 도구는 사용자의 명시적인 지시가 있을 때만 실행합니다.
-- **문서 갱신 SSOT**:
-  - [`.docs/architecture/HISTORY.md`](file:///.docs/architecture/HISTORY.md): `[YYYY-MM-DD HH:mm] 태스크명 (상태)` 기록 유지.
-  - [`.docs/architecture/CODEBASE.md`](file:///.docs/architecture/CODEBASE.md): 핵심 Action, Service, Repo 시그니처 최신 유지.
-  - [`.docs/architecture/FLOWS.md`](file:///.docs/architecture/FLOWS.md): 주요 비즈니스 로직 및 데이터 흐름 기록.
+- **패키지 매니저 원칙 (★pnpm 전용 — `npm`/`yarn`/`npx` 절대 금지★)**: 의존성 설치·추가·실행은 오직 **`pnpm`**(`pnpm install`, `pnpm add`, `pnpm run`, `pnpm dlx`)만 사용합니다.
+- **Python(`uv`) 및 `.scratch/` 격리 원칙**: 파이썬은 반드시 **`uv`**만 사용하며, 일회성 파이썬 스크립트·가상환경(`.venv`/`pyproject.toml`)은 **`.scratch/` 내부**(`uv add/run --project .scratch ...`)에서 실행하고, 외부 참조 표준 문서는 **`.scratch/references/`**에 보관합니다.
+- **초기 설치 및 코어 버전 고정 (필수 준수)**:
+  - **Node.js (`fnm default` 조회 ➔ `.node-version` 필수 유지)**: 로컬 `fnm` `default` 버전(`v24.14.1`)을 루트 **`.node-version`**에 고정하고, 루트 `package.json`의 `"engines.node"`도 `"24.x"`로 고정합니다 (`">=20"` 등 상한 없는 범위 엄격 금지).
+  - **Package Manager & Build**: `"packageManager": "pnpm@12.5.1"`, `"turbo": "^2.5.0"`, `"typescript": "^5.8.2"`.
+  - **Framework & UI 버전**: **`"next": "16.2.6"`** (캐럿 `^` 없이 고정 — Firebase App Hosting 호환성 보장), **`"react": "^19.0.0"`**, **`"react-dom": "^19.0.0"`**, `"tailwindcss": "^4.1.0"`, `"zustand": "^5.0.3"`, `"@types/node": "^22.13.0"`.
+- **Turbo Strict Env**: 신규 환경변수(`NEXT_PUBLIC_*`, `CRON_SECRET` 등) 추가 시 반드시 `turbo.json`의 `tasks.build.env` 배열에 함께 등록합니다.
+- **검증 의무**: 코드 변경 후 반드시 `pnpm typecheck`으로 전체 워크스페이스 타입 에러 0건을 확인합니다.
+- **문서 동기화 및 보고**:
+  1. 작업 완료 시 `.docs/history/YYYY-MM-DD.md` 및 [`.docs/history/index.md`](file:///.docs/history/index.md) 갱신.
+  2. 설계 플랜 생성 시 `.docs/plan/YYYY-MM-DD_제목.md` 작성 및 [`.docs/plan/index.md`](file:///.docs/plan/index.md) 등록.
+  3. 모든 수정 응답 하단에 `[파일명:L시작-L끝](file:///절대경로#L시작-L끝)` 클릭형 라인 링크 및 1줄 요약 제공.

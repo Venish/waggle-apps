@@ -1,0 +1,23 @@
+{
+  "name": "와글(Waggle) — 반려견 맞춤 교육",
+  "short_name": "와글",
+  "description": "하루 5분 맞춤 교육으로 우리 강아지가 달라지는 반려견 교육·데일리 기록 플랫폼",
+  "start_url": "/app",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "lang": "ko"
+}

@@ -1,0 +1,804 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Waggle User Design System — Editorial Flat + Single Waggle Green (v3.0)
+   적용 범위: (www) 소개페이지 + (mobile) /app/* 모바일 웹앱 전용
+   (admin) styles/admin.css 와 100% 물리 분리
+   ========================================================================== */
+
+/* [보류] 숫자(0~9) 글리프 전용 NanumSquareRound unicode-range 매핑 (재적용 시 주석 해제)
+@font-face {
+  font-family: "NanumSquareRoundNum";
+  src: url("/fonts/NanumSquareRound/NanumSquareRoundR.woff2") format("woff2");
+  font-weight: 100 500;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0030-0039;
+}
+
+@font-face {
+  font-family: "NanumSquareRoundNum";
+  src: url("/fonts/NanumSquareRound/NanumSquareRoundB.woff2") format("woff2");
+  font-weight: 600 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0030-0039;
+}
+
+@font-face {
+  font-family: "NanumSquareRoundNum";
+  src: url("/fonts/NanumSquareRound/NanumSquareRoundEB.woff2") format("woff2");
+  font-weight: 800 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0030-0039;
+}
+*/
+
+@theme inline {
+  /* [보류] 숫자 NanumSquareRound 재적용 시 아래 줄로 교체:
+     --font-sans: "NanumSquareRoundNum", var(--font-pretendard), "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+     --font-display: var(--font-nanum-round), var(--font-pretendard), -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  */
+  --font-sans: var(--font-pretendard), "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-display: var(--font-pretendard), "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+}
+
+@theme {
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --tracking-heading: 0.01em;
+
+  /* Container & Type Tokens (rem) */
+  --container-app: 27.5rem;
+  --text-display: 2.25rem;
+  --text-body-md: 0.9375rem;
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1rem;
+  /* text-3xs는 BottomNavBar(하단 Footer 5탭 메뉴) 단독 전용 — 그 외 화면 사용 금지 */
+  --text-3xs: 0.625rem;
+  --text-3xs--line-height: 0.875rem;
+
+  /* Refined Tight Radius Scale (과한 24px/16px 둥글기 절제 → 깔끔한 6~14px) */
+  --radius-lg: 0.375rem;
+  --radius-xl: 0.5rem;
+  --radius-2xl: 0.625rem;
+  --radius-3xl: 0.875rem;
+
+  /* Editorial Monochrome Base (90% Pure White / Ultra-Light Gray / Deep Ink) */
+  --color-ink: oklch(0.18 0.006 250);
+  --color-ink-muted: oklch(0.545 0.01 255);
+  --color-canvas: oklch(1 0 0);
+  --color-surface: oklch(1 0 0);
+  --color-surface-subtle: oklch(0.978 0.001 250);
+  --color-border-subtle: oklch(0.946 0.002 250);
+
+  /* Single Signature Waggle Green (밝고 산뜻한 생동감 있는 그린 1색) */
+  --color-brand: oklch(0.705 0.185 150);
+  --color-brand-strong: oklch(0.565 0.165 150);
+  --color-brand-soft: oklch(0.962 0.035 150);
+
+  /* System Status */
+  --color-success: oklch(0.705 0.185 150);
+  --color-warning: oklch(0.68 0.145 72);
+  --color-star: oklch(0.80 0.175 84);
+  --color-destructive: oklch(0.575 0.195 24);
+}
+
+html {
+  font-size: 16px;
+}
+
+/* /app 모바일 웹앱 전용 Root REM (390px+ 전 구간 표준 16px 고정, 360px 초소형만 15px 방어) */
+html:has([data-waggle-app]) {
+  font-size: clamp(15px, 4.1vw, 16px);
+  overscroll-behavior-x: none;
+  touch-action: manipulation;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html:has([data-waggle-app])::-webkit-scrollbar,
+.waggle-app-shell::-webkit-scrollbar {
+  display: none;
+}
+
+.waggle-app-shell {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+/* 데스크톱(>= 640px): 전체 창 스크롤 잠금 + 440px 앱 프레임 내부 무스크롤바 스크롤 */
+@media (min-width: 640px) {
+  html:has([data-waggle-app]) {
+    overflow: hidden;
+  }
+}
+
+/* 시트/모달/Alert 오픈 시 전역 스크롤 잠금 (useModalHistory 단일 제어) */
+html[data-scroll-locked="true"],
+html[data-scroll-locked="true"] body,
+html[data-scroll-locked="true"] .waggle-app-shell {
+  overflow: hidden !important;
+}
+
+/* SubPageHeader(h-14 + safe-top) 바로 아래 Sticky 탭 밀착 (Safari 서브픽셀 1px 틈 차단) */
+.sticky-below-header {
+  top: calc(3.5rem + env(safe-area-inset-top, 0px) - 1px);
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 사용자 헤딩(h1~h6) 자간 통일 (기존 tracking-tight(-0.025em) 대비 살짝 여유 확보) */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  letter-spacing: var(--tracking-heading);
+}
+
+/* [보류] 사용자 헤딩(h1~h6) NanumSquareRound 적용 (재적용 시 주석 해제)
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+}
+*/
+
+.max-w-app {
+  max-width: var(--container-app);
+}
+
+.pb-safe-bottom {
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+}
+
+.pt-safe-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* 모바일 가로 스와이프 + 세로 페이지 스크롤 공존 유틸 */
+.swipe-x {
+  touch-action: pan-x pan-y;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Toss / iOS Editorial Flat 전역 Input·Select·Textarea 포커스 링 (브라우저 기본 파란/검정 외곽선 제거) */
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([data-toss-underline]),
+textarea,
+select {
+  transition: box-shadow 150ms ease, background-color 150ms ease, border-color 150ms ease;
+}
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([data-toss-underline]):focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  background-color: var(--color-surface);
+  box-shadow:
+    0 0 0 1.5px var(--color-brand),
+    0 0 0 4px color-mix(in oklab, var(--color-brand) 14%, transparent);
+}
+
+input[data-toss-underline]:focus {
+  outline: none;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--color-brand);
+}
+
+@keyframes waggle-modal-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(0.375rem);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes waggle-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-modal-pop {
+  animation: waggle-modal-pop 170ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.animate-fade-in {
+  animation: waggle-fade-in 150ms ease-out;
+}
+
+@keyframes waggle-check-pop {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(0.88);
+  }
+  70% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes waggle-check-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes waggle-sparkle-ray {
+  0% {
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+  18% {
+    opacity: 1;
+  }
+  52% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: -1;
+    opacity: 0;
+  }
+}
+
+.animate-check-pop {
+  animation: waggle-check-pop 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.animate-check-draw {
+  animation: waggle-check-draw 230ms cubic-bezier(0.22, 1, 0.36, 1) 40ms both;
+}
+
+.animate-sparkle-ray {
+  animation: waggle-sparkle-ray 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* iOS Liquid Glass 플로팅 바 (반투명 유리 + 채도 보정 + 상단 반사 림 + 다층 그림자) */
+.waggle-liquid-glass {
+  background: color-mix(in oklab, var(--color-surface) 66%, transparent);
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  box-shadow:
+    inset 0 1px 0 0 oklch(1 0 0 / 0.88),
+    inset 0 -1px 0 0 oklch(0.18 0.006 250 / 0.04),
+    0 0 0 1px oklch(0.18 0.006 250 / 0.07),
+    0 12px 28px -6px oklch(0.18 0.006 250 / 0.13),
+    0 2px 8px -2px oklch(0.18 0.006 250 / 0.06);
+}
+
+/* ==========================================================================
+   Mobile Navigation & 5-Tab Stagger Motion (Zero-JS, backwards-only)
+   - animation-fill-mode: backwards 전용 → 종료 후 transform 완전 소멸
+     (sticky 헤더 / fixed FAB Containing Block 깨짐 원천 차단)
+   ========================================================================== */
+@keyframes waggle-block-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes waggle-page-right {
+  from {
+    opacity: 0.4;
+    transform: translateX(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes waggle-sheet-up {
+  from {
+    opacity: 0.85;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.waggle-stagger > * {
+  animation: waggle-block-rise 300ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+.waggle-stagger > *:nth-child(1) {
+  animation-delay: 0ms;
+}
+
+.waggle-stagger > *:nth-child(2) {
+  animation-delay: 50ms;
+}
+
+.waggle-stagger > *:nth-child(3) {
+  animation-delay: 100ms;
+}
+
+.waggle-stagger > *:nth-child(4) {
+  animation-delay: 150ms;
+}
+
+.waggle-stagger > *:nth-child(5) {
+  animation-delay: 200ms;
+}
+
+.waggle-stagger > *:nth-child(n + 6) {
+  animation-delay: 240ms;
+}
+
+.animate-page-right {
+  animation: waggle-page-right 220ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+.animate-sheet-up {
+  animation: waggle-sheet-up 260ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .waggle-stagger > *,
+  .animate-page-right,
+  .animate-sheet-up,
+  .animate-modal-pop,
+  .animate-fade-in {
+    animation: none !important;
+  }
+
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
+/* ==========================================================================
+   Native App View Transitions (Next.js 16 + React 19.3 <ViewTransition>)
+   - 440px 모바일 프레임 내부에서 Old/New 화면이 동시에 패럴랙스 Push/Pop 합성
+   ========================================================================== */
+@keyframes waggle-vt-push-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes waggle-vt-push-out {
+  from {
+    transform: translateX(0);
+    filter: brightness(1);
+  }
+  to {
+    transform: translateX(-24%);
+    filter: brightness(0.92);
+  }
+}
+
+@keyframes waggle-vt-pop-out {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes waggle-vt-pop-in {
+  from {
+    transform: translateX(-24%);
+    filter: brightness(0.92);
+  }
+  to {
+    transform: translateX(0);
+    filter: brightness(1);
+  }
+}
+
+/* Modal Page (×) Editorial Flat 담백 덮기 — 뒤 화면 고정+미세 어두워짐, 새 화면 아래 100%→0 */
+@keyframes waggle-vt-modal-in {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes waggle-vt-modal-bg-dim {
+  from {
+    filter: brightness(1);
+  }
+  to {
+    filter: brightness(0.93);
+  }
+}
+
+@keyframes waggle-vt-modal-out {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes waggle-vt-modal-bg-restore {
+  from {
+    filter: brightness(0.93);
+  }
+  to {
+    filter: brightness(1);
+  }
+}
+
+::view-transition {
+  pointer-events: none;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+
+::view-transition-group(.waggle-vt-push-exit),
+::view-transition-group(.waggle-vt-pop-enter),
+::view-transition-group(.waggle-vt-modal-exit),
+::view-transition-group(.waggle-vt-modal-close-enter) {
+  z-index: 1;
+  overflow: clip;
+  animation: none;
+}
+
+::view-transition-group(.waggle-vt-push-enter),
+::view-transition-group(.waggle-vt-pop-exit),
+::view-transition-group(.waggle-vt-modal-enter),
+::view-transition-group(.waggle-vt-modal-close-exit) {
+  z-index: 2;
+  overflow: clip;
+  animation: none;
+}
+
+::view-transition-old(.waggle-vt-push-exit) {
+  animation: waggle-vt-push-out 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+::view-transition-new(.waggle-vt-push-enter) {
+  box-shadow: -0.75rem 0 2rem oklch(0.18 0.006 250 / 0.14);
+  animation: waggle-vt-push-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+::view-transition-old(.waggle-vt-pop-exit) {
+  box-shadow: -0.75rem 0 2rem oklch(0.18 0.006 250 / 0.14);
+  animation: waggle-vt-pop-out 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+::view-transition-new(.waggle-vt-pop-enter) {
+  animation: waggle-vt-pop-in 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+::view-transition-old(.waggle-vt-modal-exit) {
+  animation: waggle-vt-modal-bg-dim 300ms ease-out both;
+}
+
+::view-transition-new(.waggle-vt-modal-enter) {
+  box-shadow: 0 -0.75rem 2rem oklch(0.18 0.006 250 / 0.12);
+  animation: waggle-vt-modal-in 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+::view-transition-old(.waggle-vt-modal-close-exit) {
+  box-shadow: 0 -0.75rem 2rem oklch(0.18 0.006 250 / 0.12);
+  animation: waggle-vt-modal-out 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+::view-transition-new(.waggle-vt-modal-close-enter) {
+  animation: waggle-vt-modal-bg-restore 260ms ease-out both;
+}
+
+/* ==========================================================================
+   상품 리치 상세 HTML 본문 타이포그래피 (Tailwind v4 Preflight 복원)
+   ========================================================================== */
+.waggle-prose {
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--color-ink);
+  word-break: keep-all;
+}
+
+.waggle-prose h2 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.625rem;
+  font-size: 1.125rem;
+  font-weight: 800;
+  line-height: 1.35;
+  color: var(--color-ink);
+}
+
+.waggle-prose h3 {
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--color-ink);
+}
+
+.waggle-prose h4 {
+  margin-top: 1rem;
+  margin-bottom: 0.375rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.waggle-prose > :first-child {
+  margin-top: 0;
+}
+
+.waggle-prose p {
+  margin-top: 0.625rem;
+  margin-bottom: 0.625rem;
+  color: var(--color-ink);
+}
+
+.waggle-prose ul {
+  margin: 0.75rem 0;
+  padding-left: 1.25rem;
+  list-style-type: disc;
+}
+
+.waggle-prose ol {
+  margin: 0.75rem 0;
+  padding-left: 1.25rem;
+  list-style-type: decimal;
+}
+
+.waggle-prose li {
+  margin: 0.3125rem 0;
+}
+
+.waggle-prose blockquote {
+  margin: 0.875rem 0;
+  padding: 0.625rem 0.875rem;
+  border-left: 0.1875rem solid var(--color-brand);
+  background-color: var(--color-surface-subtle);
+  border-radius: 0 var(--radius-xl) var(--radius-xl) 0;
+  color: var(--color-ink-muted);
+}
+
+.waggle-prose hr {
+  margin: 1.25rem 0;
+  border: 0;
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.waggle-prose img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 1rem 0;
+  border-radius: var(--radius-2xl);
+}
+
+.waggle-prose a {
+  color: var(--color-brand-strong);
+  text-decoration: underline;
+  text-underline-offset: 0.1875rem;
+}
+
+/* ==========================================================================
+   강아지 학년 스쿨 패스 — 레인보우 멀티 스팟 파스텔 그라데이션 (OKLCH · 무보라)
+   ========================================================================== */
+.waggle-pass-1 {
+  background-color: oklch(0.985 0.004 140);
+  background-image:
+    radial-gradient(circle at 12% 14%, oklch(0.91 0.095 152 / 0.85), transparent 56%),
+    radial-gradient(circle at 88% 18%, oklch(0.92 0.08 212 / 0.78), transparent 54%),
+    radial-gradient(circle at 84% 92%, oklch(0.945 0.095 92 / 0.85), transparent 55%),
+    radial-gradient(circle at 14% 92%, oklch(0.935 0.075 26 / 0.72), transparent 52%);
+}
+
+.waggle-pass-2 {
+  background-color: oklch(0.985 0.004 210);
+  background-image:
+    radial-gradient(circle at 16% 18%, oklch(0.915 0.09 212 / 0.85), transparent 56%),
+    radial-gradient(circle at 88% 20%, oklch(0.92 0.085 152 / 0.78), transparent 54%),
+    radial-gradient(circle at 82% 90%, oklch(0.935 0.08 26 / 0.78), transparent 55%),
+    radial-gradient(circle at 18% 92%, oklch(0.95 0.09 92 / 0.78), transparent 52%);
+}
+
+.waggle-pass-3 {
+  background-color: oklch(0.986 0.005 90);
+  background-image:
+    radial-gradient(circle at 14% 16%, oklch(0.945 0.1 92 / 0.88), transparent 56%),
+    radial-gradient(circle at 88% 18%, oklch(0.93 0.085 26 / 0.78), transparent 54%),
+    radial-gradient(circle at 84% 90%, oklch(0.915 0.09 152 / 0.8), transparent 55%),
+    radial-gradient(circle at 16% 90%, oklch(0.92 0.075 212 / 0.72), transparent 52%);
+}
+
+.waggle-pass-4 {
+  background-color: oklch(0.985 0.005 30);
+  background-image:
+    radial-gradient(circle at 14% 16%, oklch(0.93 0.09 24 / 0.85), transparent 56%),
+    radial-gradient(circle at 88% 18%, oklch(0.945 0.095 85 / 0.8), transparent 54%),
+    radial-gradient(circle at 84% 90%, oklch(0.915 0.085 212 / 0.78), transparent 55%),
+    radial-gradient(circle at 16% 92%, oklch(0.92 0.085 152 / 0.72), transparent 52%);
+}
+
+.waggle-pass-5 {
+  background-color: oklch(0.986 0.005 85);
+  background-image:
+    radial-gradient(circle at 15% 15%, oklch(0.94 0.11 86 / 0.9), transparent 56%),
+    radial-gradient(circle at 88% 18%, oklch(0.915 0.095 152 / 0.82), transparent 54%),
+    radial-gradient(circle at 82% 90%, oklch(0.92 0.085 212 / 0.8), transparent 55%),
+    radial-gradient(circle at 16% 90%, oklch(0.93 0.085 24 / 0.8), transparent 54%);
+}
+
+.waggle-pass-locked {
+  background-color: oklch(0.976 0.002 250);
+  background-image:
+    radial-gradient(circle at 14% 16%, oklch(0.94 0.035 212 / 0.55), transparent 52%),
+    radial-gradient(circle at 86% 86%, oklch(0.95 0.035 88 / 0.5), transparent 52%);
+}
+
+/* 기록(/app/record) 하단 은은한 프라이머리 그린 그라데이션 배경 */
+.waggle-record-bg {
+  background-image: linear-gradient(
+    to top,
+    oklch(0.915 0.085 150 / 0.48) 0%,
+    oklch(0.955 0.048 150 / 0.24) 42%,
+    transparent 100%
+  );
+}
+
+/* 레슨 진행률 바 — 부드럽게 흐르는 그라데이션 모션 (무보라 · 심리스 루프) */
+@keyframes waggle-gradient-flow {
+  0% {
+    background-position: 200% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.waggle-progress-flow {
+  background-image: linear-gradient(
+    90deg,
+    oklch(0.68 0.185 152) 0%,
+    oklch(0.75 0.15 182) 33%,
+    oklch(0.77 0.16 115) 66%,
+    oklch(0.68 0.185 152) 100%
+  );
+  background-size: 200% 100%;
+  animation: waggle-gradient-flow 3.2s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .waggle-progress-flow {
+    animation: none;
+  }
+}
+
+/* 슈퍼타원 스퀘어클(네모같은 원) — 모서리만 깎는 border-radius가 아닌 전체 곡률 마스크 */
+.waggle-squircle {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0 C88 0 100 12 100 50 C100 88 88 100 50 100 C12 100 0 88 0 50 C0 12 12 0 50 0 Z'/%3E%3C/svg%3E");
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0 C88 0 100 12 100 50 C100 88 88 100 50 100 C12 100 0 88 0 50 C0 12 12 0 50 0 Z'/%3E%3C/svg%3E");
+  mask-size: 100% 100%;
+  -webkit-mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+}
+
+/* 비행기표(보딩패스) 티켓 — 위/아래 진짜 반원 펀칭 마스크 + 외곽 그림자 */
+.waggle-ticket-wrap {
+  filter: drop-shadow(0 2px 6px oklch(0.2 0.02 250 / 0.07))
+    drop-shadow(0 0 1px oklch(0.2 0.02 250 / 0.14));
+}
+
+.waggle-ticket-body {
+  --ticket-notch-x: calc(100% - 7rem);
+  --ticket-notch-r: 0.625rem;
+  mask-image:
+    radial-gradient(
+      circle var(--ticket-notch-r) at var(--ticket-notch-x) 0,
+      transparent 98%,
+      #000 100%
+    ),
+    radial-gradient(
+      circle var(--ticket-notch-r) at var(--ticket-notch-x) 100%,
+      transparent 98%,
+      #000 100%
+    );
+  -webkit-mask-image:
+    radial-gradient(
+      circle var(--ticket-notch-r) at var(--ticket-notch-x) 0,
+      transparent 98%,
+      #000 100%
+    ),
+    radial-gradient(
+      circle var(--ticket-notch-r) at var(--ticket-notch-x) 100%,
+      transparent 98%,
+      #000 100%
+    );
+  mask-composite: intersect;
+  -webkit-mask-composite: source-in;
+}
+
+.waggle-ticket-body-sm {
+  --ticket-notch-x: calc(100% - 5.5rem);
+  --ticket-notch-r: 0.5rem;
+}
+
+/* 로그인·온보딩 하단 강아지 발자국 "총총" 순차 스탬프 애니메이션 (1회 재생 후 정착) */
+@keyframes waggle-paw-stamp {
+  0% {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+  65% {
+    opacity: var(--paw-op, 0.16);
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: var(--paw-op, 0.16);
+    transform: scale(1);
+  }
+}
+
+.waggle-paw-step {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  animation: waggle-paw-stamp 420ms cubic-bezier(0.22, 1, 0.36, 1) var(--paw-delay, 0ms) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .waggle-paw-step {
+    animation: none;
+    opacity: var(--paw-op, 0.16);
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "env": [
+        "NODE_ENV",
+        "DATABASE_URL",
+        "DB_HOST",
+        "DB_PORT",
+        "DB_USER",
+        "DB_PASSWORD",
+        "DB_NAME",
+        "NEXT_PUBLIC_WWW_URL",
+        "NEXT_PUBLIC_APP_URL",
+        "NEXT_PUBLIC_ADMIN_URL",
+        "WWW_DOMAIN_HOST",
+        "APP_SUBDOMAIN_HOST",
+        "ADMIN_SUBDOMAIN_HOST",
+        "SESSION_SECRET",
+        "CRON_SECRET",
+        "APP_COOKIE_MAX_AGE_DAYS",
+        "ADMIN_SESSION_IDLE_MINUTES",
+        "ADMIN_OTP_EXPIRES_MINUTES",
+        "AUTH_MAX_LOGIN_ATTEMPTS",
+        "UPLOAD_DIR",
+        "UPLOAD_PUBLIC_BASE_URL"
+      ],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
+    },
+    "typecheck": {
+      "dependsOn": ["^typecheck"]
+    },
+    "clean": {
+      "cache": false
+    }
+  }
+}

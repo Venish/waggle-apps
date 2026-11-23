@@ -39,6 +39,7 @@ next-env.d.ts
 .env.production
 .env.staging
 *.env
+!.env.example
 
 # Logs
 logs/

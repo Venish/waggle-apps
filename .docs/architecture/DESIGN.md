@@ -1,40 +1,38 @@
-# Waggle UI/UX 엔지니어링 & 디자인 시스템 표준 (DESIGN.md)
+# Waggle Design System Hub (DESIGN.md — Separation Gate)
 
-> **문서 상태:** 활성 (Active SSOT)  
-> **참고 기획서:** [`.docs/specs/design-theme-guide.md`](file:///d:/01.업무/2026/와글/05.HTML/waggle-apps/.docs/specs/design-theme-guide.md)
-
----
-
-## 1. 코어 레이아웃 & 440px 기준 Fluid REM 뷰포트 규격
-
-- **440px 앱 전용 뷰포트 컨테이너**:
-  ```html
-  w-full max-w-[440px] mx-auto min-h-dvh bg-background relative overflow-x-clip shadow-2xl
-  ```
-- **440px 기준 Fluid Root REM 반응형 스케일 (`globals.css`)**:
-  - 기본 디자인 기준 폭을 **`440px` (`1rem = 16px`)**로 고정하고, 화면이 `440px`보다 작아지면(`360px ~ 439px`) `html` 루트 폰트 사이즈가 **1:1 정비례(`16 / 440 * 100 = 3.63636vw`)로 축소**되어 모든 `rem` 단위 UI(폰트, 패딩, 높이, 간격, 아이콘)가 레이아웃 깨짐 없이 완벽히 정비례 반응형으로 동작합니다.
-  ```css
-  /* 440px 이상: 16px 고정 | 440px 미만: 기기 폭에 맞춰 1:1 정비례 축소 (최소 12.5px 방어) */
-  html {
-    font-size: clamp(12.5px, 3.6364vw, 16px);
-  }
-  ```
-- **Concentric Border Radius (동심원 곡률)**: `Inner Radius = Outer Radius - Padding` 비례 유지 (`rem` 기반 Tailwind 유틸리티 사용)
-  - 대형 카드/모달: `rounded-3xl` (24px)
-  - 인풋/중형 버튼/서브 카드: `rounded-2xl` (16px)
-  - 소형 버튼/아이콘 박스: `rounded-xl` (12px)
-- **Tabular Numbers**: 포인트, 산책 거리/시간, 타이머 등 동적 숫자에는 반드시 `tabular-nums`를 적용하여 레이아웃 흔들림(Layout Shift)을 방지합니다.
+> **문서 상태:** 활성 (Active SSOT Gate)  
+> **핵심 원칙:** 단일 앱(`apps/web`) 내부에서도 **사용자 디자인(`(www)`·`(mobile)`)과 관리자 디자인(`(admin)`)은 독립 Root Layout · 전용 CSS 파일(`styles/web.css` vs `styles/admin.css`) · 컴포넌트 폴더 경계로 100% 물리 분리**하며, **전역 문서(`AGENTS.md`, `.agents/rules/*`, `.agents/memory/*`, 본 허브)에는 구체 폰트 스타일·`px`/`rem` 치수·패딩/마진·컬러 코드를 직접 기록하지 않는다.**
 
 ---
 
-## 2. 엄격한 UI 가드레일 (Strict UI Guardrails)
+## 1. 영역별 디자인 SSOT 라우팅 (단일 진실 공급원)
 
-1. **비흰색 박스 무경계 원칙 (Non-White Container Borderless Principle)**
-   - 배경색이 순수 흰색(`bg-white`)이 아닌 컨테이너(`bg-gray-50`, 파스텔 틴트 박스 등)에는 테두리(`border`)를 절대 적용하지 않고 100% 무경계(Borderless)로 제작합니다.
-   - 테두리는 순수 `bg-white` 카드에만 섬세한 1px 헤어라인(`border border-gray-100` / `border-theme-subtle`)으로 허용합니다.
-2. **정적 Tailwind 클래스 작성**
-   - `grid-cols-${n}` 같은 동적 문자열 조합을 금지하고 정적 클래스 매핑 객체를 사용합니다.
-3. **마이크로 인터랙션 & 터치 타겟**
-   - 모든 클릭 가능한 버튼/카드에는 `active:scale-[0.96] transition-transform`을 적용하고 최소 터치 영역 `44px × 44px`(`min-h-[44px]`)를 보장합니다. (`transition-all` 남용 지양)
-4. **시맨틱 토큰 및 다크모드 대응**
-   - 하드코딩 색상 단독 사용을 피하고 테마 시맨틱 토큰 또는 `dark:*` 페어링을 준수합니다.
+모든 폰트·치수(`rem`)·패딩/마진·컬러 토큰·라운드·섀도우·모션 수치는 아래 **영역별 전용 SSOT 문서**와 **전용 CSS 파일**에만 단일 관리한다. (추후 서버 증설로 `apps/admin`을 물리 분리할 때도 `styles/admin.css`와 `(admin)` Route Group을 그대로 이식한다.)
+
+| 대상 영역 (`apps/web` Route Group) | 디자인 시스템 명칭 | 전용 SSOT 문서 | 전용 테마 CSS 위치 |
+| :--- | :--- | :--- | :--- |
+| **사용자** — `(www)` 소개 · `(mobile)` `/app/*` | **Clean Neo-Pop** | [DESIGN_WEB.md](./DESIGN_WEB.md) | `apps/web/src/styles/web.css` |
+| **관리자** — `(admin)` `/admin/*` (`ADMIN` · `TRAINER`) | **Atlas Precision Studio** | [DESIGN_ADMIN.md](./DESIGN_ADMIN.md) | `apps/web/src/styles/admin.css` |
+
+- 모바일 웹앱 3단 쉘·오버레이·뒤로가기 방어 상세 규격: [APP_SHEET_FRAME_GUIDE.md](./APP_SHEET_FRAME_GUIDE.md)
+- 관리자 백오피스 UX 패턴 스킬: [`.agents/skills/corenuri-ui-standards/SKILL.md`](../../.agents/skills/corenuri-ui-standards/SKILL.md)
+
+---
+
+## 2. 전 영역 공통 불변 가드레일 (Design Governance)
+
+1. **전역 MD 시각 수치 기록 금지 (Single Visual SSOT)**:
+   - `AGENTS.md`, `.agents/rules/*`, `.agents/memory/*`, `DESIGN.md` 허브 등 전역 문서에는 폰트명·폰트 크기/굵기·`px`/`rem` 수치·패딩/마진·HEX/OKLCH 컬러·라운드·모션 수치를 직접 적지 않는다(문서 간 불일치 원천 차단).
+2. **사용자 ↔ 관리자 디자인 100% 물리 분리 (Independent Root Layouts & Zero Cross-Theme Import)**:
+   - 최상위 공통 `app/layout.tsx`에 스타일을 합치지 않고, `(www)`/`(mobile)` Root Layout은 `styles/web.css`만, `(admin)` Root Layout은 `styles/admin.css`만 import한다.
+   - `components/web/` ↔ `components/admin/` 간 스타일·컴포넌트 교차 import를 금지한다.
+   - `@repo/ui`는 색상·치수 하드코딩 없이 각 영역 CSS 변수 슬롯만 소비하는 구조/접근성 프리미티브만 공유한다.
+3. **선언된 `rem` 토큰 & Tailwind v4 기본 스케일 전용 (Token-First Code)**:
+   - **사용자와 관리자의 루트 `rem` 설정은 `styles/web.css`와 `styles/admin.css`에서 물리 분리**한다 (`(admin)`·`(www)`는 브라우저 기본 루트 `rem` 고정, `(mobile)` `/app/*`만 전용 스코프 Fluid REM).
+   - `.tsx` 컴포넌트에서 인라인 `style`이나 임의 `px`/HEX arbitrary 값 하드코딩을 금지하고, **Tailwind v4 기본 `rem` 유틸리티와 전용 CSS `@theme`에 사전 선언된 `rem`/시맨틱 토큰만** 사용한다 *(예외: hairline border 및 blur 필터)*.
+4. **UI 내 유니코드 이모지·이모티콘 전면 금지**:
+   - `www` · `app` · `admin` 전 화면에서 유니코드 이모지를 금지하고 `lucide-react` 단색 SVG 또는 커스텀 SVG만 사용한다.
+5. **수치 가독성 (`tabular-nums`) & 정적 Tailwind 클래스**:
+   - 모든 동적 수치(포인트·금액·수량·진도율·날짜)에 `tabular-nums`를 적용하며, `grid-cols-${n}` 같은 동적 클래스 문자열 조합을 금지한다.
+6. **접근성(WCAG) & 정책 상수 분리**:
+   - 모든 텍스트·컨트롤은 WCAG AA 이상 명암비를 충족하며, 세션/포인트/SLA 등 운영 정책 수치는 문서·컴포넌트에 하드코딩하지 않고 설정 파일(`00_lib/*SessionConfig.ts`) 또는 DB `policy_configs`에서만 관리한다.

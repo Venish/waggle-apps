@@ -23,9 +23,13 @@
 | 3. Fixed Bottom Navigation Bar (z-30)                        |
 +-------------------------------------------------------------+
 ```
-- **컨테이너 클래스**: `w-full max-w-[440px] mx-auto min-h-dvh bg-background relative overflow-x-clip shadow-2xl`
-- **440px 기준 Fluid REM 스케일링 (`globals.css`)**:
-  - 기본 기준 폭 `440px`에서 `1rem = 16px`이며, `440px` 미만 기기에서는 `html { font-size: clamp(12.5px, 3.6364vw, 16px); }`에 의해 전체 UI가 `rem` 단위로 1:1 정비례 축소됩니다.
+- **컨테이너 클래스**: `waggle-app-shell relative mx-auto flex min-h-dvh w-full max-w-app flex-col overflow-x-clip bg-canvas sm:h-dvh sm:min-h-0 sm:overflow-x-hidden sm:overflow-y-auto sm:overscroll-y-contain sm:shadow-2xl sm:ring-1 sm:ring-ink/[0.08]`
+- **반응형 하이브리드 스크롤 (`styles/web.css` · `MobileShellMain` · `useModalHistory`)**:
+  - **실모바일(`< 640px`)**: 네이티브 `window` 스크롤을 유지해 iOS Safari/Android Chrome 주소창 자동 숨김, 상태바 탭 최상단 이동, Pull-to-Refresh를 100% 보존합니다.
+  - **데스크톱(`≥ 640px`)**: `html`/`body`를 `h-dvh overflow-hidden`으로 잠그고 440px 앱 프레임(`.waggle-app-shell`) 내부에서 스크롤바를 숨긴 채(`scrollbar-width: none`) 스크롤합니다. 전진 이동 시 `scrollTop = 0` 리셋, 뒤로가기(`<`/`×`/`popstate`) 시 `mobileNavHistory`에 저장된 이전 스크롤 위치를 복원하며, `useModalHistory`는 `html[data-scroll-locked="true"]` 단일 속성으로 스크롤 잠금을 제어합니다.
+- **440px 기준 Fluid REM 스케일링 (`/app` 전용 스코프 격리 — `globals.css`)**:
+  - `(www)` 소개페이지(`16px` 기본 반응형)와의 충돌을 방지하기 위해 `html:has([data-waggle-app]) { font-size: clamp(12.5px, 3.6364vw, 16px); }`처럼 `/app` 레이아웃 내부에만 스코핑합니다.
+  - 기본 기준 폭 `440px`에서 `1rem = 16px`이며, `440px` 미만 기기에서는 전체 UI가 `rem` 단위로 1:1 정비례 축소됩니다.
   - 따라서 컴포넌트 작성 시 하드코딩 `px` 대신 **Tailwind `rem` 기반 유틸리티(`p-4`, `h-14`, `text-base`, `rounded-2xl` 등)**를 사용해야 화면 폭이 줄어들 때 자동으로 반응형 축소됩니다.
 
 ### 2.2 전역 Z-Index 계층 스택 (`Z-Index Stacking Context`)
@@ -33,43 +37,27 @@
 | Z-Index 계층 | 레이어 명칭 | 구성 요소 및 설명 |
 |---|---|---|
 | **`z-0`** | **Background Layer** | 배경 캔버스 및 장식 레이어 |
-| **`z-10`** | **Main Content Layer** | 메인 대시보드/탭 본문 콘텐츠 |
-| **`z-20`** | **Sticky Header Layer** | 상단 고정 앱 헤더 (`TopHeader`) |
-| **`z-30`** | **Bottom Nav Layer** | 하단 고정 GNB 탭바 (`BottomNavBar`) |
-| **`z-40`** | **1차 전역 오버레이 (Page Sheet)** | `GlobalOverlayProvider` 1차 슬라이드/바텀시트 모달 |
-| **`z-45`** | **2차 중첩 오버레이 (Sub-Page Sheet)** | 1차 시트 위에서 열리는 2차 상세 시트 |
-| **`z-50`** | **In-Modal Dropdown & Popovers** | 시트 내부 드롭다운, 바텀 팝오버, 툴팁 |
-| **`z-60`** | **최상위 시스템 팝업 (Global Alert)** | `GlobalAlert` / `GlobalPopupProvider` (Confirm/Alert 모달) |
+| **`z-10`** | **Main Content Layer** | 메인 대시보드/탭 본문 콘텐츠 (`MobileShellMain`) |
+| **`z-20`** | **Sticky Header Layer** | 상단 고정 앱 헤더 (`MobileTopHeader` — 5대 탭 전용 / `SubPageHeader` — 서브 페이지 최상단 단독 고정) |
+| **`z-30`** | **Bottom Nav Layer** | 하단 고정 플로팅 5탭 바 (`BottomNavBar` — 5대 탭 전용) |
+| **`z-40`** | **1차 전역 오버레이 (Background-Preserving Sheet)** | `GlobalOverlayProvider` 슬라이드업 시트 (**Max Depth = 1**, 중복 적재 금지·교체만 허용) |
+| **`z-50`** | **중앙 피커 모달 (`AppCenterModal`)** | 날짜(`AppDatePicker`) · 시간(`AppTimePicker`) · 선택(`AppSelectPicker`) 모달 |
+| **`z-60`** | **최상위 시스템 팝업 (Global Alert)** | `WebGlobalAlert` (`closeOnOverlayClick={false}`, `closeOnEscape={false}`) |
 | **`z-70`** | **최상위 토스트 (Toast/Banner)** | 글로벌 토스트 알림, 오프라인 배너 |
 
-### 2.3 0ms 네이티브 오버레이 전환 (`GlobalOverlayProvider`)
-라우트 전체를 언마운트하지 않고 대시보드가 100% 렌더링된 채로 유지되는 Framer Motion 전역 오버레이 방식을 사용합니다.
-- **좌우 슬라이드 (`x: "100%" -> 0`)**: 일반 서브 페이지, 상세 화면, 설정 시트
-- **상하 바텀시트 (`y: "100%" -> 0`)**: 필터, 빠른 입력, 액션 시트
-
-```tsx
-// GlobalOverlayProvider: 440px 마스킹 프레임 내부에서만 x: 100% -> 0 또는 y: 100% -> 0 슬라이드
-<motion.div
-  style={{ zIndex: 40 + index * 5 }}
-  className="fixed inset-0 w-full max-w-[440px] mx-auto flex items-end justify-center pointer-events-none overflow-hidden"
->
-  {/* 백드롭 */}
-  <motion.div
-    className="absolute inset-0 bg-black/15 backdrop-blur-md z-0 pointer-events-auto"
-    onClick={closeModal}
-  />
-  {/* 본문 시트 */}
-  <motion.div
-    initial={isSlideUp ? { y: "100%" } : { x: "100%" }}
-    animate={isSlideUp ? { y: 0 } : { x: 0 }}
-    exit={isSlideUp ? { y: "100%" } : { x: "100%" }}
-    transition={{ type: "spring", stiffness: 380, damping: 36, mass: 0.9 }}
-    className="w-full h-full bg-background relative overflow-y-auto no-scrollbar pointer-events-auto z-10"
-  >
-    {modal.content}
-  </motion.div>
-</motion.div>
-```
+### 2.3 0ms 배경 유지 슬라이드업 시트 (`GlobalOverlayProvider`) & 38화면 라우트 전환
+- **라우트 프레젠테이션 4분류 & Next.js 16 네이티브 ViewTransition (`00_lib/mobileRoutePresentation.ts`, `MobileViewTransitionShell.tsx`)**:
+  - `next.config.ts`의 `experimental.viewTransition: true` + React 19.3 `<ViewTransition>` + `<AppLink>`/`<AppLinkButton>` 자동 방향 주입으로 전 화면 GPU 합성 전환을 제공합니다.
+  - `ROOT_TAB` 5개(`/app`, `/app/record`, `/app/daily`, `/app/shop`, `/app/my`): 상단 `Waggle` 헤더 + 하단 5탭 바 표시, `key="root-tabs"` 유지로 하단 바 리마운트 차단, 직계 블록 순차 상승 모션(`.waggle-stagger`, `backwards` 전용).
+  - `BRAND_FLOW` 6개: 심플 브랜드 헤더만 표시 (온보딩 인트로·로그인·설문·결과).
+  - `MODAL_PAGE` 11개(주문·배송 조회, 장바구니, 주문/결제, 포인트 지갑, 알림함, 레슨 1~3단계 실행, 직접 URL 폼): 상/하단 메뉴 숨김, `SubPageHeader` **우상단 `×` 닫기** + 담백 상하 덮기/내리기 ViewTransition(`waggle-modal-up`/`waggle-modal-down`, `300ms`/`260ms`).
+  - `SUB_PUSH` 16개(상품 상세, 코스·레슨 개요, Q&A 목록/상세, 반려견·목표·설정 등): 상/하단 메뉴 숨김, `SubPageHeader` **좌상단 `←` 뒤로가기** + iOS 패럴랙스 좌우 Push/Pop ViewTransition(`waggle-push-forward`/`waggle-push-back`, `320ms`/`280ms`).
+- **스마트 뒤로가기 & 푸시 딥링크 무순환 가드 (`00_lib/mobileNavHistory.ts` + `SubPageHeader.tsx`)**:
+  - 현재 SPA 세션 메모리 기반 무순환(Cycle-Free) 이동 스택(`ROOT_TAB` 진입 시 초기화, 동일 경로 재진입 시 `indexOf` 절단)을 유지해 다중 진입 화면에서도 `<`/`×` 클릭 시 직전 출발 화면으로 `router.replace(target, { scroll: false, transitionTypes })` 역방향 ViewTransition 복귀합니다.
+  - 푸시 딥링크·주소창 직접 URL 진입·새로고침·`forceBackHref` 폴백 시에는 `resolveAppBackTarget`이 현재 경로를 스택에서 제거하고 `[fallbackHref]`로 단조 리셋하여 상위 화면 → 루트 탭까지 `A ↔ B` 무한 루프 없이 안전하게 빠져나옵니다.
+- **배경 유지 시트 5종 (`GlobalOverlayProvider`, `z-40`, Max Depth = 1)**:
+  - 일기 작성(`/app/daily`), 상품 옵션·수량(`/app/shop/products/[id]`), 포인트 충전(`/app/wallet`), 영상 Q&A 작성(`/app/inquiry`), 반려견 추가(`/app/my/dogs`)는 뒤 화면을 어둡게 유지(`bg-ink/35`)한 채 순수 CSS `animate-sheet-up`으로 오픈합니다.
+  - 시트 내부에서 `router.push()` 실행 시 `useModalStore.getState().dismissForNavigation()`을 호출하고, `usePathname()` 변경 시 잔여 시트를 자동 해제하여 `history.back()` 충돌을 원천 차단합니다.
 
 ---
 
@@ -121,7 +109,7 @@ export interface AppSheetFrameProps {
 ### 3.2 핵심 준수 규칙
 1. **자식 컴포넌트 내부에 개별 `fixed/absolute` 하단 버튼 금지**: 하단 CTA 버튼은 반드시 `AppSheetFrame`의 `bottom` 슬롯으로 주입합니다.
 2. **`pt-safe`와 `pb-safe`의 개별 하드코딩 금지**: 상하단 노치 안전 영역은 `AppSheetFrame`이 단일 제어합니다.
-3. **풀-블리드(화면 양 끝 확장) 처리**: 지도(산책 트래킹), 이미지 배너, 가로 칩바 스크롤 등 화면 좌우 끝까지 채워야 할 때는 `noPadding={true}`를 선언하고 내부 텍스트 블록에만 개별 `px-4`를 부여합니다.
+3. **풀-블리드(화면 양 끝 확장) 처리**: 교육 영상 플레이어, 히어로 이미지 배너, 가로 칩바 스크롤 등 화면 좌우 끝까지 채워야 할 때는 `noPadding={true}`를 선언하고 내부 텍스트 블록에만 개별 `px-4`를 부여합니다.
 
 ---
 
@@ -137,44 +125,10 @@ html, body {
 }
 ```
 
-### 4.2 [Layer 2] History Lock 커스텀 훅 (`useModalHistory.ts`)
-```typescript
-import { useEffect, useRef } from "react";
-
-interface UseModalHistoryOptions {
-  isOpen: boolean;
-  onClose: () => void;
-  modalId?: string;
-}
-
-export function useModalHistory({ isOpen, onClose, modalId = "global-modal" }: UseModalHistoryOptions) {
-  const isPushedRef = useRef(false);
-
-  useEffect(() => {
-    if (!isOpen) {
-      isPushedRef.current = false;
-      return;
-    }
-
-    window.history.pushState({ modalOpen: true, modalId }, "");
-    isPushedRef.current = true;
-
-    const handlePopState = () => {
-      isPushedRef.current = false;
-      onClose();
-    };
-
-    window.addEventListener("popstate", handlePopState);
-    return () => {
-      window.removeEventListener("popstate", handlePopState);
-      if (isPushedRef.current && window.history.state?.modalOpen) {
-        isPushedRef.current = false;
-        window.history.back();
-      }
-    };
-  }, [isOpen, onClose, modalId]);
-}
-```
+### 4.2 [Layer 2] 단일 LIFO History / ESC / Scroll-Lock 매니저 (`02_hooks/useModalHistory.ts`)
+- 시트(`z-40`) → 중앙 피커(`z-50`) → 시스템 Alert(`z-60`) 중첩 시 **단일 전역 LIFO 스택(`layerStack`)**으로 `popstate`, `Escape`, `document.body.style.overflow`를 통합 제어합니다.
+- 버튼 클릭으로 상위 모달을 닫을 때 발생하는 비동기 `popstate`는 `ignorePopCount`로 흡수하여 부모 시트가 연쇄 닫히는 버그를 원천 차단합니다.
+- 시트 내부에서 `router.push()` 실행 직전 `skipLayerHistoryBack()`(`useModalStore.dismissForNavigation()`)을 호출하여 `history.back()`이 내비게이션을 취소하지 않도록 보호합니다.
 
 ### 4.3 [Layer 3] 모달 닫힘 시 리소스 클린업 의무화 (Teardown on Close)
 시트가 닫히거나 언마운트될 때 내부에서 실행 중이던 모든 `setInterval`, `setTimeout`, `requestAnimationFrame`, GPS 위치 추적(`watchPosition`), 오디오/비디오 스트림은 `useEffect` cleanup에서 100% 즉시 해제해야 합니다.
