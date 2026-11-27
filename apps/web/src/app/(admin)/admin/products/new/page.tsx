@@ -8,7 +8,12 @@ import {
   type AdminVariantDraft,
 } from "@/components/admin/AdminProductVariantsManager";
 import { AdminRichEditor } from "@/components/admin/AdminRichEditor";
-import { AdminPageHeader } from "@/components/admin/AdminUiKit";
+import {
+  AdminInput,
+  AdminPageHeader,
+  AdminSelect,
+  AdminTextarea,
+} from "@/components/admin/AdminUiKit";
 
 export const dynamic = "force-dynamic";
 
@@ -93,82 +98,83 @@ export default async function AdminProductNewPage() {
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label className="block text-xs text-secondary">카테고리</label>
-            <select
+            <AdminSelect
               name="categoryId"
-              className="mt-1 h-8 w-full rounded-control bg-base-1 px-2 text-xs atlas-border"
-            >
-              {cats.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
+              defaultValue={String(cats[0]?.id ?? "")}
+              ariaLabel="카테고리"
+              size="md"
+              className="mt-1"
+              options={cats.map((c) => ({ value: String(c.id), label: c.name }))}
+            />
           </div>
           <div>
             <label className="block text-xs text-secondary">상품 유형</label>
-            <select
+            <AdminSelect
               name="type"
-              className="mt-1 h-8 w-full rounded-control bg-base-1 px-2 text-xs atlas-border"
-            >
-              <option value="PHYSICAL">PHYSICAL (상품 배송 · 후기 지원)</option>
-              <option value="INQUIRY_TICKET">INQUIRY_TICKET (문의권)</option>
-              <option value="PREMIUM_UNLOCK">PREMIUM_UNLOCK (강좌 해제)</option>
-            </select>
+              defaultValue="PHYSICAL"
+              ariaLabel="상품 유형"
+              size="md"
+              className="mt-1"
+              options={[
+                { value: "PHYSICAL", label: "PHYSICAL (상품 배송 · 후기 지원)" },
+                { value: "INQUIRY_TICKET", label: "INQUIRY_TICKET (문의권)" },
+                { value: "PREMIUM_UNLOCK", label: "PREMIUM_UNLOCK (강좌 해제)" },
+              ]}
+            />
           </div>
         </div>
 
         <div>
           <label className="block text-xs text-secondary">상품명 *</label>
-          <input
-            name="name"
-            className="mt-1 h-8 w-full rounded-control bg-base-1 px-2.5 text-sm atlas-border"
-          />
+          <AdminInput name="name" size="md" className="mt-1" />
         </div>
 
         <div>
           <label className="block text-xs text-secondary">상품 요약 설명 (상단 노출)</label>
-          <textarea
+          <AdminTextarea
             name="description"
             rows={2}
             placeholder="상품명 아래에 노출되는 1~2줄 핵심 설명"
-            className="mt-1 w-full rounded-control bg-base-1 p-2.5 text-xs atlas-border"
+            className="mt-1"
           />
         </div>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div>
             <label className="block text-xs text-secondary">포인트 가격 *</label>
-            <input
+            <AdminInput
               name="pointPrice"
               type="number"
+              size="md"
               min={0}
               defaultValue={1000}
-              className="mt-1 h-8 w-full rounded-control bg-base-1 px-2.5 font-mono text-xs atlas-border"
+              className="mt-1 font-mono"
             />
           </div>
           <div>
             <label className="block text-xs text-secondary">초기 재고 *</label>
-            <input
+            <AdminInput
               name="stock"
               type="number"
+              size="md"
               min={0}
               defaultValue={50}
-              className="mt-1 h-8 w-full rounded-control bg-base-1 px-2.5 font-mono text-xs atlas-border"
+              className="mt-1 font-mono"
             />
           </div>
           <div>
             <label className="block text-xs text-secondary">연동 강좌 (PREMIUM_UNLOCK 전용)</label>
-            <select
+            <AdminSelect
               name="linkedCourseId"
-              className="mt-1 h-8 w-full rounded-control bg-base-1 px-2 text-xs atlas-border"
-            >
-              <option value="">연동 없음</option>
-              {courseList.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.title}
-                </option>
-              ))}
-            </select>
+              defaultValue=""
+              ariaLabel="연동 강좌"
+              size="md"
+              className="mt-1"
+              options={[
+                { value: "", label: "연동 없음" },
+                ...courseList.map((c) => ({ value: String(c.id), label: c.title })),
+              ]}
+            />
           </div>
         </div>
 

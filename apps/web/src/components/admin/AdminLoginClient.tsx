@@ -9,6 +9,7 @@ import {
   adminLoginStep2VerifyOtpAction,
 } from "@/03_actions/admin/adminAuthActions";
 import { useAdminAlertStore } from "@/01_store/admin/useAdminAlertStore";
+import { AdminButton, AdminInput } from "@/components/admin/ui";
 
 export function AdminLoginClient() {
   const router = useRouter();
@@ -59,9 +60,7 @@ export function AdminLoginClient() {
     <div className="flex min-h-dvh items-center justify-center p-4">
       <div className="w-full max-w-sm rounded-auth bg-base-2 p-6 shadow-lg atlas-border">
         <div className="flex items-center gap-2.5">
-          <span className="flex size-8 shrink-0 items-center justify-center rounded-control bg-inverse text-on-inverse">
-            <WaggleMark className="h-4.5 w-auto" />
-          </span>
+          <WaggleMark className="size-6 shrink-0 text-neutral" />
           <div>
             <h1 className="text-base font-semibold text-neutral">Waggle Admin Console</h1>
             <p className="text-xs text-subdued">Atlas Precision Studio · 2FA SMS 인증</p>
@@ -74,13 +73,13 @@ export function AdminLoginClient() {
               <label htmlFor="adm-email" className="block text-xs font-medium text-secondary">
                 관리자 이메일
               </label>
-              <input
+              <AdminInput
                 id="adm-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@waggle.kr"
-                className="mt-1 h-8 w-full rounded-control bg-base-1 px-2.5 text-sm text-neutral atlas-border focus:outline-2 focus:outline-accent"
+                className="mt-1"
               />
             </div>
 
@@ -88,57 +87,61 @@ export function AdminLoginClient() {
               <label htmlFor="adm-pw" className="block text-xs font-medium text-secondary">
                 비밀번호
               </label>
-              <input
+              <AdminInput
                 id="adm-pw"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="비밀번호 입력"
-                className="mt-1 h-8 w-full rounded-control bg-base-1 px-2.5 text-sm text-neutral atlas-border focus:outline-2 focus:outline-accent"
+                className="mt-1"
               />
             </div>
 
-            <button
+            <AdminButton
               type="submit"
-              disabled={pending}
-              className="mt-1 flex h-8 w-full items-center justify-center gap-1.5 rounded-menu bg-inverse text-sm font-medium text-on-inverse transition-opacity hover:opacity-90 disabled:opacity-45"
+              variant="solid"
+              size="lg"
+              loading={pending}
+              className="mt-1 w-full"
             >
-              <KeyRound className="size-4" strokeWidth={1.75} />
+              {!pending ? <KeyRound className="size-4 stroke-[1.5]" aria-hidden="true" /> : null}
               {pending ? "검증 및 OTP 발송 중..." : "1단계 로그인 (SMS OTP 발송)"}
-            </button>
+            </AdminButton>
 
             <div className="grid grid-cols-2 gap-1.5 pt-2">
-              <button
+              <AdminButton
                 type="button"
+                variant="outline"
+                size="sm"
                 onClick={() => {
                   setEmail("admin@waggle.kr");
                   setPassword("Admin1234!");
                 }}
-                className="h-7 rounded-control px-2 text-xs font-medium text-secondary atlas-border hover:bg-[var(--mix-hover-subtle)] hover:text-neutral"
               >
                 운영자 자동입력
-              </button>
-              <button
+              </AdminButton>
+              <AdminButton
                 type="button"
+                variant="outline"
+                size="sm"
                 onClick={() => {
                   setEmail("trainer@waggle.kr");
                   setPassword("Trainer1234!");
                 }}
-                className="h-7 rounded-control px-2 text-xs font-medium text-secondary atlas-border hover:bg-[var(--mix-hover-subtle)] hover:text-neutral"
               >
                 훈련사 자동입력
-              </button>
+              </AdminButton>
             </div>
           </form>
         ) : (
           <form noValidate onSubmit={handleStep2} className="mt-5 space-y-3">
             <div className="rounded-control bg-base-1 p-3 text-xs text-secondary atlas-border">
               <p className="flex items-center gap-1.5 font-medium text-neutral">
-                <Smartphone className="size-3.5 text-info" strokeWidth={1.75} />
+                <Smartphone className="size-3.5 text-info stroke-[1.5]" aria-hidden="true" />
                 {maskedPhone} 으로 6자리 인증번호가 발송되었습니다.
               </p>
               {devMockOtp && (
-                <p className="mt-2 rounded-badge bg-info/15 px-2 py-1 font-mono text-xs font-semibold text-info tabular-nums">
+                <p className="mt-2 rounded-badge bg-[color-mix(in_oklab,var(--text-info)_12%,transparent)] px-2 py-1 font-mono text-xs font-semibold text-info tabular-nums">
                   [개발 Mock SMS OTP]: {devMockOtp}
                 </p>
               )}
@@ -148,32 +151,30 @@ export function AdminLoginClient() {
               <label htmlFor="adm-otp" className="block text-xs font-medium text-secondary">
                 인증번호 6자리
               </label>
-              <input
+              <AdminInput
                 id="adm-otp"
                 type="text"
                 maxLength={6}
                 value={otpCode}
                 onChange={(e) => setOtpCode(e.target.value)}
                 placeholder="000000"
-                className="mt-1 h-8 w-full rounded-control bg-base-1 px-2.5 font-mono text-sm tracking-widest tabular-nums text-neutral atlas-border focus:outline-2 focus:outline-accent"
+                className="mt-1 font-mono tracking-widest tabular-nums"
               />
             </div>
 
             <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setStep(1)}
-                className="h-8 rounded-menu px-3 text-control font-medium text-secondary atlas-border hover:text-neutral"
-              >
+              <AdminButton type="button" variant="outline" size="md" onClick={() => setStep(1)}>
                 이전
-              </button>
-              <button
+              </AdminButton>
+              <AdminButton
                 type="submit"
-                disabled={pending}
-                className="flex h-8 flex-1 items-center justify-center rounded-menu bg-inverse text-sm font-medium text-on-inverse hover:opacity-90 disabled:opacity-45"
+                variant="solid"
+                size="md"
+                loading={pending}
+                className="flex-1"
               >
                 {pending ? "인증 확인 중..." : "2단계 인증 완료 및 로그인"}
-              </button>
+              </AdminButton>
             </div>
           </form>
         )}

@@ -13,6 +13,7 @@
 
 | 작성일 | 문서 제목 (클릭 시 이동) | 핵심 설계 요약 |
 | :---: | :--- | :--- |
+| **2026-11-27** | [2026-11-27_www_마케팅_랜딩_개편_설계.md](./2026-11-27_www_마케팅_랜딩_개편_설계.md) | **와글 `(www)` 실서비스 마케팅 랜딩 개편 설계** — GSAP ScrollTrigger + Lenis 관성 스크롤 멀티 패턴 패럴랙스(3D 카메라 Scrub · Sticky 카드 스택 · 가로 Pinning · 다층 시차 · Tilt-to-Flat), Three.js 3D 관계망 Hero, GodUI iOS/Android Store Badge(+QR), 실제 `/app` 아이폰 목업, DB 실강좌, Admin·서버 정보 전면 제거 |
 | **2026-11-27** | [2026-11-27_다크모드_테마_설계.md](./2026-11-27_다크모드_테마_설계.md) | **사용자 웹앱 다크 모드 & 4색 브랜드 직교 아키텍처 설계** — `data-web-theme × data-web-mode` 2축 `localStorage` 0ms FOUC, `--color-on-brand` 분리, 다크 OKLCH 역보정, 리퀴드 글래스·스쿨패스·하드코딩 틴트 10곳 전수 대응 |
 | **2026-11-23** | [2026-11-23_포인트샵_고도화_및_후기_시스템.md](./2026-11-23_포인트샵_고도화_및_후기_시스템.md) | **포인트샵 이커머스 고도화 · 리치 상세 · 구매확정 후기 시스템 설계** — `.env` `UPLOAD_DIR` + `sharp` WebP, `/admin/api/upload` 격리, Tiptap 에디터 + 새니타이징, Peek Swiper, Sticky 탭, `CONFIRMED` 후기 포인트 적립 및 `/admin/reviews` |
 | **2026-11-23** | [2026-11-23_주문취소_및_포인트환불_프로세스_설계.md](./2026-11-23_주문취소_및_포인트환불_프로세스_설계.md) | **주문 취소·반품 및 포인트 충전 환불(사용자+관리자) 프로세스 설계** — `PAID` 즉시취소/`PREPARING·DELIVERED` 신청·승인, 지갑 미사용 7일 즉시취소/부분사용 승인, `/admin/orders`·`/admin/recharges` 연계 및 재고 복구 보강 |

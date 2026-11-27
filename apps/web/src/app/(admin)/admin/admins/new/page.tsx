@@ -1,7 +1,12 @@
 import { requireAdminSession } from "@/00_lib/session";
 import { createAdminAccountAction } from "@/03_actions/admin/adminAuthActions";
 import { AdminActionForm } from "@/components/admin/AdminActionForm";
-import { AdminPageHeader } from "@/components/admin/AdminUiKit";
+import {
+  adminButtonClass,
+  AdminInput,
+  AdminPageHeader,
+  AdminSelect,
+} from "@/components/admin/AdminUiKit";
 
 export const dynamic = "force-dynamic";
 
@@ -31,28 +36,35 @@ export default async function AdminAccountNewPage() {
       >
         <div>
           <label className="block text-xs font-medium text-secondary">이메일 *</label>
-          <input name="email" type="email" className="mt-1 h-7 w-full rounded-control bg-base-1 px-2.5 text-sm atlas-border" />
+          <AdminInput name="email" type="email" size="md" className="mt-1" />
         </div>
         <div>
           <label className="block text-xs font-medium text-secondary">이름 *</label>
-          <input name="name" type="text" className="mt-1 h-7 w-full rounded-control bg-base-1 px-2.5 text-sm atlas-border" />
+          <AdminInput name="name" type="text" size="md" className="mt-1" />
         </div>
         <div>
           <label className="block text-xs font-medium text-secondary">휴대폰 번호 (SMS 2FA 수신) *</label>
-          <input name="phone" type="text" placeholder="010-0000-0000" className="mt-1 h-7 w-full rounded-control bg-base-1 px-2.5 text-sm atlas-border" />
+          <AdminInput name="phone" type="text" size="md" placeholder="010-0000-0000" className="mt-1" />
         </div>
         <div>
           <label className="block text-xs font-medium text-secondary">역할</label>
-          <select name="role" className="mt-1 h-7 w-full rounded-control bg-base-1 px-2.5 text-control atlas-border">
-            <option value="ADMIN">ADMIN (전체 운영 콘솔)</option>
-            <option value="TRAINER">TRAINER (훈련사 제한 포털)</option>
-          </select>
+          <AdminSelect
+            name="role"
+            defaultValue="ADMIN"
+            ariaLabel="역할"
+            size="md"
+            className="mt-1"
+            options={[
+              { value: "ADMIN", label: "ADMIN (전체 운영 콘솔)" },
+              { value: "TRAINER", label: "TRAINER (훈련사 제한 포털)" },
+            ]}
+          />
         </div>
         <div>
           <label className="block text-xs font-medium text-secondary">초기 비밀번호 (8자 이상) *</label>
-          <input name="password" type="password" className="mt-1 h-7 w-full rounded-control bg-base-1 px-2.5 text-sm atlas-border" />
+          <AdminInput name="password" type="password" size="md" className="mt-1" />
         </div>
-        <button type="submit" className="h-7 rounded-control bg-inverse px-3 text-control font-medium text-on-inverse">
+        <button type="submit" className={adminButtonClass({ variant: "solid", size: "md" })}>
           계정 생성
         </button>
       </AdminActionForm>

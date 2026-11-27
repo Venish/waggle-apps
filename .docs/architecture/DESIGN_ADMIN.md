@@ -1,5 +1,5 @@
 ---
-version: "2.3.0"
+version: "2.6.0"
 name: Waggle Admin Design System — Atlas Precision Studio
 description: >
   와글(Waggle) 운영 관리자 콘솔(`apps/web` `(admin)` Route Group — 추후 `apps/admin` 분리 대비) 전용 디자인 시스템.
@@ -78,14 +78,18 @@ typography:
     lineHeight: 1.333
     letterSpacing: 0em
 rounded:
-  r1: 0.25rem
-  r1_75: 0.4375rem
-  r2: 0.5rem
-  r2_5: 0.625rem
-  r3: 0.75rem
-  r3_5: 0.875rem
-  r4: 1rem
+  checkbox: 0.375rem
+  badge: 0.375rem
+  btn-sm: 0.625rem
+  control: 0.625rem
+  menu: 0.75rem
+  nav-item: 0.875rem
+  panel: 1rem
+  btn-lg: 1.125rem
+  auth: 1.25rem
+  search-hero: 1.375rem
   full: 9999px
+  cornerShape: "superellipse(1.3)"
 spacing:
   unit: 0.25rem
   xs: 0.375rem

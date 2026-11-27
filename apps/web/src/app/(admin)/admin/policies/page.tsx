@@ -6,7 +6,13 @@ import {
   adminUpdatePolicyAction,
 } from "@/03_actions/admin/adminTrainerOpsActions";
 import { AdminActionForm } from "@/components/admin/AdminActionForm";
-import { AdminPageHeader, AdminStatusBadge } from "@/components/admin/AdminUiKit";
+import {
+  adminButtonClass,
+  AdminInput,
+  AdminPageHeader,
+  AdminSelect,
+  AdminStatusBadge,
+} from "@/components/admin/AdminUiKit";
 
 export const dynamic = "force-dynamic";
 
@@ -90,14 +96,20 @@ export default async function AdminPoliciesPage() {
           resetOnSuccess
           className="grid gap-2 rounded-panel bg-base-2 p-3 sm:grid-cols-4 atlas-border"
         >
-          <input name="title" placeholder="배너 제목" className="h-7 rounded-control bg-base-1 px-2.5 text-xs atlas-border" />
-          <input name="subtitle" placeholder="부제목" className="h-7 rounded-control bg-base-1 px-2.5 text-xs atlas-border" />
-          <select name="placement" className="h-7 rounded-control bg-base-1 px-2 text-xs atlas-border">
-            <option value="HOME">HOME</option>
-            <option value="SHOP_HOME">SHOP_HOME</option>
-            <option value="NOTICE">NOTICE</option>
-          </select>
-          <button type="submit" className="h-7 rounded-control bg-inverse px-2.5 text-xs font-medium text-on-inverse">
+          <AdminInput name="title" size="sm" placeholder="배너 제목" />
+          <AdminInput name="subtitle" size="sm" placeholder="부제목" />
+          <AdminSelect
+            name="placement"
+            defaultValue="HOME"
+            ariaLabel="배너 영역"
+            size="sm"
+            options={[
+              { value: "HOME", label: "HOME" },
+              { value: "SHOP_HOME", label: "SHOP_HOME" },
+              { value: "NOTICE", label: "NOTICE" },
+            ]}
+          />
+          <button type="submit" className={adminButtonClass({ variant: "solid", size: "md" })}>
             배너 추가
           </button>
         </AdminActionForm>

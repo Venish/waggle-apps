@@ -29,6 +29,8 @@ async function getAdminDbBadge() {
   }
 }
 
+const ADMIN_THEME_BOOTSTRAP_SCRIPT = `(function(){try{var t=localStorage.getItem("waggle-admin-theme");if(t==="light"||t==="dark"){document.documentElement.setAttribute("data-admin-theme",t);document.documentElement.style.colorScheme=t;}}catch(e){}})();`;
+
 export default async function AdminRootLayout({ children }: { children: ReactNode }) {
   const [dbBadge, session] = await Promise.all([getAdminDbBadge(), getCurrentAdminSession()]);
 
@@ -39,6 +41,9 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
       className={pretendardFont.variable}
       suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: ADMIN_THEME_BOOTSTRAP_SCRIPT }} />
+      </head>
       <body className="min-h-dvh bg-base-1 text-sm text-neutral antialiased">
         <AdminShell
           dbConnected={dbBadge.connected}

@@ -2,7 +2,14 @@ import Link from "next/link";
 import { accounts, desc, eq, getDb, pointWallets, users } from "@repo/db";
 import { formatDateDot } from "@/00_lib/formatDate";
 import { requireAdminSession } from "@/00_lib/session";
-import { AdminPageHeader, AdminStatusBadge } from "@/components/admin/AdminUiKit";
+import {
+  adminButtonClass,
+  AdminEmptyState,
+  AdminInput,
+  AdminPageHeader,
+  AdminSelect,
+  AdminStatusBadge,
+} from "@/components/admin/AdminUiKit";
 
 export const dynamic = "force-dynamic";
 
@@ -43,26 +50,31 @@ export default async function AdminUsersPage({
   });
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <AdminPageHeader title="보호자 회원 관리" description="전체 보호자 목록 및 다중 필터" />
 
-      <form className="flex flex-wrap items-center gap-2 rounded-panel bg-base-2 p-3 atlas-border">
-        <input
+      <form className="flex flex-wrap items-center gap-2 rounded-panel bg-base-2 p-3.5">
+        <AdminInput
           name="q"
+          type="search"
+          size="sm"
           defaultValue={q}
           placeholder="닉네임 · 이메일 검색..."
-          className="h-7 min-w-0 flex-1 sm:flex-none sm:w-60 rounded-control bg-base-1 px-2.5 text-sm atlas-border"
+          className="flex-1 sm:w-64 sm:flex-none"
         />
-        <select
+        <AdminSelect
           name="status"
           defaultValue={status}
-          className="h-7 shrink-0 rounded-control bg-base-1 px-2.5 text-control atlas-border"
-        >
-          <option value="ALL">상태 전체</option>
-          <option value="ACTIVE">ACTIVE</option>
-          <option value="SUSPENDED">SUSPENDED</option>
-        </select>
-        <button type="submit" className="h-7 shrink-0 whitespace-nowrap rounded-control bg-inverse px-3 text-control font-medium text-on-inverse">
+          ariaLabel="회원 상태 필터"
+          size="sm"
+          className="w-36 shrink-0"
+          options={[
+            { value: "ALL", label: "상태 전체" },
+            { value: "ACTIVE", label: "ACTIVE" },
+            { value: "SUSPENDED", label: "SUSPENDED" },
+          ]}
+        />
+        <button type="submit" className={adminButtonClass({ variant: "solid", size: "md" })}>
           필터 적용
         </button>
       </form>
@@ -104,6 +116,13 @@ export default async function AdminUsersPage({
                 </td>
               </tr>
             ))}
+            {filtered.length === 0 && (
+              <tr>
+                <td colSpan={6}>
+                  <AdminEmptyState title="조건에 맞는 회원이 없습니다." />
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

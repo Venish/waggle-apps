@@ -13,7 +13,12 @@ import {
   adminUpdateEducationPoliciesAction,
 } from "@/03_actions/admin/adminEducationMatchingActions";
 import type { EducationPolicies } from "@/04_services/shared/policyService";
-import { AdminStatusBadge } from "@/components/admin/AdminUiKit";
+import {
+  AdminButton,
+  AdminSearchInput,
+  AdminSelect,
+  AdminStatusBadge,
+} from "@/components/admin/ui";
 
 export interface AdminCourseRowItem {
   id: number;
@@ -401,38 +406,39 @@ export function AdminEducationConsoleClient({
       </section>
 
       {/* 필터 바 + 다중 선택 강좌 일괄 작업 바 */}
-      <div className="flex flex-wrap items-center justify-between gap-2 rounded-panel bg-base-2 px-3 py-2 atlas-border">
+      <div className="flex flex-wrap items-center justify-between gap-2.5 rounded-panel bg-base-2 p-3.5">
         <div className="flex flex-wrap items-center gap-2">
-          <input
-            type="search"
+          <AdminSearchInput
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={setQuery}
+            sizeVariant="compact"
             placeholder="강좌명 · 코드 검색"
-            className="h-7 w-44 rounded-control bg-base-1 px-2.5 text-xs atlas-border"
+            ariaLabel="강좌명 · 코드 검색"
+            className="w-52"
           />
-          <select
+          <AdminSelect
             value={levelFilter}
-            onChange={(e) => setLevelFilter(e.target.value)}
-            aria-label="레벨 필터"
-            className="h-7 rounded-control bg-base-1 px-2 text-xs atlas-border"
-          >
-            <option value="ALL">전체 레벨</option>
-            {[1, 2, 3, 4, 5].map((lv) => (
-              <option key={lv} value={String(lv)}>
-                Lv.{lv}
-              </option>
-            ))}
-          </select>
-          <select
+            onValueChange={setLevelFilter}
+            ariaLabel="레벨 필터"
+            size="sm"
+            className="w-28"
+            options={[
+              { value: "ALL", label: "전체 레벨" },
+              ...[1, 2, 3, 4, 5].map((lv) => ({ value: String(lv), label: `Lv.${lv}` })),
+            ]}
+          />
+          <AdminSelect
             value={publishFilter}
-            onChange={(e) => setPublishFilter(e.target.value)}
-            aria-label="게시 상태 필터"
-            className="h-7 rounded-control bg-base-1 px-2 text-xs atlas-border"
-          >
-            <option value="ALL">전체 상태</option>
-            <option value="PUBLISHED">PUBLISHED</option>
-            <option value="DRAFT">DRAFT</option>
-          </select>
+            onValueChange={setPublishFilter}
+            ariaLabel="게시 상태 필터"
+            size="sm"
+            className="w-32"
+            options={[
+              { value: "ALL", label: "전체 상태" },
+              { value: "PUBLISHED", label: "PUBLISHED" },
+              { value: "DRAFT", label: "DRAFT" },
+            ]}
+          />
           <span className="font-mono text-xs tabular-nums text-subdued">
             {filteredCourses.length} / {courses.length} 강좌
           </span>
@@ -443,47 +449,52 @@ export function AdminEducationConsoleClient({
             <span className="font-mono text-xs font-semibold tabular-nums text-info">
               {selectedIds.length}개 선택
             </span>
-            <select
+            <AdminSelect
               value={bulkLevel}
-              onChange={(e) => setBulkLevel(e.target.value)}
-              aria-label="일괄 레벨 변경"
-              className="h-7 rounded-control bg-base-1 px-2 text-xs atlas-border"
-            >
-              <option value="">레벨 유지</option>
-              {[1, 2, 3, 4, 5].map((lv) => (
-                <option key={lv} value={String(lv)}>
-                  Lv.{lv}로 변경
-                </option>
-              ))}
-            </select>
-            <select
+              onValueChange={setBulkLevel}
+              ariaLabel="일괄 레벨 변경"
+              size="sm"
+              className="w-32"
+              options={[
+                { value: "", label: "레벨 유지" },
+                ...[1, 2, 3, 4, 5].map((lv) => ({
+                  value: String(lv),
+                  label: `Lv.${lv}로 변경`,
+                })),
+              ]}
+            />
+            <AdminSelect
               value={bulkPremium}
-              onChange={(e) => setBulkPremium(e.target.value)}
-              aria-label="일괄 유형 변경"
-              className="h-7 rounded-control bg-base-1 px-2 text-xs atlas-border"
-            >
-              <option value="">유형 유지</option>
-              <option value="FREE">FREE</option>
-              <option value="PREMIUM">PREMIUM</option>
-            </select>
-            <select
+              onValueChange={setBulkPremium}
+              ariaLabel="일괄 유형 변경"
+              size="sm"
+              className="w-28"
+              options={[
+                { value: "", label: "유형 유지" },
+                { value: "FREE", label: "FREE" },
+                { value: "PREMIUM", label: "PREMIUM" },
+              ]}
+            />
+            <AdminSelect
               value={bulkPublished}
-              onChange={(e) => setBulkPublished(e.target.value)}
-              aria-label="일괄 게시 상태 변경"
-              className="h-7 rounded-control bg-base-1 px-2 text-xs atlas-border"
-            >
-              <option value="">게시 유지</option>
-              <option value="PUBLISHED">PUBLISHED</option>
-              <option value="DRAFT">DRAFT</option>
-            </select>
-            <button
-              type="button"
-              disabled={bulkLock.pending}
+              onValueChange={setBulkPublished}
+              ariaLabel="일괄 게시 상태 변경"
+              size="sm"
+              className="w-32"
+              options={[
+                { value: "", label: "게시 유지" },
+                { value: "PUBLISHED", label: "PUBLISHED" },
+                { value: "DRAFT", label: "DRAFT" },
+              ]}
+            />
+            <AdminButton
+              variant="solid"
+              size="md"
+              loading={bulkLock.pending}
               onClick={handleApplyBulk}
-              className="h-7 rounded-control bg-inverse px-2.5 text-xs font-medium text-on-inverse disabled:opacity-50"
             >
               {bulkLock.pending ? "적용 중..." : "일괄 적용"}
-            </button>
+            </AdminButton>
           </div>
         )}
       </div>

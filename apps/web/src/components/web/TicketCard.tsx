@@ -43,7 +43,7 @@ export function TicketCard({ ticket }: { ticket: UserTicketView }) {
         <div
           aria-hidden="true"
           className={cn(
-            "w-2 shrink-0",
+            "w-1 shrink-0",
             !isAvailable
               ? "bg-ink-muted/25"
               : isCourse

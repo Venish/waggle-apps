@@ -3,7 +3,13 @@ import { asc, eq, getDb, tags } from "@repo/db";
 import { requireAdminSession } from "@/00_lib/session";
 import { adminCreateTagAction } from "@/03_actions/admin/adminEducationMatchingActions";
 import { AdminActionForm } from "@/components/admin/AdminActionForm";
-import { AdminPageHeader, AdminStatusBadge } from "@/components/admin/AdminUiKit";
+import {
+  adminButtonClass,
+  AdminInput,
+  AdminPageHeader,
+  AdminSelect,
+  AdminStatusBadge,
+} from "@/components/admin/AdminUiKit";
 
 export const dynamic = "force-dynamic";
 
@@ -43,14 +49,20 @@ export default async function AdminMatchingTagsPage() {
         resetOnSuccess
         className="flex flex-wrap gap-2 rounded-panel bg-base-2 p-3 atlas-border"
       >
-        <input name="code" placeholder="태그 코드 (예: prob_jump)" className="h-7 rounded-control bg-base-1 px-2.5 font-mono text-xs atlas-border" />
-        <input name="name" placeholder="표시 이름" className="h-7 rounded-control bg-base-1 px-2.5 text-xs atlas-border" />
-        <select name="category" className="h-7 rounded-control bg-base-1 px-2.5 text-xs atlas-border">
-          {["AGE", "EXPERIENCE", "PROBLEM", "GOAL", "ENV", "SOCIAL", "SPECIALTY", "ETC"].map((c) => (
-            <option key={c} value={c}>{c}</option>
-          ))}
-        </select>
-        <button type="submit" className="h-7 rounded-control bg-inverse px-3 text-control font-medium text-on-inverse">
+        <AdminInput name="code" size="sm" placeholder="태그 코드 (예: prob_jump)" className="w-48 font-mono" />
+        <AdminInput name="name" size="sm" placeholder="표시 이름" className="w-44" />
+        <AdminSelect
+          name="category"
+          defaultValue="AGE"
+          ariaLabel="태그 카테고리"
+          size="sm"
+          className="w-36"
+          options={["AGE", "EXPERIENCE", "PROBLEM", "GOAL", "ENV", "SOCIAL", "SPECIALTY", "ETC"].map((c) => ({
+            value: c,
+            label: c,
+          }))}
+        />
+        <button type="submit" className={adminButtonClass({ variant: "solid", size: "md" })}>
           태그 추가
         </button>
       </AdminActionForm>

@@ -3,7 +3,12 @@ import { asc, courses, courseTags, eq, getDb, tags } from "@repo/db";
 import { requireAdminSession } from "@/00_lib/session";
 import { adminUpsertCourseTagWeightAction } from "@/03_actions/admin/adminEducationMatchingActions";
 import { AdminActionForm } from "@/components/admin/AdminActionForm";
-import { AdminPageHeader } from "@/components/admin/AdminUiKit";
+import {
+  adminButtonClass,
+  AdminInput,
+  AdminPageHeader,
+  AdminSelect,
+} from "@/components/admin/AdminUiKit";
 
 export const dynamic = "force-dynamic";
 
@@ -52,18 +57,27 @@ export default async function AdminMatchingOverviewPage() {
         successMessage="강좌-태그 가중치가 저장되었습니다."
         className="flex flex-wrap items-center gap-2 rounded-panel bg-base-2 p-3 atlas-border"
       >
-        <select name="courseId" className="h-7 rounded-control bg-base-1 px-2.5 text-xs atlas-border">
-          {courseList.map((c) => (
-            <option key={c.id} value={c.id}>{c.title}</option>
-          ))}
-        </select>
-        <select name="tagId" className="h-7 rounded-control bg-base-1 px-2.5 text-xs atlas-border">
-          {tagList.map((t) => (
-            <option key={t.id} value={t.id}>[{t.category}] {t.code} ({t.name})</option>
-          ))}
-        </select>
-        <input name="weight" type="number" min={1} max={10} defaultValue={3} className="h-7 w-20 rounded-control bg-base-1 px-2 font-mono text-xs atlas-border" />
-        <button type="submit" className="h-7 rounded-control bg-inverse px-3 text-control font-medium text-on-inverse">
+        <AdminSelect
+          name="courseId"
+          defaultValue={String(courseList[0]?.id ?? "")}
+          ariaLabel="강좌 선택"
+          size="sm"
+          className="w-56"
+          options={courseList.map((c) => ({ value: String(c.id), label: c.title }))}
+        />
+        <AdminSelect
+          name="tagId"
+          defaultValue={String(tagList[0]?.id ?? "")}
+          ariaLabel="태그 선택"
+          size="sm"
+          className="w-64"
+          options={tagList.map((t) => ({
+            value: String(t.id),
+            label: `[${t.category}] ${t.code} (${t.name})`,
+          }))}
+        />
+        <AdminInput name="weight" type="number" size="sm" min={1} max={10} defaultValue={3} className="w-20 font-mono" />
+        <button type="submit" className={adminButtonClass({ variant: "solid", size: "md" })}>
           가중치 저장
         </button>
       </AdminActionForm>

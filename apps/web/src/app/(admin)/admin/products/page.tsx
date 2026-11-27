@@ -8,7 +8,11 @@ import {
   getPrimaryProductImagesMap,
   getProductReviewSummaryMap,
 } from "@/04_services/shared/shopReviewService";
-import { AdminPageHeader, AdminStatusBadge } from "@/components/admin/AdminUiKit";
+import {
+  adminButtonClass,
+  AdminPageHeader,
+  AdminStatusBadge,
+} from "@/components/admin/AdminUiKit";
 
 export const dynamic = "force-dynamic";
 
@@ -28,7 +32,7 @@ export default async function AdminProductsPage() {
   const catMap = new Map(cats.map((c) => [c.id, c.name]));
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <AdminPageHeader
         title="포인트샵 상품 관리"
         description="실물 제휴 상품 · 프리미엄 강좌 잠금해제 · 훈련사 문의권 (이미지 · 리치 상세 · 후기 연동)"
@@ -36,21 +40,21 @@ export default async function AdminProductsPage() {
           <>
             <Link
               href="/admin/reviews"
-              className="inline-flex h-7 items-center rounded-control px-2.5 text-control atlas-border"
+              className={adminButtonClass({ variant: "outline", size: "sm" })}
             >
               상품 후기 관리
             </Link>
             <Link
               href="/admin/products/categories"
-              className="inline-flex h-7 items-center rounded-control px-2.5 text-control atlas-border"
+              className={adminButtonClass({ variant: "outline", size: "sm" })}
             >
               카테고리 관리
             </Link>
             <Link
               href="/admin/products/new"
-              className="inline-flex h-7 items-center gap-1 rounded-control bg-inverse px-2.5 text-control font-medium text-on-inverse"
+              className={adminButtonClass({ variant: "solid", size: "sm" })}
             >
-              <Plus className="size-3.5" strokeWidth={1.75} />
+              <Plus className="size-3.5 stroke-[1.5]" aria-hidden="true" />
               상품 등록
             </Link>
           </>

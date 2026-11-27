@@ -1,5 +1,5 @@
 ---
-version: "3.2.0"
+version: "3.3.0"
 name: Waggle User Design System — Editorial Flat + Multi-Theme & Dark Mode (Default Favicon Orange)
 description: >
   와글(Waggle) 사용자 영역(`apps/web`: `(www)` 소개페이지 + `(mobile)` `/app/*` 모바일 웹앱) 전용 디자인 시스템.
@@ -42,11 +42,13 @@ typography:
     fontSize: 0.625rem
     lineHeight: 0.875rem
 rounded:
-  lg: 0.375rem
-  xl: 0.5rem
-  2xl: 0.625rem
-  3xl: 0.875rem
+  lg: 0.4375rem
+  xl: 0.75rem
+  2xl: 1rem
+  btn-lg: 1.125rem
+  3xl: 1.375rem
   full: 9999px
+  cornerShape: "superellipse(1.3)"
 spacing:
   xs: 0.25rem
   sm: 0.5rem
@@ -58,13 +60,13 @@ spacing:
 components:
   button-primary:
     backgroundColor: "{colors.brand}"
-    textColor: "{colors.surface}"
-    rounded: "{rounded.2xl}"
+    textColor: "{colors.on-brand}"
+    rounded: "{rounded.btn-lg}"
     height: 3rem
   button-secondary:
     backgroundColor: "{colors.surface-subtle}"
     textColor: "{colors.ink}"
-    rounded: "{rounded.2xl}"
+    rounded: "{rounded.btn-lg}"
     height: 3rem
   input-underline:
     borderBottom: "{colors.border-subtle}"

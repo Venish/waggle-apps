@@ -6,7 +6,12 @@ import {
 } from "@/03_actions/admin/adminUserCodeActions";
 import { AdminActionForm } from "@/components/admin/AdminActionForm";
 import { AdminSoftDeleteCodeButton } from "@/components/admin/AdminSoftDeleteCodeButton";
-import { AdminPageHeader } from "@/components/admin/AdminUiKit";
+import {
+  adminButtonClass,
+  AdminInput,
+  AdminPageHeader,
+  AdminSelect,
+} from "@/components/admin/AdminUiKit";
 
 export const dynamic = "force-dynamic";
 
@@ -108,16 +113,23 @@ export default async function AdminCodesPage() {
             resetOnSuccess
             className="grid grid-cols-1 gap-2 rounded-panel bg-base-2 p-3 sm:grid-cols-2 atlas-border"
           >
-            <input name="code" placeholder="견종 코드" className="h-7 min-w-0 w-full rounded-control bg-base-1 px-2.5 text-xs atlas-border" />
-            <input name="nameKo" placeholder="견종 한글명" className="h-7 min-w-0 w-full rounded-control bg-base-1 px-2.5 text-xs atlas-border" />
-            <input name="nameEn" placeholder="English Name" className="h-7 min-w-0 w-full rounded-control bg-base-1 px-2.5 text-xs atlas-border" />
+            <AdminInput name="code" size="sm" placeholder="견종 코드" />
+            <AdminInput name="nameKo" size="sm" placeholder="견종 한글명" />
+            <AdminInput name="nameEn" size="sm" placeholder="English Name" />
             <div className="flex gap-1.5">
-              <select name="defaultSize" className="h-7 min-w-0 flex-1 rounded-control bg-base-1 px-2 text-xs atlas-border">
-                <option value="SMALL">SMALL</option>
-                <option value="MEDIUM">MEDIUM</option>
-                <option value="LARGE">LARGE</option>
-              </select>
-              <button type="submit" className="h-7 shrink-0 whitespace-nowrap rounded-control bg-inverse px-2.5 text-xs font-medium text-on-inverse">
+              <AdminSelect
+                name="defaultSize"
+                defaultValue="SMALL"
+                ariaLabel="견종 크기"
+                size="sm"
+                className="min-w-0 flex-1"
+                options={[
+                  { value: "SMALL", label: "SMALL" },
+                  { value: "MEDIUM", label: "MEDIUM" },
+                  { value: "LARGE", label: "LARGE" },
+                ]}
+              />
+              <button type="submit" className={adminButtonClass({ variant: "solid", size: "md" })}>
                 추가
               </button>
             </div>

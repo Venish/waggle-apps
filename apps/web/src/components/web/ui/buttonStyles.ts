@@ -23,7 +23,7 @@ const SIZE_CLASSES: Record<AppButtonSize, string> = {
   xs: "h-8 px-2.5 text-xs rounded-xl",
   sm: "h-9 px-3 text-xs rounded-xl",
   md: "h-11 px-4 text-sm rounded-2xl",
-  lg: "h-12 px-5 text-body-md rounded-2xl",
+  lg: "h-12 px-5 text-body-md rounded-btn-lg",
 };
 
 /**

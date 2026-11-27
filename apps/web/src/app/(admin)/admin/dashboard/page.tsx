@@ -16,7 +16,12 @@ import {
 } from "@repo/db";
 import { formatDateTimeDot } from "@/00_lib/formatDate";
 import { requireAdminSession } from "@/00_lib/session";
-import { AdminPageHeader, AdminStatCard, AdminStatusBadge } from "@/components/admin/AdminUiKit";
+import {
+  AdminEmptyState,
+  AdminPageHeader,
+  AdminStatStrip,
+  AdminStatusBadge,
+} from "@/components/admin/AdminUiKit";
 
 export const dynamic = "force-dynamic";
 
@@ -52,28 +57,46 @@ export default async function AdminDashboardPage() {
   ]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <AdminPageHeader
         title="운영 KPI 대시보드"
         description="PostgreSQL 18 실시간 집계 지표 및 최근 거래·감사 이벤트"
       />
 
-      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <AdminStatCard label="전체 보호자 회원" value={userCnt?.c ?? 0} sub="활성 계정 기준" tone="text-info" />
-        <AdminStatCard label="누적 강좌 수강" value={enrCnt?.c ?? 0} sub="반려견 기준 Enrollment" tone="text-positive" />
-        <AdminStatCard
-          label="누적 충전 결제액"
-          value={`${Number(rechargeSum?.total ?? 0).toLocaleString("ko-KR")}원`}
-          sub="PortOne / IAP PAID 합계"
-          tone="text-neutral"
-        />
-        <AdminStatCard
-          label="답변 대기 영상 Q&A"
-          value={pendingInqCnt?.c ?? 0}
-          sub="48h SLA 모니터링 대상"
-          tone={(pendingInqCnt?.c ?? 0) > 0 ? "text-warning" : "text-positive"}
-        />
-      </section>
+      <AdminStatStrip
+        variant="divided"
+        columns={4}
+        items={[
+          {
+            id: "users",
+            label: "전체 보호자 회원",
+            value: userCnt?.c ?? 0,
+            subValue: "활성 계정 기준",
+            tone: "info",
+          },
+          {
+            id: "enrollments",
+            label: "누적 강좌 수강",
+            value: enrCnt?.c ?? 0,
+            subValue: "반려견 기준 Enrollment",
+            tone: "positive",
+          },
+          {
+            id: "recharges",
+            label: "누적 충전 결제액",
+            value: `${Number(rechargeSum?.total ?? 0).toLocaleString("ko-KR")}원`,
+            subValue: "PortOne / IAP PAID 합계",
+            tone: "neutral",
+          },
+          {
+            id: "inquiries",
+            label: "답변 대기 영상 Q&A",
+            value: pendingInqCnt?.c ?? 0,
+            subValue: "48h SLA 모니터링 대상",
+            tone: (pendingInqCnt?.c ?? 0) > 0 ? "warning" : "positive",
+          },
+        ]}
+      />
 
       <div className="grid gap-4 lg:grid-cols-2">
         <section className="min-w-0 overflow-hidden rounded-panel bg-base-1 atlas-border">
@@ -101,8 +124,8 @@ export default async function AdminDashboardPage() {
                 ))}
                 {recentOrders.length === 0 && (
                   <tr>
-                    <td colSpan={3} className="py-6 text-center text-xs text-subdued">
-                      주문 내역이 없습니다.
+                    <td colSpan={3}>
+                      <AdminEmptyState title="주문 내역이 없습니다." className="py-8" />
                     </td>
                   </tr>
                 )}
@@ -134,8 +157,8 @@ export default async function AdminDashboardPage() {
                 ))}
                 {recentAudits.length === 0 && (
                   <tr>
-                    <td colSpan={3} className="py-6 text-center text-xs text-subdued">
-                      기록된 감사로그가 없습니다.
+                    <td colSpan={3}>
+                      <AdminEmptyState title="기록된 감사로그가 없습니다." className="py-8" />
                     </td>
                   </tr>
                 )}

@@ -8,7 +8,14 @@ import {
   adminUpdateOrderShipmentAction,
 } from "@/03_actions/admin/adminCommerceActions";
 import { AdminActionForm } from "@/components/admin/AdminActionForm";
-import { AdminPageHeader, AdminStatusBadge } from "@/components/admin/AdminUiKit";
+import {
+  adminButtonClass,
+  AdminEmptyState,
+  AdminInput,
+  AdminPageHeader,
+  AdminSelect,
+  AdminStatusBadge,
+} from "@/components/admin/AdminUiKit";
 
 export const dynamic = "force-dynamic";
 
@@ -89,7 +96,7 @@ export default async function AdminOrdersPage({
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <AdminPageHeader
         title="주문 · 배송 관리"
         description="배송지 확인 · 송장번호 입력 · 사용자 취소/반품 신청 승인·반려 및 재고 복구 환불"
@@ -102,13 +109,11 @@ export default async function AdminOrdersPage({
             <Link
               key={t.key}
               href={t.key === "ALL" ? "/admin/orders" : `/admin/orders?tab=${t.key}`}
-              className={`inline-flex h-7 items-center rounded-control px-2.5 text-xs font-medium transition-colors atlas-border ${
-                active
-                  ? "bg-inverse text-on-inverse"
-                  : t.key === "CLAIMS" && claimCount > 0
-                    ? "bg-base-2 text-warning hover:bg-base-3"
-                    : "bg-base-2 text-secondary hover:text-neutral"
-              }`}
+              className={adminButtonClass({
+                variant: active ? "solid" : "outline",
+                size: "sm",
+                className: !active && t.key === "CLAIMS" && claimCount > 0 ? "text-warning" : undefined,
+              })}
             >
               {t.label}
             </Link>
@@ -204,7 +209,7 @@ export default async function AdminOrdersPage({
                     <input type="hidden" name="restoreStock" value="true" />
                     <button
                       type="submit"
-                      className="h-7 shrink-0 whitespace-nowrap rounded-control bg-inverse px-2.5 text-xs font-medium text-on-inverse"
+                      className={adminButtonClass({ variant: "solid", size: "sm" })}
                     >
                       요청 승인 · 환불 (재고복구)
                     </button>
@@ -217,14 +222,15 @@ export default async function AdminOrdersPage({
                     resetOnSuccess
                     className="flex flex-1 flex-wrap items-center gap-1.5 min-w-56"
                   >
-                    <input
+                    <AdminInput
                       name="rejectReason"
+                      size="sm"
                       placeholder="반려 사유 입력 (예: 이미 출고 완료)"
-                      className="h-7 min-w-0 flex-1 rounded-control bg-base-1 px-2 text-xs atlas-border"
+                      className="flex-1"
                     />
                     <button
                       type="submit"
-                      className="h-7 shrink-0 whitespace-nowrap rounded-control px-2.5 text-xs font-medium text-negative atlas-border"
+                      className={adminButtonClass({ variant: "danger", size: "sm" })}
                     >
                       요청 반려
                     </button>
@@ -240,30 +246,35 @@ export default async function AdminOrdersPage({
                     successMessage="주문 배송 상태가 반영되었습니다."
                     className="flex flex-wrap items-center gap-2 w-full sm:w-auto"
                   >
-                    <select
+                    <AdminSelect
                       name="status"
                       defaultValue={ord.status === "PAID" ? "PREPARING" : ord.status}
-                      className="h-7 rounded-control bg-base-1 px-2 text-xs atlas-border"
-                    >
-                      <option value="PREPARING">PREPARING (배송준비)</option>
-                      <option value="SHIPPING">SHIPPING (배송중)</option>
-                      <option value="DELIVERED">DELIVERED (배송완료)</option>
-                    </select>
-                    <input
+                      ariaLabel="배송 상태"
+                      size="sm"
+                      className="w-44"
+                      options={[
+                        { value: "PREPARING", label: "PREPARING (배송준비)" },
+                        { value: "SHIPPING", label: "SHIPPING (배송중)" },
+                        { value: "DELIVERED", label: "DELIVERED (배송완료)" },
+                      ]}
+                    />
+                    <AdminInput
                       name="courier"
+                      size="sm"
                       defaultValue={ship?.courier ?? "CJ대한통운"}
                       placeholder="택배사"
-                      className="h-7 min-w-0 flex-1 sm:flex-none sm:w-28 rounded-control bg-base-1 px-2 text-xs atlas-border"
+                      className="flex-1 sm:w-28 sm:flex-none"
                     />
-                    <input
+                    <AdminInput
                       name="trackingNo"
+                      size="sm"
                       defaultValue={ship?.trackingNo ?? ""}
                       placeholder="송장번호"
-                      className="h-7 min-w-0 flex-1 sm:flex-none sm:w-40 rounded-control bg-base-1 px-2 font-mono text-xs atlas-border"
+                      className="flex-1 font-mono sm:w-40 sm:flex-none"
                     />
                     <button
                       type="submit"
-                      className="h-7 shrink-0 whitespace-nowrap rounded-control bg-inverse px-2.5 text-xs font-medium text-on-inverse"
+                      className={adminButtonClass({ variant: "solid", size: "md" })}
                     >
                       배송 반영
                     </button>
@@ -280,7 +291,7 @@ export default async function AdminOrdersPage({
                     <input type="hidden" name="restoreStock" value="true" />
                     <button
                       type="submit"
-                      className="h-7 shrink-0 whitespace-nowrap rounded-control px-2.5 text-xs font-medium text-negative atlas-border"
+                      className={adminButtonClass({ variant: "danger", size: "md" })}
                     >
                       취소·전액환불
                     </button>
@@ -291,8 +302,8 @@ export default async function AdminOrdersPage({
           );
         })}
         {filtered.length === 0 && (
-          <div className="rounded-panel bg-base-2 p-8 text-center text-xs text-subdued atlas-border">
-            해당 조건의 주문이 없습니다.
+          <div className="rounded-panel bg-base-1 atlas-border">
+            <AdminEmptyState title="해당 조건의 주문이 없습니다." />
           </div>
         )}
       </div>

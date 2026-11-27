@@ -4,7 +4,13 @@ import { requireAdminSession } from "@/00_lib/session";
 import { adminAssignInquiryAction } from "@/03_actions/admin/adminTrainerOpsActions";
 import { AdminActionForm } from "@/components/admin/AdminActionForm";
 import { AdminMediaPlayer } from "@/components/admin/AdminMediaPlayer";
-import { AdminPageHeader, AdminStatusBadge } from "@/components/admin/AdminUiKit";
+import {
+  adminButtonClass,
+  AdminEmptyState,
+  AdminPageHeader,
+  AdminSelect,
+  AdminStatusBadge,
+} from "@/components/admin/AdminUiKit";
 
 export const dynamic = "force-dynamic";
 
@@ -18,13 +24,21 @@ export default async function AdminInquiriesPage() {
   ]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <AdminPageHeader
         title="영상 Q&A 모니터링 & 훈련사 배정"
         description="48h SLA 모니터링 및 훈련사 수동 배정"
       />
 
-      <div className="space-y-3">
+      {list.length === 0 ? (
+        <div className="rounded-panel bg-base-1 atlas-border">
+          <AdminEmptyState
+            title="접수된 영상 Q&A가 없습니다."
+            description="사용자가 행동 영상을 등록하면 이곳에 표시됩니다."
+          />
+        </div>
+      ) : (
+        <div className="space-y-3">
         {list.map((inq) => {
           async function assignTrainer(formData: FormData) {
             "use server";
@@ -72,18 +86,21 @@ export default async function AdminInquiriesPage() {
                   successMessage="훈련사 배정이 반영되었습니다."
                   className="flex flex-wrap items-center gap-2 pt-1"
                 >
-                  <select
+                  <AdminSelect
                     name="trainerId"
-                    defaultValue={inq.trainerId ?? trainerList[0]?.id}
-                    className="h-7 min-w-0 flex-1 sm:flex-none rounded-control bg-base-1 px-2.5 text-xs atlas-border"
+                    defaultValue={String(inq.trainerId ?? trainerList[0]?.id ?? "")}
+                    ariaLabel="배정 훈련사 선택"
+                    size="sm"
+                    className="min-w-0 flex-1 sm:w-44 sm:flex-none"
+                    options={trainerList.map((t) => ({
+                      value: String(t.id),
+                      label: t.name,
+                    }))}
+                  />
+                  <button
+                    type="submit"
+                    className={adminButtonClass({ variant: "solid", size: "md" })}
                   >
-                    {trainerList.map((t) => (
-                      <option key={t.id} value={t.id}>
-                        {t.name}
-                      </option>
-                    ))}
-                  </select>
-                  <button type="submit" className="h-7 shrink-0 whitespace-nowrap rounded-control bg-inverse px-2.5 text-xs font-medium text-on-inverse">
                     훈련사 배정
                   </button>
                 </AdminActionForm>
@@ -91,7 +108,8 @@ export default async function AdminInquiriesPage() {
             </div>
           );
         })}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -597,14 +597,16 @@ export function RecordHubClient({
         {dogs.length === 1 ? (
           <Link
             href="/app/my/dogs"
-            className="flex items-center gap-3.5 rounded-2xl bg-surface-subtle px-4 py-3 transition-colors hover:bg-ink/[0.05] active:scale-[0.99]"
+            className="waggle-squircle-box flex items-center gap-3 bg-surface-subtle px-3.5 py-2.5 transition-colors hover:bg-ink/[0.05] active:scale-[0.99]"
           >
-            <DogAvatar
-              src={selectedDog.profileImage}
-              name={selectedDog.name}
-              size="md"
-              shape="squircle"
-            />
+            <span className="waggle-squircle inline-flex shrink-0 bg-surface p-0.5 dark:bg-white/15">
+              <DogAvatar
+                src={selectedDog.profileImage}
+                name={selectedDog.name}
+                size="md"
+                shape="squircle"
+              />
+            </span>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <p className="truncate text-base font-extrabold tracking-tight text-ink">
@@ -627,14 +629,16 @@ export function RecordHubClient({
               aria-haspopup="listbox"
               aria-expanded={dogDropdownOpen}
               onClick={() => setDogDropdownOpen((prev) => !prev)}
-              className="flex w-full items-center gap-3.5 rounded-2xl bg-surface-subtle px-4 py-3 text-left transition-colors hover:bg-ink/[0.05] active:scale-[0.99]"
+              className="waggle-squircle-box flex w-full items-center gap-3 bg-surface-subtle px-3.5 py-2.5 text-left transition-colors hover:bg-ink/[0.05] active:scale-[0.99]"
             >
-              <DogAvatar
-                src={selectedDog.profileImage}
-                name={selectedDog.name}
-                size="md"
-                shape="squircle"
-              />
+              <span className="waggle-squircle inline-flex shrink-0 bg-surface p-0.5 dark:bg-white/15">
+                <DogAvatar
+                  src={selectedDog.profileImage}
+                  name={selectedDog.name}
+                  size="md"
+                  shape="squircle"
+                />
+              </span>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <p className="truncate text-base font-extrabold tracking-tight text-ink">
@@ -661,7 +665,7 @@ export function RecordHubClient({
               <div
                 role="listbox"
                 aria-label="반려견 선택"
-                className="animate-fade-in absolute inset-x-0 top-full z-30 mt-1.5 overflow-hidden rounded-2xl border border-border-subtle bg-surface shadow-lg"
+                className="waggle-squircle-panel animate-fade-in absolute inset-x-0 top-full z-30 mt-1.5 overflow-hidden border border-border-subtle bg-surface shadow-lg"
               >
                 <div className="max-h-64 overflow-y-auto py-1">
                   {dogs.map((d) => {

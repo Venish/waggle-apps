@@ -219,7 +219,7 @@ function PremiumUnlockSheetContent({
               )}
             >
               {/* 좌측 직각 컬러 바 */}
-              <div aria-hidden="true" className="w-2 shrink-0 bg-brand" />
+              <div aria-hidden="true" className="w-1 shrink-0 bg-brand" />
 
               {/* 좌측 티켓 정보 */}
               <div className="flex min-w-0 flex-1 items-center gap-2.5 py-3.5 pl-3.5 pr-3">
