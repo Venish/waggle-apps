@@ -43,19 +43,25 @@
   );
 }
 
-/* Tight localized dim ONLY behind left Hero text block for crisp readability */
+/* Tight localized dim ONLY behind left Hero text block (Zero backdrop-filter readback over 60fps WebGL) */
 .heroTextDim {
   position: relative;
   border-radius: 2rem;
-  background: color-mix(in oklab, var(--color-canvas) 76%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 0 3.5rem 1.75rem color-mix(in oklab, var(--color-canvas) 72%, transparent);
+  background: radial-gradient(
+    ellipse 96% 96% at 44% 50%,
+    color-mix(in oklab, var(--color-canvas) 92%, transparent) 0%,
+    color-mix(in oklab, var(--color-canvas) 82%, transparent) 58%,
+    transparent 100%
+  );
 }
 
 :global(:root[data-web-mode="dark"]) .heroTextDim {
-  background: color-mix(in oklab, var(--color-canvas) 78%, transparent);
-  box-shadow: 0 0 3.5rem 1.75rem color-mix(in oklab, var(--color-canvas) 74%, transparent);
+  background: radial-gradient(
+    ellipse 96% 96% at 44% 50%,
+    color-mix(in oklab, var(--color-canvas) 92%, transparent) 0%,
+    color-mix(in oklab, var(--color-canvas) 82%, transparent) 58%,
+    transparent 100%
+  );
 }
 
 /* Titanium iPhone 3D Device Mockup */

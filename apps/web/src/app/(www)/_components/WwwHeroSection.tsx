@@ -27,25 +27,134 @@ export function WwwHeroSection() {
     () => {
       const mm = gsap.matchMedia();
 
-      // Entrance choreography (runs once cleanly on load when motion allowed)
+      // Choreographed opening entrance timeline (~1.2s, runs once when motion allowed)
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        gsap.from("[data-hero-enter]", {
-          y: 24,
-          opacity: 0,
-          duration: 0.72,
-          stagger: 0.08,
-          ease: "power3.out",
-          clearProps: "transform,opacity",
-        });
+        const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-        gsap.from("[data-hero-mockup]", {
-          y: 36,
-          scale: 0.96,
-          opacity: 0,
-          duration: 0.85,
-          delay: 0.16,
-          ease: "power3.out",
-          clearProps: "transform,opacity",
+        tl.from(
+          "[data-hero-badge]",
+          {
+            y: 16,
+            scale: 0.9,
+            opacity: 0,
+            duration: 0.55,
+            ease: "back.out(1.6)",
+            clearProps: "transform,opacity",
+          },
+          0.06,
+        )
+          .from(
+            "[data-hero-line]",
+            {
+              yPercent: 115,
+              opacity: 0,
+              duration: 0.85,
+              stagger: 0.12,
+              ease: "expo.out",
+              clearProps: "transform,opacity",
+            },
+            0.14,
+          )
+          .from(
+            "[data-hero-desc]",
+            {
+              y: 22,
+              opacity: 0,
+              duration: 0.68,
+              clearProps: "transform,opacity",
+            },
+            0.38,
+          )
+          .from(
+            "[data-hero-chip]",
+            {
+              y: 16,
+              scale: 0.86,
+              opacity: 0,
+              duration: 0.55,
+              stagger: 0.075,
+              ease: "back.out(1.5)",
+              clearProps: "transform,opacity",
+            },
+            0.48,
+          )
+          .from(
+            "[data-hero-badges]",
+            {
+              y: 20,
+              scale: 0.94,
+              opacity: 0,
+              duration: 0.65,
+              clearProps: "transform,opacity",
+            },
+            0.64,
+          )
+          .from(
+            "[data-hero-halo]",
+            {
+              scale: 0.55,
+              opacity: 0,
+              duration: 1.15,
+              ease: "power2.out",
+              clearProps: "transform,opacity",
+            },
+            0.16,
+          )
+          .from(
+            "[data-hero-phone-inner]",
+            {
+              y: 74,
+              scale: 0.88,
+              rotateY: -14,
+              rotateX: 6,
+              opacity: 0,
+              duration: 1.05,
+              ease: "expo.out",
+              clearProps: "transform,opacity",
+            },
+            0.2,
+          )
+          .from(
+            "[data-hero-pill='top']",
+            {
+              x: -32,
+              y: 12,
+              scale: 0.8,
+              opacity: 0,
+              duration: 0.72,
+              ease: "back.out(1.7)",
+            },
+            0.66,
+          )
+          .from(
+            "[data-hero-pill='bottom']",
+            {
+              x: 32,
+              y: 12,
+              scale: 0.8,
+              opacity: 0,
+              duration: 0.72,
+              ease: "back.out(1.7)",
+            },
+            0.78,
+          );
+
+        // Gentle living float on inner pills (nested inside scroll-scrub wrappers to avoid conflicts)
+        gsap.to("[data-hero-pill='top']", {
+          y: -6,
+          duration: 2.7,
+          delay: 1.45,
+          ease: "sine.inOut",
+          repeat: -1,
+          yoyo: true,
+        });
+        gsap.to("[data-hero-pill='bottom']", {
+          y: 6,
+          duration: 3.1,
+          delay: 1.6,
+          ease: "sine.inOut",
+          repeat: -1,
+          yoyo: true,
         });
       });
 
@@ -128,7 +237,7 @@ export function WwwHeroSection() {
           data-hero-copy
           className={`${styles.heroTextDim} space-y-6 p-5 sm:p-7 lg:col-span-7 lg:p-8`}
         >
-          <div data-hero-enter className="inline-flex items-center gap-2 rounded-full border border-border-subtle bg-surface/85 px-3.5 py-1.5 backdrop-blur-md">
+          <div data-hero-badge className="inline-flex items-center gap-2 rounded-full border border-border-subtle bg-surface/95 px-3.5 py-1.5 shadow-2xs">
             <span className="relative flex size-2">
               <span className="absolute inline-flex size-full animate-ping rounded-full bg-brand opacity-60 motion-reduce:hidden" />
               <span className="relative inline-flex size-2 rounded-full bg-brand" />
@@ -137,29 +246,34 @@ export function WwwHeroSection() {
             <span className="text-xs font-bold text-ink">반려견 맞춤 교육 · 데일리 기록 앱</span>
           </div>
 
-          <h1
-            data-hero-enter
-            className="text-balance text-[2.25rem] font-extrabold leading-[1.16] tracking-tight text-ink sm:text-[3rem] lg:text-[3.5rem]"
-          >
-            매일 5분 맞춤 교육으로
-            <br />
-            <span className="text-brand">우리 강아지가 달라져요</span>
+          <h1 className="text-balance text-[2.25rem] font-extrabold leading-[1.16] tracking-tight text-ink sm:text-[3rem] lg:text-[3.5rem]">
+            <span className="block overflow-hidden py-0.5">
+              <span data-hero-line className="block">
+                매일 5분 맞춤 교육으로
+              </span>
+            </span>
+            <span className="block overflow-hidden py-0.5">
+              <span data-hero-line className="block text-brand">
+                우리 강아지가 달라져요
+              </span>
+            </span>
           </h1>
 
           <p
-            data-hero-enter
-            className="max-w-xl text-pretty text-base leading-relaxed text-ink-muted sm:text-lg"
+            data-hero-desc
+            className="max-w-xl text-pretty text-base font-medium leading-relaxed text-ink/85 sm:text-lg"
           >
             반려견 성향 설문 매칭부터 영상·실습·퀴즈 3단계 교육 루프, 데일리·건강 기록,
             포인트샵과 훈련사 1:1 영상 Q&amp;A까지 보호자와 강아지의 하루를 하나로 잇습니다.
           </p>
 
           {/* 3 Core Value Chips */}
-          <div data-hero-enter className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {HERO_CHIPS.map((chip) => (
               <span
                 key={chip.label}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-border-subtle bg-surface/85 px-3 py-1.5 text-xs font-semibold text-ink backdrop-blur-md"
+                data-hero-chip
+                className="inline-flex items-center gap-1.5 rounded-xl border border-border-subtle bg-surface/95 px-3 py-1.5 text-xs font-semibold text-ink shadow-2xs"
               >
                 <chip.icon className="size-3.5 text-brand" strokeWidth={2.2} />
                 {chip.label}
@@ -168,21 +282,21 @@ export function WwwHeroSection() {
           </div>
 
           {/* GodUI Store Badge Primary Row */}
-          <div data-hero-enter className="pt-2">
+          <div data-hero-badges className="pt-2">
             <StoreBadgeButtons size="md" theme="dark" qr />
           </div>
         </div>
 
         {/* Right 5 Columns: Titanium iPhone 3D Mockup with Real /app Capture */}
-        <div className="relative flex justify-center lg:col-span-5 lg:justify-end">
+        <div className={`${styles.perspectiveStage} relative flex justify-center lg:col-span-5 lg:justify-end`}>
           <div
             data-hero-mockup
             className="relative w-[17.5rem] sm:w-[19.25rem] lg:w-[20rem]"
           >
-            <div className={styles.iphoneHalo} aria-hidden="true" />
+            <div data-hero-halo className={styles.iphoneHalo} aria-hidden="true" />
 
             {/* Titanium iPhone Frame */}
-            <div className={styles.iphoneFrame}>
+            <div data-hero-phone-inner className={styles.iphoneFrame}>
               {/* Side Hardware Buttons */}
               <span
                 aria-hidden="true"
@@ -219,43 +333,53 @@ export function WwwHeroSection() {
             {/* Floating Counter-Parallax Accent Pill (Mid-Left, Clear of Top Dog Card) */}
             <div
               data-hero-float="top"
-              className="pointer-events-none absolute -left-14 top-52 hidden items-center gap-3 rounded-2xl bg-surface/94 px-3.5 py-2.5 shadow-[0_14px_34px_-10px_rgba(15,23,42,0.16)] ring-1 ring-ink/[0.07] backdrop-blur-xl dark:ring-white/[0.12] sm:flex"
+              className="pointer-events-none absolute -left-14 top-52 hidden sm:block"
             >
-              <svg
-                viewBox="0 0 36 36"
-                fill="none"
-                aria-hidden="true"
-                className="size-9 shrink-0 text-brand"
+              <div
+                data-hero-pill="top"
+                className="flex items-center gap-3 rounded-2xl bg-surface/96 px-3.5 py-2.5 shadow-[0_14px_34px_-10px_rgba(15,23,42,0.16)] ring-1 ring-ink/[0.07] dark:ring-white/[0.12]"
               >
-                <circle cx="18" cy="18" r="16" fill="currentColor" fillOpacity="0.14" />
-                <circle cx="18" cy="18" r="12" stroke="currentColor" strokeWidth="2.4" />
-                <circle cx="18" cy="18" r="7.2" stroke="currentColor" strokeWidth="2.4" strokeOpacity="0.55" />
-                <circle cx="18" cy="18" r="3.4" fill="currentColor" />
-              </svg>
-              <div className="leading-tight">
-                <p className="text-xs font-extrabold text-ink">오늘의 5분 미션</p>
-                <p className="mt-1 inline-flex items-center gap-1 text-2xs font-semibold text-ink-muted tabular-nums">
-                  <PointIcon className="size-3.5 text-brand" />
-                  <span>퀴즈 통과 +100P 적립</span>
-                </p>
+                <svg
+                  viewBox="0 0 36 36"
+                  fill="none"
+                  aria-hidden="true"
+                  className="size-9 shrink-0 text-brand"
+                >
+                  <circle cx="18" cy="18" r="16" fill="currentColor" fillOpacity="0.14" />
+                  <circle cx="18" cy="18" r="12" stroke="currentColor" strokeWidth="2.4" />
+                  <circle cx="18" cy="18" r="7.2" stroke="currentColor" strokeWidth="2.4" strokeOpacity="0.55" />
+                  <circle cx="18" cy="18" r="3.4" fill="currentColor" />
+                </svg>
+                <div className="leading-tight">
+                  <p className="text-xs font-extrabold text-ink">오늘의 5분 미션</p>
+                  <p className="mt-1 inline-flex items-center gap-1 text-2xs font-semibold text-ink-muted tabular-nums">
+                    <PointIcon className="size-3.5 text-brand" />
+                    <span>퀴즈 통과 +100P 적립</span>
+                  </p>
+                </div>
               </div>
             </div>
 
             {/* Floating Counter-Parallax Accent Pill (Bottom Right) */}
             <div
               data-hero-float="bottom"
-              className="pointer-events-none absolute -right-8 bottom-16 hidden items-center gap-3 rounded-2xl bg-surface/94 px-3.5 py-2.5 shadow-[0_14px_34px_-10px_rgba(15,23,42,0.16)] ring-1 ring-ink/[0.07] backdrop-blur-xl dark:ring-white/[0.12] sm:flex"
+              className="pointer-events-none absolute -right-8 bottom-16 hidden sm:block"
             >
-              <PawStampIcon
-                ringOpacity={1}
-                pawOpacity={1}
-                className="size-9 shrink-0 text-brand"
-              />
-              <div className="leading-tight">
-                <p className="text-xs font-extrabold text-ink">초코 · 유치원 1학년</p>
-                <p className="mt-1 text-2xs font-semibold text-ink-muted tabular-nums">
-                  연속 7일 학습 · 일상 기록
-                </p>
+              <div
+                data-hero-pill="bottom"
+                className="flex items-center gap-3 rounded-2xl bg-surface/96 px-3.5 py-2.5 shadow-[0_14px_34px_-10px_rgba(15,23,42,0.16)] ring-1 ring-ink/[0.07] dark:ring-white/[0.12]"
+              >
+                <PawStampIcon
+                  ringOpacity={1}
+                  pawOpacity={1}
+                  className="size-9 shrink-0 text-brand"
+                />
+                <div className="leading-tight">
+                  <p className="text-xs font-extrabold text-ink">초코 · 유치원 1학년</p>
+                  <p className="mt-1 text-2xs font-semibold text-ink-muted tabular-nums">
+                    연속 7일 학습 · 일상 기록
+                  </p>
+                </div>
               </div>
             </div>
           </div>

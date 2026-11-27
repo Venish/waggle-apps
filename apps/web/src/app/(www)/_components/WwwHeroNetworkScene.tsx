@@ -22,12 +22,6 @@ const BREED_IMAGES = [
   "/images/breeds/shih-tzu.webp",
   "/images/breeds/yorkshire-terrier.webp",
   "/images/breeds/siberian-husky.webp",
-  "/images/breeds/labrador-retriever.webp",
-  "/images/breeds/papillon.webp",
-  "/images/breeds/pug.webp",
-  "/images/breeds/jack-russell-terrier.webp",
-  "/images/breeds/coton-de-tulear.webp",
-  "/images/breeds/jindo.webp",
 ] as const;
 
 type ShapeKind =
@@ -47,7 +41,7 @@ const SHAPE_KINDS: readonly ShapeKind[] = [
   "square-outline",
 ];
 
-// Clean Neo-Pop non-purple accent tones (index 0 dynamically tracks live --color-brand)
+// Clean Neo-Pop non-purple accent tones (brand particles dynamically track live --color-brand)
 const ACCENT_HEXES = ["#F59E0B", "#10B981", "#0EA5E9"] as const;
 
 interface ResolvedPalette {
@@ -96,6 +90,14 @@ function readLivePalette(): ResolvedPalette {
   };
 }
 
+function configureFastTexture(tex: THREE.CanvasTexture): THREE.CanvasTexture {
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.generateMipmaps = false;
+  tex.minFilter = THREE.LinearFilter;
+  tex.magFilter = THREE.LinearFilter;
+  return tex;
+}
+
 function drawAvatarCanvas(
   canvas: HTMLCanvasElement,
   img: HTMLImageElement | null,
@@ -110,11 +112,11 @@ function drawAvatarCanvas(
   const r = size * 0.38;
 
   ctx.save();
-  ctx.shadowColor = palette.isDark ? "rgba(0, 0, 0, 0.55)" : "rgba(15, 23, 42, 0.16)";
-  ctx.shadowBlur = 18;
-  ctx.shadowOffsetY = 6;
+  ctx.shadowColor = palette.isDark ? "rgba(0, 0, 0, 0.5)" : "rgba(15, 23, 42, 0.15)";
+  ctx.shadowBlur = 14;
+  ctx.shadowOffsetY = 5;
   ctx.beginPath();
-  ctx.arc(cx, cx, r + 9, 0, Math.PI * 2);
+  ctx.arc(cx, cx, r + 8, 0, Math.PI * 2);
   ctx.fillStyle = palette.isDark ? "#1E2128" : "#FFFFFF";
   ctx.fill();
   ctx.restore();
@@ -124,10 +126,12 @@ function drawAvatarCanvas(
     ctx.beginPath();
     ctx.arc(cx, cx, r, 0, Math.PI * 2);
     ctx.clip();
+    // 1.42x center-crop zoom so each dog portrait fills the circular frame boldly
     const minSide = Math.min(img.naturalWidth, img.naturalHeight);
-    const sx = (img.naturalWidth - minSide) / 2;
-    const sy = (img.naturalHeight - minSide) / 2;
-    ctx.drawImage(img, sx, sy, minSide, minSide, cx - r, cx - r, r * 2, r * 2);
+    const cropSide = minSide / 1.42;
+    const sx = (img.naturalWidth - cropSide) / 2;
+    const sy = (img.naturalHeight - cropSide) / 2;
+    ctx.drawImage(img, sx, sy, cropSide, cropSide, cx - r, cx - r, r * 2, r * 2);
     ctx.restore();
   } else {
     ctx.save();
@@ -139,14 +143,14 @@ function drawAvatarCanvas(
   }
 
   ctx.beginPath();
-  ctx.arc(cx, cx, r + 4.5, 0, Math.PI * 2);
-  ctx.lineWidth = 6.5;
+  ctx.arc(cx, cx, r + 4, 0, Math.PI * 2);
+  ctx.lineWidth = 6;
   ctx.strokeStyle = palette.brandHex;
   ctx.stroke();
 }
 
 function createCoreGlowTexture(brandHex: string): THREE.CanvasTexture {
-  const size = 256;
+  const size = 192;
   const canvas = document.createElement("canvas");
   canvas.width = size;
   canvas.height = size;
@@ -158,17 +162,11 @@ function createCoreGlowTexture(brandHex: string): THREE.CanvasTexture {
   grad.addColorStop(1, `${brandHex}00`);
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, size, size);
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  return tex;
+  return configureFastTexture(new THREE.CanvasTexture(canvas));
 }
 
-/**
- * Generates crisp white geometric shape texture (tinted via SpriteMaterial.color).
- * Uses classic 5-point geometric star (never 4-point AI sparkles), triangle, and rounded square.
- */
 function createShapeTexture(kind: ShapeKind): THREE.CanvasTexture {
-  const size = 128;
+  const size = 96;
   const canvas = document.createElement("canvas");
   canvas.width = size;
   canvas.height = size;
@@ -180,15 +178,15 @@ function createShapeTexture(kind: ShapeKind): THREE.CanvasTexture {
 
   ctx.fillStyle = "#FFFFFF";
   ctx.strokeStyle = "#FFFFFF";
-  ctx.lineWidth = 10;
+  ctx.lineWidth = 8;
   ctx.lineJoin = "round";
   ctx.lineCap = "round";
 
   ctx.beginPath();
   if (kind.startsWith("star")) {
     const spikes = 5;
-    const outerR = 44;
-    const innerR = 20;
+    const outerR = 33;
+    const innerR = 15;
     for (let i = 0; i < spikes * 2; i++) {
       const r = i % 2 === 0 ? outerR : innerR;
       const angle = (i * Math.PI) / spikes - Math.PI / 2;
@@ -199,19 +197,18 @@ function createShapeTexture(kind: ShapeKind): THREE.CanvasTexture {
     }
     ctx.closePath();
   } else if (kind.startsWith("triangle")) {
-    const r = 44;
+    const r = 33;
     for (let i = 0; i < 3; i++) {
       const angle = (i * Math.PI * 2) / 3 - Math.PI / 2;
       const x = cx + Math.cos(angle) * r;
-      const y = cy + Math.sin(angle) * r + 5;
+      const y = cy + Math.sin(angle) * r + 4;
       if (i === 0) ctx.moveTo(x, y);
       else ctx.lineTo(x, y);
     }
     ctx.closePath();
   } else {
-    // Rounded square
-    const side = 72;
-    ctx.roundRect(cx - side / 2, cy - side / 2, side, side, 16);
+    const side = 54;
+    ctx.roundRect(cx - side / 2, cy - side / 2, side, side, 12);
   }
 
   if (isSolid) {
@@ -220,26 +217,22 @@ function createShapeTexture(kind: ShapeKind): THREE.CanvasTexture {
     ctx.stroke();
   }
 
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  return tex;
+  return configureFastTexture(new THREE.CanvasTexture(canvas));
 }
 
 function createSignalTexture(): THREE.CanvasTexture {
-  const size = 64;
+  const size = 48;
   const canvas = document.createElement("canvas");
   canvas.width = size;
   canvas.height = size;
   const ctx = canvas.getContext("2d")!;
-  const grad = ctx.createRadialGradient(size / 2, size / 2, 2, size / 2, size / 2, size / 2);
+  const grad = ctx.createRadialGradient(size / 2, size / 2, 1, size / 2, size / 2, size / 2);
   grad.addColorStop(0, "rgba(255, 255, 255, 1)");
   grad.addColorStop(0.45, "rgba(255, 255, 255, 0.85)");
   grad.addColorStop(1, "rgba(255, 255, 255, 0)");
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, size, size);
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  return tex;
+  return configureFastTexture(new THREE.CanvasTexture(canvas));
 }
 
 export interface WwwHeroNetworkSceneProps {
@@ -263,16 +256,18 @@ export function WwwHeroNetworkScene({ scrollProgressRef }: WwwHeroNetworkScenePr
 
     let renderer: THREE.WebGLRenderer;
     try {
+      // Textures are already 2D-canvas anti-aliased; disable MSAA & cap DPR<=1.5 for silky 60fps
       renderer = new THREE.WebGLRenderer({
         alpha: true,
-        antialias: true,
-        powerPreference: "default",
+        antialias: false,
+        powerPreference: "high-performance",
+        stencil: false,
       });
     } catch {
       return;
     }
 
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.domElement.style.width = "100%";
     renderer.domElement.style.height = "100%";
@@ -299,7 +294,7 @@ export function WwwHeroNetworkScene({ scrollProgressRef }: WwwHeroNetworkScenePr
     const originY = isMobileViewport ? 0.15 : -0.05;
     const originZ = -6.2;
 
-    // 1. Subtle Soft Luminous Ambient Origin (Zero central line pinch)
+    // 1. Subtle Soft Luminous Ambient Origin (renderOrder = 0)
     let coreGlowTex = createCoreGlowTexture(palette.brandHex);
     textures.push(coreGlowTex);
     const coreGlowMat = new THREE.SpriteMaterial({
@@ -315,8 +310,8 @@ export function WwwHeroNetworkScene({ scrollProgressRef }: WwwHeroNetworkScenePr
     coreGlowSprite.renderOrder = 0;
     rootGroup.add(coreGlowSprite);
 
-    // 2. 3D Radial Outward Dog Breed Nodes (Continuous Infinite Loop)
-    const nodeCount = isMobileViewport ? 14 : BREED_IMAGES.length;
+    // 2. 3D Radial Outward Dog Breed Nodes (renderOrder = 10, strictly on top of lines/signals/shapes)
+    const nodeCount = isMobileViewport ? 12 : BREED_IMAGES.length;
     const GOLDEN_ANGLE = 2.399963229728653;
 
     interface RadialDogNode {
@@ -345,8 +340,7 @@ export function WwwHeroNetworkScene({ scrollProgressRef }: WwwHeroNetworkScenePr
       canvas.height = 256;
       drawAvatarCanvas(canvas, null, palette);
 
-      const texture = new THREE.CanvasTexture(canvas);
-      texture.colorSpace = THREE.SRGBColorSpace;
+      const texture = configureFastTexture(new THREE.CanvasTexture(canvas));
       textures.push(texture);
 
       const material = new THREE.SpriteMaterial({
@@ -384,14 +378,14 @@ export function WwwHeroNetworkScene({ scrollProgressRef }: WwwHeroNetworkScenePr
         radialBias: 0.88 + (i % 5) * 0.085,
         progress: (i + 0.35) / nodeCount,
         speed: 0.04 + (i % 4) * 0.008,
-        baseScale: isMobileViewport ? 0.96 + (i % 3) * 0.12 : 1.08 + (i % 4) * 0.14,
+        baseScale: isMobileViewport ? 1.15 + (i % 3) * 0.14 : 1.32 + (i % 4) * 0.18,
         wobblePhase: i * 1.17,
         depthArc: (i % 2 === 0 ? 1 : -1) * (0.25 + (i % 3) * 0.15),
       });
     }
 
-    // 3. Organic Dog-to-Dog Dynamic Proximity Links (Zero central pinch!)
-    const maxDogLinks = isMobileViewport ? 18 : 34;
+    // 3. Organic Dog-to-Dog Dynamic Proximity Links (renderOrder = 1)
+    const maxDogLinks = isMobileViewport ? 14 : 26;
     const linkPositions = new Float32Array(maxDogLinks * 2 * 3);
     const linkGeo = new THREE.BufferGeometry();
     linkGeo.setAttribute("position", new THREE.BufferAttribute(linkPositions, 3));
@@ -410,7 +404,7 @@ export function WwwHeroNetworkScene({ scrollProgressRef }: WwwHeroNetworkScenePr
     dogLinkLines.renderOrder = 1;
     rootGroup.add(dogLinkLines);
 
-    // 4. Traveling Signals Gliding Along Persistent Dog-to-Dog Links (Strictly behind dog photos)
+    // 4. Traveling Signals Gliding Along Persistent Dog-to-Dog Links (renderOrder = 2)
     const signalCount = isMobileViewport ? 8 : 14;
     const signalPositions = new Float32Array(signalCount * 3);
     const signalTracks = Array.from({ length: signalCount }, (_, i) => ({
@@ -442,73 +436,89 @@ export function WwwHeroNetworkScene({ scrollProgressRef }: WwwHeroNetworkScenePr
     signalPoints.renderOrder = 2;
     rootGroup.add(signalPoints);
 
-    // 5. 6 Geometric Neo-Pop Shapes (Solid & Outline: 5-Point Star · Triangle · Rounded Square)
-    const shapeTextureMap = new Map<ShapeKind, THREE.CanvasTexture>();
-    SHAPE_KINDS.forEach((kind) => {
-      const tex = createShapeTexture(kind);
-      shapeTextureMap.set(kind, tex);
-      textures.push(tex);
-    });
+    // 5. Batched InstancedMesh for 6 Geometric Neo-Pop Shapes (Only 6 draw calls total instead of 40!)
+    const planeGeo = new THREE.PlaneGeometry(1, 1);
+    geometries.push(planeGeo);
 
-    interface GeometricParticle {
-      sprite: THREE.Sprite;
-      material: THREE.SpriteMaterial;
+    interface ShapeInstance {
+      meshIndex: number;
+      instanceId: number;
       useBrandColor: boolean;
       angle: number;
       progress: number;
       speed: number;
       radiusMult: number;
       baseScale: number;
+      rotationZ: number;
       spinSpeed: number;
-      maxOpacity: number;
     }
 
-    const shapeCount = isMobileViewport ? 22 : 40;
-    const shapeParticles: GeometricParticle[] = [];
+    const totalShapes = isMobileViewport ? 18 : 36;
+    const perKindCount = Math.ceil(totalShapes / SHAPE_KINDS.length);
+    const shapeMeshes: THREE.InstancedMesh[] = [];
+    const shapeInstances: ShapeInstance[] = [];
 
-    for (let i = 0; i < shapeCount; i++) {
-      const kind = SHAPE_KINDS[i % SHAPE_KINDS.length]!;
-      const tex = shapeTextureMap.get(kind)!;
-      // ~45% track live brand theme, remaining split cleanly across Amber / Emerald / Sky
-      const useBrandColor = i % 9 < 4;
-      const color = useBrandColor
-        ? palette.brandThree.clone()
-        : new THREE.Color(ACCENT_HEXES[i % ACCENT_HEXES.length]);
+    const tmpMatrix = new THREE.Matrix4();
+    const tmpPos = new THREE.Vector3();
+    const tmpQuat = new THREE.Quaternion();
+    const tmpEuler = new THREE.Euler();
+    const tmpScale = new THREE.Vector3();
+    const tmpColor = new THREE.Color();
 
-      const material = new THREE.SpriteMaterial({
+    SHAPE_KINDS.forEach((kind, kindIdx) => {
+      const tex = createShapeTexture(kind);
+      textures.push(tex);
+
+      const mat = new THREE.MeshBasicMaterial({
         map: tex,
-        color,
         transparent: true,
-        opacity: 0.85,
+        opacity: kind.endsWith("outline") ? 0.85 : 0.78,
         depthWrite: false,
       });
-      material.rotation = (i * 0.73) % (Math.PI * 2);
-      materials.push(material);
+      materials.push(mat);
 
-      const sprite = new THREE.Sprite(material);
-      sprite.renderOrder = 3;
-      rootGroup.add(sprite);
+      const instMesh = new THREE.InstancedMesh(planeGeo, mat, perKindCount);
+      instMesh.renderOrder = 3;
+      instMesh.frustumCulled = false;
+      rootGroup.add(instMesh);
+      shapeMeshes.push(instMesh);
 
-      const isOutline = kind.endsWith("outline");
-      shapeParticles.push({
-        sprite,
-        material,
-        useBrandColor,
-        // Even 360° distribution with slight organic jitter
-        angle: (i / shapeCount) * Math.PI * 2 + (i % 5) * 0.13,
-        progress: (i * 0.381966 + 0.17) % 1,
-        speed: 0.068 + (i % 5) * 0.015,
-        radiusMult: 0.88 + (i % 4) * 0.11,
-        baseScale: isMobileViewport
-          ? 0.22 + (i % 3) * 0.07
-          : 0.25 + (i % 4) * 0.075,
-        spinSpeed: (i % 2 === 0 ? 1 : -1) * (0.28 + (i % 4) * 0.14),
-        maxOpacity: isOutline ? 0.85 : 0.76,
-      });
-    }
+      for (let slot = 0; slot < perKindCount; slot++) {
+        const globalIdx = kindIdx + slot * SHAPE_KINDS.length;
+        const useBrandColor = globalIdx % 9 < 4;
+        if (useBrandColor) {
+          tmpColor.copy(palette.brandThree);
+        } else {
+          tmpColor.set(ACCENT_HEXES[globalIdx % ACCENT_HEXES.length]!);
+        }
+        instMesh.setColorAt(slot, tmpColor);
 
-    const activeEdges: Array<[number, number]> = [];
+        shapeInstances.push({
+          meshIndex: kindIdx,
+          instanceId: slot,
+          useBrandColor,
+          angle: (globalIdx / (perKindCount * SHAPE_KINDS.length)) * Math.PI * 2 + (globalIdx % 5) * 0.13,
+          progress: (globalIdx * 0.381966 + 0.17) % 1,
+          speed: 0.068 + (globalIdx % 5) * 0.015,
+          radiusMult: 0.88 + (globalIdx % 4) * 0.11,
+          baseScale: isMobileViewport
+            ? 0.22 + (globalIdx % 3) * 0.07
+            : 0.26 + (globalIdx % 4) * 0.075,
+          rotationZ: (globalIdx * 0.73) % (Math.PI * 2),
+          spinSpeed: (globalIdx % 2 === 0 ? 1 : -1) * (0.28 + (globalIdx % 4) * 0.14),
+        });
+      }
+      if (instMesh.instanceColor) {
+        instMesh.instanceColor.needsUpdate = true;
+      }
+    });
+
+    // Zero-GC pre-allocated buffers for neighbor links & active edge keys
+    const edgeA = new Int16Array(maxDogLinks);
+    const edgeB = new Int16Array(maxDogLinks);
+    let activeEdgeCount = 0;
     const degreeCount = new Uint8Array(nodeCount);
+    const activeEdgeKeySet = new Set<number>();
 
     const updateFrame = (elapsed: number, dt: number, scrollBoost: number) => {
       const speedFactor = 1 + scrollBoost * 2.1;
@@ -526,15 +536,16 @@ export function WwwHeroNetworkScene({ scrollProgressRef }: WwwHeroNetworkScenePr
 
         const p = dog.progress;
         const radialEase = Math.pow(p, 0.88);
+        const zoomCurve = Math.pow(p, 1.25);
         const rx = Math.cos(dog.angle) * spreadX * dog.radialBias * radialEase;
         const ry = Math.sin(dog.angle) * spreadY * dog.radialBias * radialEase;
         const wobbleX = Math.cos(elapsed * 0.55 + dog.wobblePhase) * 0.14 * p;
         const wobbleY = Math.sin(elapsed * 0.65 + dog.wobblePhase) * 0.14 * p;
-        const z = originZ + p * 9.4 + Math.sin(p * Math.PI) * dog.depthArc;
+        const z = originZ + Math.pow(p, 1.12) * 12.2 + Math.sin(p * Math.PI) * dog.depthArc;
 
         dog.sprite.position.set(originX + rx + wobbleX, originY + ry + wobbleY, z);
 
-        const scale = dog.baseScale * (0.34 + radialEase * 0.9);
+        const scale = dog.baseScale * (0.3 + zoomCurve * 1.95);
         dog.sprite.scale.set(scale, scale, 1);
 
         let alpha = 1;
@@ -543,13 +554,14 @@ export function WwwHeroNetworkScene({ scrollProgressRef }: WwwHeroNetworkScenePr
         dog.material.opacity = Math.max(0, Math.min(1, alpha));
       }
 
-      // 2. Build dynamic dog-to-dog proximity constellation (connect nearby dogs, max 2 links each)
-      activeEdges.length = 0;
+      // 2. Build dynamic dog-to-dog proximity constellation (Zero heap allocation)
+      activeEdgeCount = 0;
       degreeCount.fill(0);
-      const maxDistSq = isMobileViewport ? 24 : 30;
+      activeEdgeKeySet.clear();
+      const maxDistSq = isMobileViewport ? 34 : 44;
       const minDistSq = 1.6;
 
-      for (let i = 0; i < dogs.length && activeEdges.length < maxDogLinks; i++) {
+      for (let i = 0; i < dogs.length && activeEdgeCount < maxDogLinks; i++) {
         const a = dogs[i]!;
         if (a.progress < 0.14 || a.progress > 0.88 || degreeCount[i]! >= 2) continue;
 
@@ -575,8 +587,11 @@ export function WwwHeroNetworkScene({ scrollProgressRef }: WwwHeroNetworkScenePr
           }
         }
 
-        if (bestJ !== -1 && activeEdges.length < maxDogLinks) {
-          activeEdges.push([i, bestJ]);
+        if (bestJ !== -1 && activeEdgeCount < maxDogLinks) {
+          edgeA[activeEdgeCount] = i;
+          edgeB[activeEdgeCount] = bestJ;
+          activeEdgeKeySet.add(i * 100 + bestJ);
+          activeEdgeCount += 1;
           degreeCount[i]! += 1;
           degreeCount[bestJ]! += 1;
         }
@@ -584,19 +599,21 @@ export function WwwHeroNetworkScene({ scrollProgressRef }: WwwHeroNetworkScenePr
           secondJ !== -1 &&
           degreeCount[i]! < 2 &&
           degreeCount[secondJ]! < 2 &&
-          activeEdges.length < maxDogLinks
+          activeEdgeCount < maxDogLinks
         ) {
-          activeEdges.push([i, secondJ]);
+          edgeA[activeEdgeCount] = i;
+          edgeB[activeEdgeCount] = secondJ;
+          activeEdgeKeySet.add(i * 100 + secondJ);
+          activeEdgeCount += 1;
           degreeCount[i]! += 1;
           degreeCount[secondJ]! += 1;
         }
       }
 
       const linkAttr = linkGeo.getAttribute("position") as THREE.BufferAttribute;
-      for (let k = 0; k < activeEdges.length; k++) {
-        const [ia, ib] = activeEdges[k]!;
-        const pa = dogs[ia]!.sprite.position;
-        const pb = dogs[ib]!.sprite.position;
+      for (let k = 0; k < activeEdgeCount; k++) {
+        const pa = dogs[edgeA[k]!]!.sprite.position;
+        const pb = dogs[edgeB[k]!]!.sprite.position;
         const offset = k * 6;
         linkPositions[offset] = pa.x;
         linkPositions[offset + 1] = pa.y;
@@ -605,16 +622,10 @@ export function WwwHeroNetworkScene({ scrollProgressRef }: WwwHeroNetworkScenePr
         linkPositions[offset + 4] = pb.y;
         linkPositions[offset + 5] = pb.z;
       }
-      linkGeo.setDrawRange(0, activeEdges.length * 2);
+      linkGeo.setDrawRange(0, activeEdgeCount * 2);
       linkAttr.needsUpdate = true;
 
-      // 3. Update traveling light signals bound persistently to specific dog pairs (no teleporting/mid-air vanish)
-      const activeEdgeKeySet = new Set<number>();
-      for (let k = 0; k < activeEdges.length; k++) {
-        const [ia, ib] = activeEdges[k]!;
-        activeEdgeKeySet.add(ia * 100 + ib);
-      }
-
+      // 3. Update persistent dog-to-dog traveling signals (Strictly behind dog avatars)
       const signalAttr = signalGeo.getAttribute("position") as THREE.BufferAttribute;
       let drawnSignals = 0;
       let nextEdgeCursor = 0;
@@ -633,11 +644,11 @@ export function WwwHeroNetworkScene({ scrollProgressRef }: WwwHeroNetworkScenePr
           hasValidDogs && activeEdgeKeySet.has(sig.fromIdx * 100 + sig.toIdx);
 
         if (!pairConnected || sig.t >= 1) {
-          if (activeEdges.length > 0) {
-            const picked = activeEdges[(nextEdgeCursor + i) % activeEdges.length]!;
+          if (activeEdgeCount > 0) {
+            const pickedIdx = (nextEdgeCursor + i) % activeEdgeCount;
             nextEdgeCursor += 1;
-            sig.fromIdx = picked[0];
-            sig.toIdx = picked[1];
+            sig.fromIdx = edgeA[pickedIdx]!;
+            sig.toIdx = edgeB[pickedIdx]!;
             sig.t = dt > 0 ? 0.04 : (i / signalTracks.length) % 1;
           } else {
             sig.fromIdx = -1;
@@ -647,7 +658,6 @@ export function WwwHeroNetworkScene({ scrollProgressRef }: WwwHeroNetworkScenePr
         } else if (dt > 0) {
           sig.t += dt * sig.speed;
           if (sig.t >= 0.96) {
-            // Reached destination dog cleanly behind its avatar — pick next active link
             sig.fromIdx = -1;
             sig.toIdx = -1;
             continue;
@@ -665,16 +675,16 @@ export function WwwHeroNetworkScene({ scrollProgressRef }: WwwHeroNetworkScenePr
       signalGeo.setDrawRange(0, drawnSignals);
       signalAttr.needsUpdate = true;
 
-      // 4. Update 360° radiating & spinning geometric shapes (star/triangle/square solid+outline)
-      for (let i = 0; i < shapeParticles.length; i++) {
-        const sp = shapeParticles[i]!;
+      // 4. Update 6 batched InstancedMeshes for geometric shapes (6 draw calls total)
+      for (let i = 0; i < shapeInstances.length; i++) {
+        const sp = shapeInstances[i]!;
         if (dt > 0) {
           sp.progress += dt * sp.speed * speedFactor;
           if (sp.progress >= 1) {
             sp.progress -= 1;
             sp.angle += 0.23;
           }
-          sp.material.rotation += dt * sp.spinSpeed;
+          sp.rotationZ += dt * sp.spinSpeed;
         }
 
         const p = sp.progress;
@@ -683,15 +693,23 @@ export function WwwHeroNetworkScene({ scrollProgressRef }: WwwHeroNetworkScenePr
         const y = originY + Math.sin(sp.angle) * spreadY * 1.08 * sp.radiusMult * radialEase;
         const z = originZ + p * 10.2;
 
-        sp.sprite.position.set(x, y, z);
+        // Smooth scale-in at center and scale-out at outer edge (avoids per-instance alpha shader cost)
+        let edgeFactor = 1;
+        if (p < 0.12) edgeFactor = p / 0.12;
+        else if (p > 0.88) edgeFactor = (1 - p) / 0.12;
+        const sc = Math.max(0.001, sp.baseScale * (0.42 + radialEase * 0.98) * edgeFactor);
 
-        const sc = sp.baseScale * (0.4 + radialEase * 0.95);
-        sp.sprite.scale.set(sc, sc, 1);
+        tmpPos.set(x, y, z);
+        tmpEuler.set(0, 0, sp.rotationZ);
+        tmpQuat.setFromEuler(tmpEuler);
+        tmpScale.set(sc, sc, 1);
+        tmpMatrix.compose(tmpPos, tmpQuat, tmpScale);
 
-        let alpha = sp.maxOpacity;
-        if (p < 0.14) alpha *= p / 0.14;
-        else if (p > 0.86) alpha *= (1 - p) / 0.14;
-        sp.material.opacity = Math.max(0, Math.min(1, alpha));
+        shapeMeshes[sp.meshIndex]!.setMatrixAt(sp.instanceId, tmpMatrix);
+      }
+
+      for (let m = 0; m < shapeMeshes.length; m++) {
+        shapeMeshes[m]!.instanceMatrix.needsUpdate = true;
       }
     };
 
@@ -703,11 +721,16 @@ export function WwwHeroNetworkScene({ scrollProgressRef }: WwwHeroNetworkScenePr
       linkMat.opacity = palette.isDark ? 0.38 : 0.3;
       signalMat.color.copy(palette.brandThree);
 
-      shapeParticles.forEach((sp) => {
+      for (let i = 0; i < shapeInstances.length; i++) {
+        const sp = shapeInstances[i]!;
         if (sp.useBrandColor) {
-          sp.material.color.copy(palette.brandThree);
+          shapeMeshes[sp.meshIndex]!.setColorAt(sp.instanceId, palette.brandThree);
         }
-      });
+      }
+      for (let m = 0; m < shapeMeshes.length; m++) {
+        const col = shapeMeshes[m]!.instanceColor;
+        if (col) col.needsUpdate = true;
+      }
 
       const nextGlowTex = createCoreGlowTexture(palette.brandHex);
       coreGlowMat.map = nextGlowTex;
@@ -791,15 +814,24 @@ export function WwwHeroNetworkScene({ scrollProgressRef }: WwwHeroNetworkScenePr
       const targetScroll = scrollProgressRef.current || 0;
       smoothedScroll += (targetScroll - smoothedScroll) * 0.08;
 
-      camera.position.z = baseCameraZ - smoothedScroll * 2.4;
+      // 1.35s cinematic opening bloom + camera swoop on initial page load
+      const introRaw = Math.min(1, elapsed / 1.35);
+      const introEase = 1 - Math.pow(1 - introRaw, 3);
+      const introSurge = (1 - introEase) * 2.2;
+
+      camera.position.z = baseCameraZ + (1 - introEase) * 4.4 - smoothedScroll * 2.4;
       camera.position.y = -smoothedScroll * 0.55;
+
+      const bloomScale = 0.56 + introEase * 0.44;
+      rootGroup.scale.setScalar(bloomScale);
+      rootGroup.rotation.z = (1 - introEase) * -0.16;
 
       const targetRotY = pointerX * 0.16;
       const targetRotX = -pointerY * 0.11;
       rootGroup.rotation.y += (targetRotY - rootGroup.rotation.y) * 0.045;
       rootGroup.rotation.x += (targetRotX - rootGroup.rotation.x) * 0.045;
 
-      updateFrame(elapsed, dt, smoothedScroll);
+      updateFrame(elapsed, dt, smoothedScroll + introSurge * 0.45);
       renderer.render(scene, camera);
       rafId = requestAnimationFrame(tick);
     };
