@@ -1,19 +1,15 @@
 "use client";
 
-import Link from "next/link";
 import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import {
-  ArrowRight,
   BellRing,
   Camera,
   PawPrint,
-  Smartphone,
   Zap,
 } from "lucide-react";
-import { WaggleMark } from "@repo/ui";
 import styles from "../landing.module.css";
 import { StoreBadgeButtons } from "./StoreBadgeButtons";
 
@@ -37,8 +33,8 @@ const APP_SPECS = [
   },
   {
     icon: Zap,
-    title: "웹앱에서도 동일한 학습 이어하기",
-    desc: "설치 전에도 브라우저에서 바로 로그인해 모든 기능을 체험할 수 있어요.",
+    title: "빠른 학습 이어하기 & 자동 동기화",
+    desc: "어디서든 수강하던 강의와 기록을 끊김 없이 이어서 볼 수 있어요.",
   },
 ] as const;
 
@@ -108,40 +104,20 @@ export function WwwAppDownloadSection() {
 
           {/* Left 7 Columns: Unified Closing Conversion Copy + GodUI Store Badges + Web App CTA */}
           <div className="relative z-10 space-y-6 lg:col-span-7">
-            <div className="flex items-center gap-2.5">
-              <span className="flex size-9 items-center justify-center rounded-xl bg-brand-soft text-brand">
-                <WaggleMark className="size-5" />
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-3 py-1 text-xs font-bold text-brand">
-                <Smartphone className="size-3.5" strokeWidth={2.2} />
-                START WITH WAGGLE
-              </span>
-            </div>
-
             <h2 className="text-balance text-3xl font-extrabold leading-[1.2] tracking-tight text-ink sm:text-4xl">
               오늘 5분의 작은 습관,
               <br />
-              iOS · Android에서 더 편하게
+              <span className="text-brand">iOS · Android에서 더 편하게</span>
             </h2>
 
             <p className="max-w-lg text-pretty text-base leading-relaxed text-ink-muted">
               매일 5분 교육 리마인드부터 산책·데일리 기록, 훈련사 1:1 영상 Q&amp;A 답변 알림까지
-              네이티브 앱과 웹앱에서 지금 바로 시작해 보세요.
+              와글 앱에서 지금 바로 시작해 보세요.
             </p>
 
             {/* GodUI Store Badge Group */}
             <div className="pt-1">
               <StoreBadgeButtons size="md" theme="dark" qr />
-            </div>
-
-            <div className="pt-1">
-              <Link
-                href="/app"
-                className="inline-flex h-12 items-center gap-2 rounded-[var(--radius-btn-lg)] bg-brand px-6 text-base font-bold text-on-brand shadow-sm transition-transform duration-150 hover:brightness-95 active:scale-[0.96]"
-              >
-                <span>설치 없이 웹앱 바로 시작하기</span>
-                <ArrowRight className="size-4" strokeWidth={2.4} />
-              </Link>
             </div>
           </div>
 

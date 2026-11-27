@@ -110,17 +110,16 @@ export function WwwCorePillarsSection() {
         if (!pinWrap || !rail) return;
 
         const getScrollDistance = () => {
-          const viewportWidth = pinWrap.clientWidth;
-          return Math.max(0, rail.scrollWidth - viewportWidth + 64);
+          return Math.max(0, rail.scrollWidth - pinWrap.clientWidth);
         };
 
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: pinWrap,
             start: "top top",
-            end: () => `+=${Math.max(900, getScrollDistance() * 1.15)}`,
+            end: () => `+=${Math.max(560, getScrollDistance() * 1.35)}`,
             pin: true,
-            scrub: 0.75,
+            scrub: 0.65,
             anticipatePin: 1,
             invalidateOnRefresh: true,
           },
@@ -172,14 +171,11 @@ export function WwwCorePillarsSection() {
       >
         <div className="mx-auto w-full max-w-6xl px-8">
           <div className="flex items-end justify-between gap-8">
-            <div className="space-y-3">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-3 py-1 text-xs font-bold text-brand">
-                CORE FEATURES
-              </span>
+            <div>
               <h2 className="text-balance text-4xl font-extrabold leading-[1.18] tracking-tight text-ink">
                 교육부터 기록, 보상까지
                 <br />
-                하나로 연결된 3가지 핵심 축
+                하나로 연결된 <span className="text-brand">3가지 핵심 축</span>
               </h2>
             </div>
 
@@ -199,8 +195,11 @@ export function WwwCorePillarsSection() {
           </div>
         </div>
 
-        <div className="mt-10 w-full pl-[max(2rem,calc((100vw-72rem)/2+2rem))]">
-          <div ref={railRef} className="flex w-max items-stretch gap-6 pr-20">
+        <div className="mt-10 w-full overflow-hidden motion-reduce:overflow-x-auto">
+          <div
+            ref={railRef}
+            className="flex w-max items-stretch gap-6 pl-[max(2rem,calc((100vw-72rem)/2+2rem))] pr-[max(2rem,calc((100vw-72rem)/2+2rem))]"
+          >
             {PILLARS.map((pillar) => {
               const toneStyle = TONE_MAP[pillar.tone];
               const Icon = pillar.icon;
@@ -211,7 +210,7 @@ export function WwwCorePillarsSection() {
                   className={[
                     styles.auroraCard,
                     toneStyle.aurora,
-                    "flex w-[34rem] shrink-0 flex-col justify-between rounded-3xl border border-border-subtle bg-surface p-8 shadow-sm",
+                    "flex w-[31rem] shrink-0 flex-col justify-between rounded-3xl border border-border-subtle bg-surface p-8 shadow-sm",
                   ].join(" ")}
                 >
                   <div>
@@ -267,13 +266,10 @@ export function WwwCorePillarsSection() {
       {/* Mobile & Tablet (<1024px): Native Horizontal Swipe Snap Carousel */}
       <div className="py-20 sm:py-24 lg:hidden">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-3 py-1 text-xs font-bold text-brand">
-            CORE FEATURES
-          </span>
-          <h2 className="mt-3 text-balance text-3xl font-extrabold leading-[1.2] tracking-tight text-ink">
+          <h2 className="text-balance text-3xl font-extrabold leading-[1.2] tracking-tight text-ink">
             교육부터 기록, 보상까지
             <br />
-            하나로 연결된 3가지 핵심 축
+            하나로 연결된 <span className="text-brand">3가지 핵심 축</span>
           </h2>
         </div>
 

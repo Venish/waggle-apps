@@ -4,7 +4,7 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { ArrowDownRight, Check, HeartHandshake } from "lucide-react";
+import { ArrowDownRight, Check } from "lucide-react";
 import { WaggleMark } from "@repo/ui";
 import { useWwwScroll } from "./WwwScrollProvider";
 
@@ -115,15 +115,10 @@ export function WwwSelfCheckSection() {
         {/* Left 5 Columns: Sticky Narrative Column */}
         <div className="lg:col-span-5">
           <div className="space-y-5 lg:sticky lg:top-28">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-3 py-1 text-xs font-bold text-brand">
-              <HeartHandshake className="size-3.5" strokeWidth={2.2} />
-              보호자 공감 체크
-            </span>
-
             <h2 className="text-balance text-3xl font-extrabold leading-[1.2] tracking-tight text-ink sm:text-4xl">
               혹시 이런 고민,
               <br />
-              매일 하고 계신가요?
+              <span className="text-brand">매일 하고 계신가요?</span>
             </h2>
 
             <p className="text-pretty text-base leading-relaxed text-ink-muted">

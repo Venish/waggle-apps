@@ -5,7 +5,7 @@ import { useRef, type MouseEvent } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { ArrowRight, BookOpen, Crown, PlayCircle } from "lucide-react";
+import { ArrowRight, Crown, PlayCircle } from "lucide-react";
 import styles from "../landing.module.css";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -77,15 +77,11 @@ export function WwwCoursesSection({ courses }: { courses: WwwCourseItem[] }) {
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-          <div className="space-y-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-3 py-1 text-xs font-bold text-brand">
-              <BookOpen className="size-3.5" strokeWidth={2.2} />
-              CURATED CURRICULUM
-            </span>
+          <div>
             <h2 className="text-balance text-3xl font-extrabold leading-[1.2] tracking-tight text-ink sm:text-4xl">
               지금 바로 시작할 수 있는
               <br />
-              와글 대표 커리큘럼
+              <span className="text-brand">와글 대표 커리큘럼</span>
             </h2>
           </div>
 

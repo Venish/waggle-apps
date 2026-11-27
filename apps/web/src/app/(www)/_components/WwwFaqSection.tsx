@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, HelpCircle } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import styles from "../landing.module.css";
 
 const FAQ_ITEMS = [
@@ -38,10 +38,6 @@ export function WwwFaqSection() {
       <div className="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-12 lg:gap-12 lg:px-8">
         <div className="space-y-4 lg:col-span-4">
           <div className="space-y-4 lg:sticky lg:top-28">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-3 py-1 text-xs font-bold text-brand">
-              <HelpCircle className="size-3.5" strokeWidth={2.2} />
-              FAQ
-            </span>
             <h2 className="text-balance text-3xl font-extrabold leading-[1.2] tracking-tight text-ink sm:text-4xl">
               자주 묻는 질문
             </h2>
