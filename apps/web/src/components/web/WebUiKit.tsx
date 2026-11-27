@@ -40,7 +40,7 @@ export function DogAvatar({
           ? isSquircle
             ? "bg-surface-subtle"
             : "bg-surface-subtle ring-1 ring-ink/[0.08]"
-          : "bg-brand text-surface/95",
+          : "bg-brand text-white/95",
         DOG_AVATAR_SIZE[size],
         className,
       )}

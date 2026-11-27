@@ -125,7 +125,7 @@ export default async function ShopHomePage({
           >
             <Ticket className="size-5" strokeWidth={1.85} />
             {availableTicketCount > 0 && (
-              <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand px-1 text-2xs font-bold leading-none tabular-nums text-surface">
+              <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand px-1 text-2xs font-bold leading-none tabular-nums text-on-brand">
                 {availableTicketCount > 99 ? "99+" : availableTicketCount}
               </span>
             )}
@@ -146,7 +146,7 @@ export default async function ShopHomePage({
           >
             <ShoppingCart className="size-5" strokeWidth={1.85} />
             {cartItemCount > 0 && (
-              <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand px-1 text-2xs font-bold leading-none tabular-nums text-surface">
+              <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand px-1 text-2xs font-bold leading-none tabular-nums text-on-brand">
                 {cartItemCount > 99 ? "99+" : cartItemCount}
               </span>
             )}
@@ -200,7 +200,7 @@ export default async function ShopHomePage({
                     />
                   ) : (
                     <div className="flex size-full items-center justify-center bg-brand">
-                      <WaggleMark className="w-[40%] text-surface/95" />
+                      <WaggleMark className="w-[40%] text-on-brand/95" />
                     </div>
                   )}
 

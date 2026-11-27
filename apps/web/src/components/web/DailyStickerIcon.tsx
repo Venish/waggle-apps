@@ -13,7 +13,7 @@ export function DailyStickerIcon({
 }) {
   switch (kind) {
     case "POOP":
-      return <Toilet className={cn("shrink-0 text-amber-700", className)} strokeWidth={2} />;
+      return <Toilet className={cn("shrink-0 text-amber-700 dark:text-amber-400", className)} strokeWidth={2} />;
     case "MEAL":
       return <Utensils className={cn("shrink-0 text-orange-500", className)} strokeWidth={2} />;
     case "MEDICINE":

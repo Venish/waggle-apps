@@ -11,12 +11,12 @@ export type AppButtonVariant =
 export type AppButtonSize = "xs" | "sm" | "md" | "lg";
 
 const VARIANT_CLASSES: Record<AppButtonVariant, string> = {
-  primary: "bg-brand text-surface font-bold hover:opacity-95",
+  primary: "bg-brand text-on-brand font-bold hover:opacity-95",
   secondary: "bg-surface-subtle text-ink hover:bg-ink/[0.06]",
   outline: "border border-border-subtle bg-surface text-ink hover:bg-surface-subtle",
   ghost: "bg-transparent text-ink-muted hover:text-ink",
   danger: "bg-surface-subtle text-destructive hover:bg-destructive/10",
-  dangerSolid: "bg-destructive text-surface hover:opacity-95",
+  dangerSolid: "bg-destructive text-on-brand hover:opacity-95",
 };
 
 const SIZE_CLASSES: Record<AppButtonSize, string> = {

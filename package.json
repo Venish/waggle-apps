@@ -6,15 +6,18 @@
     "node": "24.x"
   },
   "scripts": {
-    "dev": "turbo dev",
-    "dev:web": "turbo dev --filter=@repo/web",
-    "build": "turbo build",
-    "lint": "turbo lint",
-    "typecheck": "turbo typecheck",
+    "dev": "pnpm --filter @repo/web run dev",
+    "dev:web": "pnpm --filter @repo/web run dev",
+    "build": "pnpm --filter @repo/web run build",
+    "start": "pnpm --filter @repo/web run start",
+    "lint": "pnpm -r run lint",
+    "typecheck": "pnpm -r run typecheck",
     "db:ping": "pnpm --filter @repo/db run ping",
     "db:push": "pnpm --filter @repo/db run db:push",
     "db:seed": "pnpm --filter @repo/db run seed",
-    "clean": "turbo clean"
+    "clean": "pnpm --filter @repo/web run clean",
+    "turbo:dev": "turbo dev",
+    "turbo:build": "turbo build"
   },
   "devDependencies": {
     "turbo": "^2.5.0",

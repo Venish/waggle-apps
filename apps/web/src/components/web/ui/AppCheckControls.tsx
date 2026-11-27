@@ -80,7 +80,7 @@ export function AppCheckIndicator({
         className={cn(
           "relative flex size-5 items-center justify-center rounded-lg border-2 transition-colors duration-150",
           checked
-            ? "border-brand bg-brand text-surface"
+            ? "border-brand bg-brand text-on-brand"
             : "border-ink/25 bg-surface text-transparent group-hover:border-ink/40",
           animateNow && "animate-check-pop",
         )}

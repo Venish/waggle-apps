@@ -546,7 +546,7 @@ export function EducationHomeClient({
                                 <span
                                   className={cn(
                                     "inline-flex items-center gap-1 font-semibold",
-                                    isUnstarted ? "text-ink-muted" : "text-emerald-700",
+                                    isUnstarted ? "text-ink-muted" : "text-brand-strong",
                                   )}
                                 >
                                   <span
@@ -622,7 +622,7 @@ export function EducationHomeClient({
                                   onClick={() => handleUnenrollCourse(course)}
                                   aria-label={`${course.courseTitle} 목록에서 빼기`}
                                   title="목록에서 빼기"
-                                  className="flex size-7 shrink-0 items-center justify-center rounded-full bg-rose-50 text-rose-600 transition-colors hover:bg-rose-100 active:scale-95 disabled:opacity-50"
+                                  className="flex size-7 shrink-0 items-center justify-center rounded-full bg-destructive/12 text-destructive transition-colors hover:bg-destructive/20 active:scale-95 disabled:opacity-50"
                                 >
                                   <Minus className="size-4" strokeWidth={2.4} />
                                 </button>
@@ -681,7 +681,7 @@ export function EducationHomeClient({
 
                                       <div className="flex shrink-0 items-center gap-1">
                                         {isCurrent && (
-                                          <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700">
+                                          <span className="inline-flex items-center gap-1 text-xs font-bold text-brand-strong">
                                             <span
                                               aria-hidden="true"
                                               className="size-1.5 rounded-full bg-brand"
@@ -946,7 +946,7 @@ export function EducationHomeClient({
                                 {course.lessonCount}강
                               </span>
                               {enr ? (
-                                <span className="inline-flex items-center gap-1 font-bold text-emerald-700">
+                                <span className="inline-flex items-center gap-1 font-bold text-brand-strong">
                                   <span
                                     aria-hidden="true"
                                     className="size-1.5 rounded-full bg-brand"
@@ -955,14 +955,14 @@ export function EducationHomeClient({
                                 </span>
                               ) : course.isPremium ? (
                                 canRedeemTicket ? (
-                                  <span className="inline-flex items-center gap-1 font-bold text-emerald-700">
+                                  <span className="inline-flex items-center gap-1 font-bold text-brand-strong">
                                     <Ticket className="size-3" strokeWidth={2.2} />
                                     티켓 보유 · 0P
                                   </span>
                                 ) : (
                                   <span className="inline-flex items-center gap-0.5 font-semibold text-ink-muted">
                                     {course.isUnlocked ? (
-                                      <Unlock className="size-3 text-emerald-700" strokeWidth={2.2} />
+                                      <Unlock className="size-3 text-brand-strong" strokeWidth={2.2} />
                                     ) : (
                                       <Lock className="size-3" strokeWidth={2.2} />
                                     )}
@@ -974,7 +974,7 @@ export function EducationHomeClient({
                                   </span>
                                 )
                               ) : (
-                                <span className="font-semibold text-emerald-700">무료</span>
+                                <span className="font-semibold text-brand-strong">무료</span>
                               )}
                             </div>
 
@@ -985,7 +985,7 @@ export function EducationHomeClient({
                               </p>
                             )}
                             {matchedLesson && (
-                              <p className="mt-1.5 truncate text-xs font-semibold text-emerald-700">
+                              <p className="mt-1.5 truncate text-xs font-semibold text-brand-strong">
                                 관련 강의 · {matchedLesson}
                               </p>
                             )}

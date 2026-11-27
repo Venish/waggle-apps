@@ -5,6 +5,7 @@ import { pretendardFont } from "@/00_lib/fonts";
 // [보류] 헤딩 NanumSquareRound 재적용 시 nanumSquareRoundFont 함께 import
 import { getCurrentUserSession } from "@/00_lib/session";
 import { buildWebMetadata, WEB_VIEWPORT } from "@/00_lib/webMetadata";
+import { WEB_THEME_BOOTSTRAP_SCRIPT } from "@/00_lib/webTheme";
 import { getWalletSummary } from "@/04_services/shared/pointLedgerService";
 import { BottomNavBar } from "@/components/web/BottomNavBar";
 import { GlobalOverlayProvider } from "@/components/web/GlobalOverlayProvider";
@@ -49,10 +50,13 @@ export default async function MobileRootLayout({ children }: { children: ReactNo
       className={pretendardFont.variable}
       suppressHydrationWarning
     >
-      <body className="min-h-dvh bg-canvas text-ink sm:h-dvh sm:overflow-hidden sm:bg-ink/[0.06]">
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: WEB_THEME_BOOTSTRAP_SCRIPT }} />
+      </head>
+      <body className="min-h-dvh bg-canvas text-ink sm:h-dvh sm:overflow-hidden sm:bg-ink/[0.06] dark:sm:bg-black">
         <div
           data-waggle-app="true"
-          className="waggle-app-shell relative mx-auto flex min-h-dvh w-full max-w-app flex-col overflow-x-clip bg-canvas sm:h-dvh sm:min-h-0 sm:overflow-x-hidden sm:overflow-y-auto sm:overscroll-y-contain sm:shadow-2xl sm:ring-1 sm:ring-ink/[0.08]"
+          className="waggle-app-shell relative mx-auto flex min-h-dvh w-full max-w-app flex-col overflow-x-clip bg-canvas sm:h-dvh sm:min-h-0 sm:overflow-x-hidden sm:overflow-y-auto sm:overscroll-y-contain sm:shadow-2xl sm:ring-1 sm:ring-ink/[0.08] dark:sm:ring-white/10"
         >
           <MobileViewTransitionShell>
             {/* Sticky Top Header (온보딩 화면에서는 심플 헤더로 자동 전환) */}

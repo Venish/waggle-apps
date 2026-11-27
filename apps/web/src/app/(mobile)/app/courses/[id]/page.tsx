@@ -324,7 +324,7 @@ export default async function CourseDetailPage({
                         </div>
                         <div className="flex shrink-0 items-center gap-1.5">
                           {isCurrent && (
-                            <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700">
+                            <span className="inline-flex items-center gap-1 text-xs font-bold text-brand-strong">
                               <span
                                 aria-hidden="true"
                                 className="size-1.5 rounded-full bg-brand"

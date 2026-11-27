@@ -228,7 +228,7 @@ export function NewInquiryFormClient({
         <div className="space-y-3">
           <div className="space-y-3 rounded-2xl bg-brand-soft/60 p-4">
             <div className="flex items-center justify-between gap-2">
-              <span className="inline-flex items-center gap-1.5 text-xs font-extrabold text-emerald-700">
+              <span className="inline-flex items-center gap-1.5 text-xs font-extrabold text-brand-strong">
                 <Ticket className="size-4 shrink-0" strokeWidth={2.2} />
                 보유 문의권 {availableTickets.length}장 사용 가능
               </span>

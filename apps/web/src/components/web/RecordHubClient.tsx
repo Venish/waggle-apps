@@ -109,31 +109,31 @@ const GRADE_CARD_THEMES: Record<number, GradeCardTheme> = {
   1: {
     gradient: "waggle-pass-1",
     barFill: "bg-gradient-to-r from-emerald-400 via-sky-400 to-amber-400",
-    accentText: "text-emerald-700",
+    accentText: "text-emerald-700 dark:text-emerald-300",
     dotActive: "bg-gradient-to-r from-emerald-400 via-sky-400 to-amber-400",
   },
   2: {
     gradient: "waggle-pass-2",
     barFill: "bg-gradient-to-r from-sky-400 via-emerald-400 to-rose-400",
-    accentText: "text-sky-700",
+    accentText: "text-sky-700 dark:text-sky-300",
     dotActive: "bg-gradient-to-r from-sky-400 via-emerald-400 to-rose-400",
   },
   3: {
     gradient: "waggle-pass-3",
     barFill: "bg-gradient-to-r from-amber-400 via-rose-400 to-emerald-400",
-    accentText: "text-amber-700",
+    accentText: "text-amber-700 dark:text-amber-300",
     dotActive: "bg-gradient-to-r from-amber-400 via-rose-400 to-emerald-400",
   },
   4: {
     gradient: "waggle-pass-4",
     barFill: "bg-gradient-to-r from-rose-400 via-amber-400 to-sky-400",
-    accentText: "text-rose-700",
+    accentText: "text-rose-700 dark:text-rose-300",
     dotActive: "bg-gradient-to-r from-rose-400 via-amber-400 to-sky-400",
   },
   5: {
     gradient: "waggle-pass-5",
     barFill: "bg-gradient-to-r from-amber-400 via-emerald-400 to-sky-400",
-    accentText: "text-amber-700",
+    accentText: "text-amber-700 dark:text-amber-300",
     dotActive: "bg-gradient-to-r from-amber-400 via-emerald-400 to-sky-400",
   },
 };
@@ -152,7 +152,7 @@ interface BadgeTheme {
 const DEFAULT_BADGE_THEME: BadgeTheme = {
   iconColor: "text-emerald-500",
   barFill: "bg-emerald-400",
-  auraBg: "bg-emerald-50",
+  auraBg: "bg-emerald-500/12",
 };
 
 const BADGE_THEMES: Record<string, BadgeTheme> = {
@@ -160,37 +160,37 @@ const BADGE_THEMES: Record<string, BadgeTheme> = {
     imageSrc: "/images/badges/first-lesson.webp",
     iconColor: "text-emerald-500",
     barFill: "bg-emerald-400",
-    auraBg: "bg-emerald-50",
+    auraBg: "bg-emerald-500/12",
   },
   WELCOME_WAGGLE: {
     imageSrc: "/images/badges/welcome-waggle.webp",
     iconColor: "text-amber-500",
     barFill: "bg-amber-400",
-    auraBg: "bg-amber-50",
+    auraBg: "bg-amber-500/12",
   },
   UNIT_MASTER: {
     imageSrc: "/images/badges/unit-master.webp",
     iconColor: "text-rose-500",
     barFill: "bg-rose-400",
-    auraBg: "bg-rose-50",
+    auraBg: "bg-rose-500/12",
   },
   COURSE_PUPPY_BASIC: {
     imageSrc: "/images/badges/course-puppy-basic.webp",
     iconColor: "text-sky-500",
     barFill: "bg-sky-400",
-    auraBg: "bg-sky-50",
+    auraBg: "bg-sky-500/12",
   },
   COURSE_WALK_MANNER: {
     imageSrc: "/images/badges/course-walk-manner.webp",
     iconColor: "text-teal-500",
     barFill: "bg-teal-400",
-    auraBg: "bg-teal-50",
+    auraBg: "bg-teal-500/12",
   },
   STREAK_5: {
     imageSrc: "/images/badges/streak-5.webp",
     iconColor: "text-orange-500",
     barFill: "bg-orange-400",
-    auraBg: "bg-orange-50",
+    auraBg: "bg-orange-500/12",
   },
 };
 
@@ -767,7 +767,7 @@ export function RecordHubClient({
                   <span
                     className={cn(
                       "text-sm font-normal",
-                      day.isToday ? "text-emerald-700" : "text-ink",
+                      day.isToday ? "text-brand-strong" : "text-ink",
                     )}
                   >
                     {day.label}
@@ -809,7 +809,7 @@ export function RecordHubClient({
                 onClick={() => setActiveTab("badges")}
                 className="inline-flex items-center gap-0.5 font-semibold text-ink/85 transition-opacity active:opacity-70"
               >
-                배지 <strong className="font-extrabold text-emerald-700">{earnedCount}/{allBadges.length}</strong>
+                배지 <strong className="font-extrabold text-brand-strong">{earnedCount}/{allBadges.length}</strong>
                 <ChevronRight className="size-3.5 text-ink/75" strokeWidth={2.2} />
               </button>
             </div>

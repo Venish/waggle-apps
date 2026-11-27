@@ -1,9 +1,10 @@
 ---
-version: "3.0.0"
-name: Waggle User Design System — Editorial Flat + Single Waggle Green
+version: "3.2.0"
+name: Waggle User Design System — Editorial Flat + Multi-Theme & Dark Mode (Default Favicon Orange)
 description: >
   와글(Waggle) 사용자 영역(`apps/web`: `(www)` 소개페이지 + `(mobile)` `/app/*` 모바일 웹앱) 전용 디자인 시스템.
   관리자 콘솔(`DESIGN_ADMIN.md`)과 토큰·CSS·루트 rem을 100% 물리 분리 운영한다.
+  기본 브랜드 컬러는 파비콘 주황(#EF8125)이며 `localStorage` 기반 2축 직교 구조(`data-web-theme`: `orange`·`green`·`sky`·`coral` × `data-web-mode`: `light`[기본]·`dark`)를 0ms FOUC로 지원한다.
   모든 치수는 선언된 rem 토큰 및 Tailwind v4 기본 rem 스케일(1rem = 16px 기준)만 사용한다.
 colors:
   ink: "oklch(0.18 0.006 250)"
@@ -12,10 +13,12 @@ colors:
   surface: "oklch(1 0 0)"
   surface-subtle: "oklch(0.978 0.001 250)"
   border-subtle: "oklch(0.946 0.002 250)"
-  brand: "oklch(0.705 0.185 150)"
-  brand-strong: "oklch(0.565 0.165 150)"
-  brand-soft: "oklch(0.962 0.035 150)"
-  success: "oklch(0.705 0.185 150)"
+  brand: "oklch(0.715 0.172 54)"
+  brand-strong: "oklch(0.715 0.172 54)"
+  brand-soft: "oklch(0.964 0.032 62)"
+  brand-stamp: "oklch(0.865 0.095 62)"
+  on-brand: "oklch(1 0 0)"
+  success: "oklch(0.68 0.175 150)"
   warning: "oklch(0.68 0.145 72)"
   destructive: "oklch(0.575 0.195 24)"
 typography:
@@ -102,10 +105,11 @@ components:
 | `--color-surface` | 모달·시트·카드 표면 (순백) | `oklch(1 0 0)` | - |
 | `--color-surface-subtle` | 무경계 초경량 쿨그레이 면 (트랙·비선택 카드·보조 버튼) | `oklch(0.978 0.001 250)` | text `ink` **17.6:1 (AAA)** |
 | `--color-border-subtle` | 1px 구분선·언더라인 기본선 | `oklch(0.946 0.002 250)` | hairline divider |
-| `--color-brand` | **단일 시그니처 Waggle Green** (Primary CTA · 활성 체크 · 진도바) | `oklch(0.705 0.185 150)` | **반드시 `ink` ~9.2:1 (AAA)** |
-| `--color-brand-strong` | 텍스트·배지용 딥 그린 (흰 배경 위 가독성 확보) | `oklch(0.565 0.165 150)` | on `surface` **AA+** |
-| `--color-brand-soft` | 선택 카드·활성 배지용 소프트 그린 틴트 | `oklch(0.962 0.035 150)` | text `brand-strong` |
-| `--color-success` | 성공 상태 | `oklch(0.705 0.185 150)` | accent |
+| `--color-brand` | **기본 시그니처 Waggle Orange (`#EF8125`)** (Primary CTA · 활성 체크 · 진도바) | `oklch(0.705 0.175 56)` | `data-web-theme` 4종(`orange`·`green`·`sky`·`coral`) 전환 |
+| `--color-brand-strong` | 텍스트·배지용 고대비 번트 오렌지 (흰 배경 위 가독성 확보) | `oklch(0.555 0.165 48)` | on `surface` **AA+** |
+| `--color-brand-soft` | 선택 카드·활성 배지용 소프트 틴트 | `oklch(0.964 0.032 62)` | text `brand-strong` |
+| `--color-brand-stamp` | 캘린더 발바닥 도장(`PawStampIcon`) 파스텔 채움 | `oklch(0.865 0.095 62)` | 테마별 자동 연동 |
+| `--color-success` | 성공 상태 | `oklch(0.68 0.175 150)` | accent |
 | `--color-warning` | 주의 상태 | `oklch(0.68 0.145 72)` | accent |
 | `--color-destructive` | 삭제·오류·차감 | `oklch(0.575 0.195 24)` | on-destructive `surface` **AA** |
 

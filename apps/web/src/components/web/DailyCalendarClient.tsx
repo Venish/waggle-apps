@@ -676,7 +676,7 @@ export function DailyCalendarClient({
                       className={cn(
                         "relative mx-auto flex size-11 items-center justify-center rounded-full text-base tabular-nums transition-colors active:scale-95",
                         isSelected
-                          ? "bg-brand font-extrabold text-surface"
+                          ? "bg-brand font-extrabold text-on-brand"
                           : isToday && !hasRecord
                             ? "font-bold text-brand-strong ring-1.5 ring-brand"
                             : hasRecord
@@ -689,11 +689,11 @@ export function DailyCalendarClient({
                       {hasRecord && (
                         <PawStampIcon
                           ringOpacity={isSelected ? 0 : 0.85}
-                          pawFill={isSelected ? "currentColor" : "#B4EFCA"}
+                          pawFill={isSelected ? "currentColor" : "var(--color-brand-stamp)"}
                           pawOpacity={isSelected ? 0.28 : 1}
                           className={cn(
                             "pointer-events-none absolute inset-0 z-0 size-full",
-                            isSelected ? "text-surface" : "text-brand",
+                            isSelected ? "text-on-brand" : "text-brand",
                           )}
                         />
                       )}
@@ -885,7 +885,7 @@ export function DailyCalendarClient({
                             loading="lazy"
                             className="size-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
                           />
-                          <span className="absolute bottom-1.5 right-1.5 rounded-md bg-ink/65 px-1.5 py-0.5 text-2xs font-bold tabular-nums text-surface backdrop-blur-xs">
+                          <span className="absolute bottom-1.5 right-1.5 rounded-md bg-black/65 px-1.5 py-0.5 text-2xs font-bold tabular-nums text-white backdrop-blur-xs">
                             {formatMonthDayDot(photo.entryDate)}
                           </span>
                         </button>
@@ -999,7 +999,7 @@ export function DailyCalendarClient({
                   : "일상 기록 작성"
                 : "예방접종 기록 추가"
             }
-            className="pointer-events-auto relative flex size-13 items-center justify-center rounded-full bg-brand text-surface shadow-lg transition-transform duration-150 hover:opacity-95 active:scale-[0.93]"
+            className="pointer-events-auto relative flex size-13 items-center justify-center rounded-full bg-brand text-on-brand shadow-lg transition-transform duration-150 hover:opacity-95 active:scale-[0.93]"
           >
             {activeTab === "daily" ? (
               <NotebookPen className="size-5.5" strokeWidth={2.2} />
@@ -1019,7 +1019,7 @@ export function DailyCalendarClient({
             role="dialog"
             aria-modal="true"
             aria-label="일상 사진 크게 보기"
-            className="fixed inset-0 z-[80] flex flex-col overscroll-contain bg-ink/95 text-surface select-none"
+            className="fixed inset-0 z-[80] flex flex-col overscroll-contain bg-black/95 text-white select-none"
           >
             {/* 상단 바 */}
             <div className="mx-auto flex w-full max-w-app items-center justify-between px-4 py-3.5">
@@ -1027,7 +1027,7 @@ export function DailyCalendarClient({
                 <span className="text-sm font-bold tabular-nums">
                   {formatDateKorean(activeLightboxItem.entryDate)}
                 </span>
-                <span className="rounded-full bg-surface/15 px-2 py-0.5 text-xs font-semibold tabular-nums">
+                <span className="rounded-full bg-white/15 px-2 py-0.5 text-xs font-semibold tabular-nums">
                   {lightboxState.index + 1} / {lightboxState.items.length}
                 </span>
               </div>
@@ -1035,7 +1035,7 @@ export function DailyCalendarClient({
                 type="button"
                 aria-label="사진 닫기"
                 onClick={() => setLightboxState(null)}
-                className="flex size-9 items-center justify-center rounded-full bg-surface/15 text-surface transition-colors hover:bg-surface/25 active:scale-95"
+                className="flex size-9 items-center justify-center rounded-full bg-white/15 text-white transition-colors hover:bg-white/25 active:scale-95"
               >
                 <X className="size-5" strokeWidth={2.2} />
               </button>
@@ -1061,7 +1061,7 @@ export function DailyCalendarClient({
                       prev ? { ...prev, index: prev.index - 1 } : null,
                     )
                   }
-                  className="absolute left-3 z-10 flex size-9 items-center justify-center rounded-full bg-ink/55 text-surface backdrop-blur-xs transition-opacity hover:bg-ink/75 active:scale-95"
+                  className="absolute left-3 z-10 flex size-9 items-center justify-center rounded-full bg-black/55 text-white backdrop-blur-xs transition-opacity hover:bg-black/75 active:scale-95"
                 >
                   <ChevronLeft className="size-5" strokeWidth={2.2} />
                 </button>
@@ -1088,7 +1088,7 @@ export function DailyCalendarClient({
                       prev ? { ...prev, index: prev.index + 1 } : null,
                     )
                   }
-                  className="absolute right-3 z-10 flex size-9 items-center justify-center rounded-full bg-ink/55 text-surface backdrop-blur-xs transition-opacity hover:bg-ink/75 active:scale-95"
+                  className="absolute right-3 z-10 flex size-9 items-center justify-center rounded-full bg-black/55 text-white backdrop-blur-xs transition-opacity hover:bg-black/75 active:scale-95"
                 >
                   <ChevronRight className="size-5" strokeWidth={2.2} />
                 </button>
@@ -1105,8 +1105,8 @@ export function DailyCalendarClient({
                       className={cn(
                         "h-1.5 rounded-full transition-all",
                         idx === lightboxState.index
-                          ? "w-4 bg-surface"
-                          : "w-1.5 bg-surface/35",
+                          ? "w-4 bg-white"
+                          : "w-1.5 bg-white/35",
                       )}
                     />
                   ))}
@@ -1115,7 +1115,7 @@ export function DailyCalendarClient({
 
               <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-1.5 text-xs text-surface/80">
+                  <div className="flex items-center gap-1.5 text-xs text-white/80">
                     {activeLightboxItem.entry.walked && <span>산책 완료</span>}
                     {activeLightboxItem.entry.walked &&
                       activeLightboxItem.entry.weightKg && <span>·</span>}
@@ -1126,7 +1126,7 @@ export function DailyCalendarClient({
                     )}
                   </div>
                   {activeLightboxItem.entry.memo && (
-                    <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-surface/90">
+                    <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-white/90">
                       {activeLightboxItem.entry.memo}
                     </p>
                   )}

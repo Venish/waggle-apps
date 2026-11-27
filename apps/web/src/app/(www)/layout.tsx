@@ -3,6 +3,7 @@ import "@/styles/web.css";
 import { pretendardFont } from "@/00_lib/fonts";
 // [보류] 헤딩 NanumSquareRound 재적용 시 nanumSquareRoundFont 함께 import
 import { buildWebMetadata, WEB_VIEWPORT } from "@/00_lib/webMetadata";
+import { WEB_THEME_BOOTSTRAP_SCRIPT } from "@/00_lib/webTheme";
 
 export const viewport = WEB_VIEWPORT;
 
@@ -21,6 +22,9 @@ export default function WwwRootLayout({ children }: { children: ReactNode }) {
       className={pretendardFont.variable}
       suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: WEB_THEME_BOOTSTRAP_SCRIPT }} />
+      </head>
       <body className="min-h-dvh bg-canvas text-ink">{children}</body>
     </html>
   );

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where([data-web-mode="dark"], [data-web-mode="dark"] *));
 
 /* ==========================================================================
    Waggle User Design System — Editorial Flat + Single Waggle Green (v3.0)
@@ -72,16 +73,127 @@
   --color-surface-subtle: oklch(0.978 0.001 250);
   --color-border-subtle: oklch(0.946 0.002 250);
 
-  /* Single Signature Waggle Green (밝고 산뜻한 생동감 있는 그린 1색) */
-  --color-brand: oklch(0.705 0.185 150);
-  --color-brand-strong: oklch(0.565 0.165 150);
-  --color-brand-soft: oklch(0.962 0.035 150);
+  /* Brand Theme Default — Favicon Waggle Orange (sRGB 95% Peak Vividness, OKLCH Hue 54) */
+  --color-brand: oklch(0.715 0.172 54);
+  --color-brand-strong: oklch(0.715 0.172 54);
+  --color-brand-soft: oklch(0.964 0.032 62);
+  --color-brand-stamp: oklch(0.865 0.095 62);
+  --color-on-brand: oklch(1 0 0);
 
   /* System Status */
-  --color-success: oklch(0.705 0.185 150);
-  --color-warning: oklch(0.68 0.145 72);
-  --color-star: oklch(0.80 0.175 84);
-  --color-destructive: oklch(0.575 0.195 24);
+  --color-success: oklch(0.72 0.19 148);
+  --color-warning: oklch(0.72 0.155 72);
+  --color-star: oklch(0.82 0.175 84);
+  --color-destructive: oklch(0.585 0.195 24);
+}
+
+/* 사용자 앱 다크 모드 베이스 (Cool-Neutral OKLCH Dark · 순수 #000 지양) */
+:root[data-web-mode="dark"] {
+  color-scheme: dark;
+  --color-ink: oklch(0.955 0.004 250);
+  --color-ink-muted: oklch(0.68 0.009 255);
+  --color-canvas: oklch(0.145 0.005 255);
+  --color-surface: oklch(0.185 0.006 255);
+  --color-surface-subtle: oklch(0.235 0.007 255);
+  --color-border-subtle: oklch(0.29 0.008 255);
+  /* 다크 모드 고명도 브랜드 위 딥 잉크 텍스트 (WCAG AAA 7:1~9.8:1) */
+  --color-on-brand: oklch(0.145 0.006 255);
+  --color-success: oklch(0.78 0.195 148);
+  --color-warning: oklch(0.80 0.155 76);
+  --color-star: oklch(0.84 0.175 85);
+  --color-destructive: oklch(0.69 0.19 24);
+}
+
+/* 사용자 앱 멀티 테마 프리셋 (localStorage -> html[data-web-theme], sRGB 95% 정점 · 무보라 OKLCH) */
+:root,
+:root[data-web-theme="orange"] {
+  --color-brand: oklch(0.715 0.172 54);
+  --color-brand-strong: var(--color-brand);
+  --color-brand-soft: oklch(0.964 0.032 62);
+  --color-brand-stamp: oklch(0.865 0.095 62);
+  --waggle-record-from: oklch(0.915 0.085 56 / 0.48);
+  --waggle-record-mid: oklch(0.958 0.045 58 / 0.24);
+  --waggle-flow-a: oklch(0.715 0.172 54);
+  --waggle-flow-b: oklch(0.79 0.16 78);
+  --waggle-flow-c: oklch(0.70 0.18 36);
+}
+
+:root[data-web-mode="dark"],
+:root[data-web-mode="dark"][data-web-theme="orange"] {
+  --color-brand: oklch(0.745 0.171 54);
+  --color-brand-soft: oklch(0.26 0.06 52);
+  --color-brand-stamp: oklch(0.36 0.09 54);
+  --waggle-record-from: oklch(0.34 0.095 54 / 0.46);
+  --waggle-record-mid: oklch(0.24 0.048 56 / 0.22);
+  --waggle-flow-a: oklch(0.745 0.171 54);
+  --waggle-flow-b: oklch(0.82 0.155 78);
+  --waggle-flow-c: oklch(0.73 0.175 36);
+}
+
+:root[data-web-theme="green"] {
+  --color-brand: oklch(0.745 0.195 148);
+  --color-brand-soft: oklch(0.962 0.038 148);
+  --color-brand-stamp: oklch(0.89 0.105 148);
+  --waggle-record-from: oklch(0.915 0.09 148 / 0.48);
+  --waggle-record-mid: oklch(0.955 0.048 148 / 0.24);
+  --waggle-flow-a: oklch(0.745 0.195 148);
+  --waggle-flow-b: oklch(0.78 0.16 176);
+  --waggle-flow-c: oklch(0.80 0.175 118);
+}
+
+:root[data-web-mode="dark"][data-web-theme="green"] {
+  --color-brand: oklch(0.80 0.209 148);
+  --color-brand-soft: oklch(0.26 0.06 148);
+  --color-brand-stamp: oklch(0.36 0.095 148);
+  --waggle-record-from: oklch(0.34 0.095 148 / 0.46);
+  --waggle-record-mid: oklch(0.24 0.048 148 / 0.22);
+  --waggle-flow-a: oklch(0.80 0.209 148);
+  --waggle-flow-b: oklch(0.82 0.155 178);
+  --waggle-flow-c: oklch(0.84 0.17 120);
+}
+
+:root[data-web-theme="sky"] {
+  --color-brand: oklch(0.715 0.146 236);
+  --color-brand-soft: oklch(0.962 0.03 232);
+  --color-brand-stamp: oklch(0.875 0.088 232);
+  --waggle-record-from: oklch(0.915 0.08 236 / 0.48);
+  --waggle-record-mid: oklch(0.958 0.042 236 / 0.24);
+  --waggle-flow-a: oklch(0.715 0.146 236);
+  --waggle-flow-b: oklch(0.77 0.135 204);
+  --waggle-flow-c: oklch(0.72 0.145 252);
+}
+
+:root[data-web-mode="dark"][data-web-theme="sky"] {
+  --color-brand: oklch(0.745 0.148 236);
+  --color-brand-soft: oklch(0.255 0.055 238);
+  --color-brand-stamp: oklch(0.36 0.088 236);
+  --waggle-record-from: oklch(0.33 0.088 236 / 0.46);
+  --waggle-record-mid: oklch(0.235 0.045 236 / 0.22);
+  --waggle-flow-a: oklch(0.745 0.148 236);
+  --waggle-flow-b: oklch(0.80 0.13 204);
+  --waggle-flow-c: oklch(0.76 0.14 252);
+}
+
+:root[data-web-theme="coral"] {
+  --color-brand: oklch(0.685 0.195 22);
+  --color-brand-soft: oklch(0.964 0.03 24);
+  --color-brand-stamp: oklch(0.87 0.095 22);
+  --waggle-record-from: oklch(0.918 0.085 22 / 0.46);
+  --waggle-record-mid: oklch(0.96 0.042 24 / 0.24);
+  --waggle-flow-a: oklch(0.685 0.195 22);
+  --waggle-flow-b: oklch(0.75 0.17 48);
+  --waggle-flow-c: oklch(0.70 0.18 12);
+}
+
+:root[data-web-mode="dark"][data-web-theme="coral"] {
+  --color-brand: oklch(0.72 0.175 22);
+  --color-brand-soft: oklch(0.26 0.06 20);
+  --color-brand-stamp: oklch(0.36 0.09 22);
+  --waggle-record-from: oklch(0.34 0.09 22 / 0.46);
+  --waggle-record-mid: oklch(0.24 0.048 22 / 0.22);
+  --waggle-flow-a: oklch(0.72 0.175 22);
+  --waggle-flow-b: oklch(0.79 0.16 48);
+  --waggle-flow-c: oklch(0.74 0.165 12);
 }
 
 html {
@@ -303,6 +415,16 @@ input[type="radio"] {
     0 0 0 1px oklch(0.18 0.006 250 / 0.07),
     0 12px 28px -6px oklch(0.18 0.006 250 / 0.13),
     0 2px 8px -2px oklch(0.18 0.006 250 / 0.06);
+}
+
+:root[data-web-mode="dark"] .waggle-liquid-glass {
+  background: color-mix(in oklab, var(--color-surface) 76%, transparent);
+  box-shadow:
+    inset 0 1px 0 0 oklch(1 0 0 / 0.14),
+    inset 0 -1px 0 0 oklch(0 0 0 / 0.35),
+    0 0 0 1px oklch(1 0 0 / 0.09),
+    0 14px 32px -6px oklch(0 0 0 / 0.55),
+    0 4px 10px -2px oklch(0 0 0 / 0.4);
 }
 
 /* ==========================================================================
@@ -685,17 +807,74 @@ input[type="radio"] {
     radial-gradient(circle at 86% 86%, oklch(0.95 0.035 88 / 0.5), transparent 52%);
 }
 
-/* 기록(/app/record) 하단 은은한 프라이머리 그린 그라데이션 배경 */
+:root[data-web-mode="dark"] .waggle-pass-1 {
+  background-color: oklch(0.21 0.01 150);
+  background-image:
+    radial-gradient(circle at 12% 14%, oklch(0.36 0.095 152 / 0.55), transparent 56%),
+    radial-gradient(circle at 88% 18%, oklch(0.34 0.08 212 / 0.48), transparent 54%),
+    radial-gradient(circle at 84% 92%, oklch(0.36 0.085 88 / 0.45), transparent 55%),
+    radial-gradient(circle at 14% 92%, oklch(0.34 0.08 28 / 0.42), transparent 52%);
+}
+
+:root[data-web-mode="dark"] .waggle-pass-2 {
+  background-color: oklch(0.21 0.01 220);
+  background-image:
+    radial-gradient(circle at 16% 18%, oklch(0.36 0.09 212 / 0.55), transparent 56%),
+    radial-gradient(circle at 88% 20%, oklch(0.34 0.085 152 / 0.48), transparent 54%),
+    radial-gradient(circle at 82% 90%, oklch(0.34 0.08 28 / 0.45), transparent 55%),
+    radial-gradient(circle at 18% 92%, oklch(0.36 0.085 88 / 0.42), transparent 52%);
+}
+
+:root[data-web-mode="dark"] .waggle-pass-3 {
+  background-color: oklch(0.215 0.012 85);
+  background-image:
+    radial-gradient(circle at 14% 16%, oklch(0.38 0.095 88 / 0.55), transparent 56%),
+    radial-gradient(circle at 88% 18%, oklch(0.35 0.085 28 / 0.48), transparent 54%),
+    radial-gradient(circle at 84% 90%, oklch(0.34 0.085 152 / 0.45), transparent 55%),
+    radial-gradient(circle at 16% 90%, oklch(0.34 0.075 212 / 0.42), transparent 52%);
+}
+
+:root[data-web-mode="dark"] .waggle-pass-4 {
+  background-color: oklch(0.215 0.012 28);
+  background-image:
+    radial-gradient(circle at 14% 16%, oklch(0.36 0.095 24 / 0.55), transparent 56%),
+    radial-gradient(circle at 88% 18%, oklch(0.37 0.09 85 / 0.48), transparent 54%),
+    radial-gradient(circle at 84% 90%, oklch(0.34 0.085 212 / 0.45), transparent 55%),
+    radial-gradient(circle at 16% 92%, oklch(0.34 0.085 152 / 0.42), transparent 52%);
+}
+
+:root[data-web-mode="dark"] .waggle-pass-5 {
+  background-color: oklch(0.22 0.012 80);
+  background-image:
+    radial-gradient(circle at 15% 15%, oklch(0.39 0.1 84 / 0.58), transparent 56%),
+    radial-gradient(circle at 88% 18%, oklch(0.35 0.09 152 / 0.48), transparent 54%),
+    radial-gradient(circle at 82% 90%, oklch(0.34 0.085 212 / 0.45), transparent 55%),
+    radial-gradient(circle at 16% 90%, oklch(0.35 0.085 24 / 0.45), transparent 54%);
+}
+
+:root[data-web-mode="dark"] .waggle-pass-locked {
+  background-color: oklch(0.21 0.006 255);
+  background-image:
+    radial-gradient(circle at 14% 16%, oklch(0.28 0.025 220 / 0.45), transparent 52%),
+    radial-gradient(circle at 86% 86%, oklch(0.28 0.025 85 / 0.35), transparent 52%);
+}
+
+:root[data-web-mode="dark"] .waggle-ticket-wrap {
+  filter: drop-shadow(0 3px 10px oklch(0 0 0 / 0.42))
+    drop-shadow(0 0 1px oklch(1 0 0 / 0.12));
+}
+
+/* 하단 은은한 브랜드 컬러 그라데이션 배경 (테마 자동 연동) */
 .waggle-record-bg {
   background-image: linear-gradient(
     to top,
-    oklch(0.915 0.085 150 / 0.48) 0%,
-    oklch(0.955 0.048 150 / 0.24) 42%,
+    var(--waggle-record-from) 0%,
+    var(--waggle-record-mid) 42%,
     transparent 100%
   );
 }
 
-/* 레슨 진행률 바 — 부드럽게 흐르는 그라데이션 모션 (무보라 · 심리스 루프) */
+/* 레슨 진행률 바 — 부드럽게 흐르는 그라데이션 모션 (테마 자동 연동 · 무보라) */
 @keyframes waggle-gradient-flow {
   0% {
     background-position: 200% 50%;
@@ -708,10 +887,10 @@ input[type="radio"] {
 .waggle-progress-flow {
   background-image: linear-gradient(
     90deg,
-    oklch(0.68 0.185 152) 0%,
-    oklch(0.75 0.15 182) 33%,
-    oklch(0.77 0.16 115) 66%,
-    oklch(0.68 0.185 152) 100%
+    var(--waggle-flow-a) 0%,
+    var(--waggle-flow-b) 33%,
+    var(--waggle-flow-c) 66%,
+    var(--waggle-flow-a) 100%
   );
   background-size: 200% 100%;
   animation: waggle-gradient-flow 3.2s linear infinite;

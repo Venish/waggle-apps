@@ -342,7 +342,7 @@ export function AppDatePicker({
                     className={cn(
                       "h-10 rounded-xl text-sm tabular-nums transition-colors",
                       active
-                        ? "bg-brand font-bold text-surface"
+                        ? "bg-brand font-bold text-on-brand"
                         : "bg-surface-subtle font-medium text-ink hover:bg-brand-soft hover:text-brand-strong",
                     )}
                   >
@@ -369,7 +369,7 @@ export function AppDatePicker({
                     className={cn(
                       "h-11 rounded-xl text-sm tabular-nums transition-colors",
                       active
-                        ? "bg-brand font-bold text-surface"
+                        ? "bg-brand font-bold text-on-brand"
                         : "bg-surface-subtle font-medium text-ink hover:bg-brand-soft hover:text-brand-strong",
                     )}
                   >
@@ -418,7 +418,7 @@ export function AppDatePicker({
                       className={cn(
                         "relative mx-auto flex size-9 items-center justify-center rounded-xl text-sm tabular-nums transition-all active:scale-95",
                         isSelected
-                          ? "bg-brand font-bold text-surface"
+                          ? "bg-brand font-bold text-on-brand"
                           : !cell.inMonth
                             ? "text-ink-muted/35 hover:bg-surface-subtle"
                             : isToday
@@ -461,7 +461,7 @@ export function AppDatePicker({
             <button
               type="button"
               onClick={handleConfirm}
-              className="h-9 rounded-xl bg-brand px-4 text-sm font-bold text-surface transition-opacity hover:opacity-95 active:scale-[0.98]"
+              className="h-9 rounded-xl bg-brand px-4 text-sm font-bold text-on-brand transition-opacity hover:opacity-95 active:scale-[0.98]"
             >
               확인
             </button>

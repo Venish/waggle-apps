@@ -134,7 +134,7 @@ export default async function LessonOverviewPage({
                   className={cn(
                     "flex size-5 shrink-0 items-center justify-center rounded-lg border-2 transition-colors",
                     st.done
-                      ? "border-brand bg-brand text-surface"
+                      ? "border-brand bg-brand text-on-brand"
                       : "border-ink/20 bg-surface text-ink/20",
                   )}
                 >

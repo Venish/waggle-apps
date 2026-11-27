@@ -321,7 +321,7 @@ export function DailyEditorClient({
                 type="button"
                 aria-label={`사진 ${idx + 1} 제거`}
                 onClick={() => setPhotoUrls((prev) => prev.filter((u) => u !== url))}
-                className="absolute right-1.5 top-1.5 flex size-6 items-center justify-center rounded-full bg-ink/75 text-surface transition-transform active:scale-90"
+                className="absolute right-1.5 top-1.5 flex size-6 items-center justify-center rounded-full bg-black/75 text-white transition-transform active:scale-90"
               >
                 <X className="size-3.5" strokeWidth={2.4} />
               </button>

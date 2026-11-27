@@ -299,7 +299,7 @@ export function ProductReviewSheetForm({
                 type="button"
                 aria-label="사진 삭제"
                 onClick={() => setImageUrls((prev) => prev.filter((_, i) => i !== idx))}
-                className="absolute right-1 top-1 flex size-5 items-center justify-center rounded-full bg-ink/75 text-surface"
+                className="absolute right-1 top-1 flex size-5 items-center justify-center rounded-full bg-black/75 text-white"
               >
                 <X className="size-3" strokeWidth={2.2} />
               </button>

@@ -6,7 +6,7 @@ export type AppBadgeSize = "sm" | "md";
 
 const TONE_CLASSES: Record<AppBadgeTone, string> = {
   brand: "bg-brand-soft text-brand-strong",
-  brandSolid: "bg-brand text-surface",
+  brandSolid: "bg-brand text-on-brand",
   neutral: "bg-surface-subtle text-ink-muted",
   ink: "bg-surface-subtle text-ink",
   danger: "bg-destructive/10 text-destructive",

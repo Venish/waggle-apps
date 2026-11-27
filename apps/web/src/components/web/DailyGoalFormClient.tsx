@@ -172,7 +172,7 @@ export function DailyGoalFormClient({
                       className={cn(
                         "flex size-10 items-center justify-center rounded-full text-sm transition-[background-color,color,transform] duration-150 active:scale-[0.94]",
                         active
-                          ? "bg-brand font-bold text-surface"
+                          ? "bg-brand font-bold text-on-brand"
                           : day === 0
                             ? "bg-surface-subtle font-medium text-destructive/80 hover:bg-ink/[0.05]"
                             : "bg-surface-subtle font-medium text-ink-muted hover:bg-ink/[0.05] hover:text-ink",

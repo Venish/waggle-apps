@@ -13,6 +13,7 @@ import { PointIcon } from "@repo/ui";
 import { requireUserSession } from "@/00_lib/session";
 import { getWalletSummary } from "@/04_services/shared/pointLedgerService";
 import { DogAvatar } from "@/components/web/WebUiKit";
+import { WebThemePickerClient } from "@/components/web/WebThemePickerClient";
 import { AppLink } from "@/components/web/ui";
 
 export const dynamic = "force-dynamic";
@@ -90,6 +91,9 @@ export default async function MyPageHub() {
       <div className="-mx-4 h-2 bg-surface-subtle" />
 
       <ul className="divide-y divide-border-subtle">
+        <li>
+          <WebThemePickerClient />
+        </li>
         {menuLinks.map((m) => (
           <li key={m.href}>
             <AppLink

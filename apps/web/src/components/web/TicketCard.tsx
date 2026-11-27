@@ -62,8 +62,8 @@ export function TicketCard({ ticket }: { ticket: UserTicketView }) {
                   !isAvailable
                     ? "text-ink-muted"
                     : isCourse
-                      ? "text-emerald-700"
-                      : "text-sky-600",
+                      ? "text-brand-strong"
+                      : "text-sky-600 dark:text-sky-400",
                 )}
               >
                 {isCourse ? (
@@ -128,7 +128,7 @@ export function TicketCard({ ticket }: { ticket: UserTicketView }) {
                 "-rotate-6 rounded-xl border-2 p-1",
                 isCourse
                   ? "border-brand/75 bg-brand-soft/65"
-                  : "border-sky-500/70 bg-sky-50/85",
+                  : "border-sky-500/70 bg-sky-500/12",
               )}
             >
               <div
@@ -140,7 +140,7 @@ export function TicketCard({ ticket }: { ticket: UserTicketView }) {
                 <span
                   className={cn(
                     "block text-xs font-extrabold leading-none tracking-tight",
-                    isCourse ? "text-brand-strong" : "text-sky-700",
+                    isCourse ? "text-brand-strong" : "text-sky-600 dark:text-sky-400",
                   )}
                 >
                   사용가능
@@ -148,7 +148,7 @@ export function TicketCard({ ticket }: { ticket: UserTicketView }) {
                 <span
                   className={cn(
                     "mt-1 block text-2xs font-bold leading-none tracking-wider",
-                    isCourse ? "text-emerald-700/80" : "text-sky-600/80",
+                    isCourse ? "text-brand-strong/80" : "text-sky-600/80 dark:text-sky-400/80",
                   )}
                 >
                   PASS
@@ -172,7 +172,7 @@ export function TicketCard({ ticket }: { ticket: UserTicketView }) {
             /* 만료 — 사용만료 도장 */
             <div
               aria-label="사용만료 도장"
-              className="-rotate-12 rounded-xl border-2 border-rose-500/70 bg-rose-50/90 p-1"
+              className="-rotate-12 rounded-xl border-2 border-rose-500/70 bg-rose-500/12 p-1"
             >
               <div className="rounded-lg border border-dashed border-rose-400/75 px-2 py-1.5 text-center">
                 <span className="block text-xs font-extrabold leading-none tracking-tight text-rose-600">

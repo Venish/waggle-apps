@@ -69,7 +69,7 @@ export function ProductImageSwiper({ images, productName }: ProductImageSwiperPr
           aria-label={`${productName} 기본 브랜드 이미지`}
           className="flex aspect-square w-full flex-col items-center justify-center bg-brand"
         >
-          <WaggleMark className="w-[34%] max-w-36 text-surface/95" />
+          <WaggleMark className="w-[34%] max-w-36 text-on-brand/95" />
         </div>
       </div>
     );
@@ -144,7 +144,7 @@ export function ProductImageSwiper({ images, productName }: ProductImageSwiperPr
             type="button"
             aria-label="이전 이미지"
             onClick={() => scrollToSlide(activeIndex - 1)}
-            className="absolute left-3 top-1/2 hidden -translate-y-1/2 items-center justify-center rounded-full bg-ink/55 p-1.5 text-surface backdrop-blur-xs transition-opacity sm:flex sm:opacity-0 sm:group-hover:opacity-100"
+            className="absolute left-3 top-1/2 hidden -translate-y-1/2 items-center justify-center rounded-full bg-black/55 p-1.5 text-white backdrop-blur-xs transition-opacity sm:flex sm:opacity-0 sm:group-hover:opacity-100"
           >
             <ChevronLeft className="size-4" strokeWidth={2.2} />
           </button>
@@ -154,14 +154,14 @@ export function ProductImageSwiper({ images, productName }: ProductImageSwiperPr
             type="button"
             aria-label="다음 이미지"
             onClick={() => scrollToSlide(activeIndex + 1)}
-            className="absolute right-3 top-1/2 hidden -translate-y-1/2 items-center justify-center rounded-full bg-ink/55 p-1.5 text-surface backdrop-blur-xs transition-opacity sm:flex sm:opacity-0 sm:group-hover:opacity-100"
+            className="absolute right-3 top-1/2 hidden -translate-y-1/2 items-center justify-center rounded-full bg-black/55 p-1.5 text-white backdrop-blur-xs transition-opacity sm:flex sm:opacity-0 sm:group-hover:opacity-100"
           >
             <ChevronRight className="size-4" strokeWidth={2.2} />
           </button>
         )}
 
         {/* 우측 하단 1 / N 카운터 배지 */}
-        <div className="pointer-events-none absolute bottom-3 right-3 rounded-full bg-ink/65 px-2.5 py-1 text-2xs font-semibold tabular-nums text-surface backdrop-blur-xs">
+        <div className="pointer-events-none absolute bottom-3 right-3 rounded-full bg-black/65 px-2.5 py-1 text-2xs font-semibold tabular-nums text-white backdrop-blur-xs">
           {activeIndex + 1} / {images.length}
         </div>
       </div>
@@ -214,7 +214,7 @@ export function LightboxOverlay({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-ink/92 p-4 backdrop-blur-xs"
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/92 p-4 backdrop-blur-xs"
       role="dialog"
       aria-modal="true"
       aria-label="이미지 확대 보기"
@@ -222,7 +222,7 @@ export function LightboxOverlay({
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      <div className="absolute inset-x-0 top-0 flex items-center justify-between px-4 py-3 pt-safe-top text-surface">
+      <div className="absolute inset-x-0 top-0 flex items-center justify-between px-4 py-3 pt-safe-top text-white">
         <span className="text-xs font-semibold tabular-nums">
           {index + 1} / {images.length}
         </span>
@@ -230,7 +230,7 @@ export function LightboxOverlay({
           type="button"
           onClick={onClose}
           aria-label="닫기"
-          className="flex size-9 items-center justify-center rounded-full bg-surface/15 text-surface hover:bg-surface/25"
+          className="flex size-9 items-center justify-center rounded-full bg-white/15 text-white hover:bg-white/25"
         >
           <X className="size-5" strokeWidth={2} />
         </button>
@@ -254,7 +254,7 @@ export function LightboxOverlay({
             type="button"
             disabled={index === 0}
             onClick={() => onChangeIndex(Math.max(0, index - 1))}
-            className="flex size-9 items-center justify-center rounded-full bg-surface/15 text-surface disabled:opacity-30"
+            className="flex size-9 items-center justify-center rounded-full bg-white/15 text-white disabled:opacity-30"
             aria-label="이전 사진"
           >
             <ChevronLeft className="size-5" />
@@ -263,7 +263,7 @@ export function LightboxOverlay({
             type="button"
             disabled={index === images.length - 1}
             onClick={() => onChangeIndex(Math.min(images.length - 1, index + 1))}
-            className="flex size-9 items-center justify-center rounded-full bg-surface/15 text-surface disabled:opacity-30"
+            className="flex size-9 items-center justify-center rounded-full bg-white/15 text-white disabled:opacity-30"
             aria-label="다음 사진"
           >
             <ChevronRight className="size-5" />

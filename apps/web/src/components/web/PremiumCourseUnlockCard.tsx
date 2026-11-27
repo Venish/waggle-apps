@@ -200,7 +200,7 @@ function PremiumUnlockSheetContent({
       {availableTicket && (
         <div className="space-y-2">
           <div className="flex items-center justify-between text-xs">
-            <span className="inline-flex items-center gap-1 font-extrabold text-emerald-700">
+            <span className="inline-flex items-center gap-1 font-extrabold text-brand-strong">
               <Ticket className="size-3.5" strokeWidth={2.2} />
               보유 중인 티켓 (1장)
             </span>
@@ -234,7 +234,7 @@ function PremiumUnlockSheetContent({
                   {method === "TICKET" && <Check className="size-3" strokeWidth={2.8} />}
                 </span>
                 <div className="min-w-0">
-                  <p className="text-2xs font-bold text-emerald-700">프리미엄 강좌 티켓</p>
+                  <p className="text-2xs font-bold text-brand-strong">프리미엄 강좌 티켓</p>
                   <p className="mt-0.5 truncate text-xs font-extrabold text-ink">
                     {availableTicket.title}
                   </p>
@@ -253,7 +253,7 @@ function PremiumUnlockSheetContent({
                   <span className="block text-xs font-extrabold leading-none tabular-nums text-brand-strong">
                     0P
                   </span>
-                  <span className="mt-0.5 block text-2xs font-bold leading-none text-emerald-700">
+                  <span className="mt-0.5 block text-2xs font-bold leading-none text-brand-strong">
                     티켓적용
                   </span>
                 </div>

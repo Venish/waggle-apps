@@ -187,7 +187,7 @@ export function ShopOrdersListClient({
                             />
                           ) : (
                             <div className="flex size-full items-center justify-center bg-brand">
-                              <WaggleMark className="w-[46%] text-surface/95" />
+                              <WaggleMark className="w-[46%] text-on-brand/95" />
                             </div>
                           )}
                         </AppLink>

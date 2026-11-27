@@ -184,7 +184,7 @@ export function DogProfileFormClient({
         >
           <DogAvatar src={profileImage} name={name.trim() || "반려견"} size="xl" />
           {isUploading ? (
-            <span className="absolute inset-0 flex items-center justify-center waggle-squircle bg-ink/45 text-surface">
+            <span className="absolute inset-0 flex items-center justify-center waggle-squircle bg-black/45 text-white">
               <Loader2 className="size-6 animate-spin" strokeWidth={2} />
             </span>
           ) : (
