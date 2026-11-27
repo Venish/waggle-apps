@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Check, Moon, Palette } from "lucide-react";
 import { cn } from "@repo/ui";
+import { AppSwitch } from "@/components/web/ui";
 import {
   applyWebMode,
   applyWebTheme,
@@ -33,8 +34,8 @@ export function WebThemePickerClient() {
   const currentTheme = WEB_THEMES.find((t) => t.id === theme) ?? WEB_THEMES[0]!;
   const isDark = mounted && mode === "dark";
 
-  const handleToggleDark = () => {
-    const nextMode: WebMode = isDark ? "light" : "dark";
+  const handleToggleDark = (checked: boolean) => {
+    const nextMode: WebMode = checked ? "dark" : "light";
     setMode(nextMode);
     applyWebMode(nextMode);
   };
@@ -46,38 +47,16 @@ export function WebThemePickerClient() {
 
   return (
     <div className="divide-y divide-border-subtle">
-      {/* 1행: 다크 모드 ON/OFF 토글 스위치 */}
-      <button
-        type="button"
-        role="switch"
-        aria-checked={isDark}
-        onClick={handleToggleDark}
-        className="group flex w-full items-center justify-between gap-3 py-4 text-left transition-opacity active:opacity-80"
-      >
-        <div className="flex min-w-0 items-center gap-3.5">
-          <Moon className="size-5 shrink-0 text-ink" strokeWidth={1.8} />
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-ink">다크 모드</p>
-            <p className="mt-0.5 truncate text-xs text-ink-muted">
-              {isDark ? "어두운 화면 사용 중" : "밝은 화면 사용 중"}
-            </p>
-          </div>
-        </div>
-
-        <span
-          className={cn(
-            "relative inline-flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors duration-200",
-            isDark ? "bg-brand" : "bg-ink/[0.12] group-hover:bg-ink/[0.17]",
-          )}
-        >
-          <span
-            className={cn(
-              "h-5 w-5 rounded-full bg-white shadow-xs transition-[transform,width] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-active:w-6",
-              isDark ? "translate-x-5 group-active:translate-x-4" : "translate-x-0",
-            )}
-          />
-        </span>
-      </button>
+      {/* 1행: 다크 모드 ON/OFF 토글 스위치 (공용 AppSwitch SSOT 사용) */}
+      <AppSwitch
+        checked={isDark}
+        onChange={handleToggleDark}
+        leading={<Moon className="size-5 text-ink" strokeWidth={1.8} />}
+        label="다크 모드"
+        description={isDark ? "어두운 화면 사용 중" : "밝은 화면 사용 중"}
+        className="gap-3 py-4"
+        labelClassName="font-semibold"
+      />
 
       {/* 2행: 브랜드 컬러 4색 스와치 */}
       <div className="flex items-center justify-between gap-3 py-4">

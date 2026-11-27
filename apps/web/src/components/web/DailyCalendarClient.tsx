@@ -18,6 +18,7 @@ import { cn, PawStampIcon } from "@repo/ui";
 import { formatDateDot } from "@/00_lib/formatDate";
 import { useModalStore } from "@/01_store/web/useModalStore";
 import { DailyEditorClient } from "@/components/web/DailyEditorClient";
+import { DailyPhotoCarousel } from "@/components/web/DailyPhotoCarousel";
 import { DailyStickerIcon } from "@/components/web/DailyStickerIcon";
 import { DailyWeightChart, type WeightPoint } from "@/components/web/DailyWeightChart";
 import { VaccinationSheetClient } from "@/components/web/VaccinationSheetClient";
@@ -303,41 +304,6 @@ export function DailyCalendarClient({
 
   const jumpToday = () => {
     selectDateAndSyncMonth(todayStr);
-  };
-
-  const openLightboxForEntry = (entry: DailyEntryView, targetUrl: string) => {
-    const entryPhotos: GalleryPhotoItem[] = [];
-    const seen = new Set<string>();
-    for (const url of entry.photoUrls) {
-      if (!url || seen.has(url)) continue;
-      seen.add(url);
-      entryPhotos.push({
-        key: `${entry.id}-${url}`,
-        url,
-        entryDate: entry.entryDate,
-        monthKey: entry.entryDate.slice(0, 7),
-        entry,
-      });
-    }
-    for (const st of entry.stickers) {
-      if (!st.photoUrl || seen.has(st.photoUrl)) continue;
-      seen.add(st.photoUrl);
-      entryPhotos.push({
-        key: `${entry.id}-st-${st.id}`,
-        url: st.photoUrl,
-        entryDate: entry.entryDate,
-        monthKey: entry.entryDate.slice(0, 7),
-        entry,
-      });
-    }
-    const idx = Math.max(
-      0,
-      entryPhotos.findIndex((p) => p.url === targetUrl),
-    );
-    if (entryPhotos.length > 0) {
-      setDragOffsetX(0);
-      setLightboxState({ items: entryPhotos, index: idx });
-    }
   };
 
   const openDailyEditorSheet = (targetDate: string) => {
@@ -680,24 +646,24 @@ export function DailyCalendarClient({
                           : isToday && !hasRecord
                             ? "font-bold text-brand-strong ring-1.5 ring-brand"
                             : hasRecord
-                              ? "font-extrabold text-ink hover:bg-surface-subtle"
+                              ? "font-medium text-ink-muted hover:bg-surface-subtle"
                               : dow === 0
                                 ? "font-medium text-destructive/85 hover:bg-surface-subtle"
                                 : "font-medium text-ink hover:bg-surface-subtle",
                       )}
                     >
+                      <span className="relative z-10">{day}</span>
                       {hasRecord && (
                         <PawStampIcon
-                          ringOpacity={isSelected ? 0 : 0.85}
-                          pawFill={isSelected ? "currentColor" : "var(--color-brand-stamp)"}
-                          pawOpacity={isSelected ? 0.28 : 1}
+                          ringOpacity={isSelected ? 0.35 : 1}
+                          pawFill="currentColor"
+                          pawOpacity={isSelected ? 0.22 : 1}
                           className={cn(
-                            "pointer-events-none absolute inset-0 z-0 size-full",
-                            isSelected ? "text-on-brand" : "text-brand",
+                            "pointer-events-none absolute inset-0 size-full",
+                            isSelected ? "z-0 text-on-brand" : "z-20 text-brand",
                           )}
                         />
                       )}
-                      <span className="relative z-10">{day}</span>
                     </button>
                   );
                 })}
@@ -754,39 +720,13 @@ export function DailyCalendarClient({
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {/* 다중 사진 그리드 (풀폭 · 클릭 시 좌우 스와이프 라이트박스) */}
+                  {/* 다중 사진 캐로셀 (1장: 중앙 100% / 2장+: 우측 Peek 풀블리드 스와이퍼) */}
                   {selectedEntryPhotos.length > 0 && (
-                    <div
-                      className={cn(
-                        "grid gap-2",
-                        selectedEntryPhotos.length === 1
-                          ? "grid-cols-1"
-                          : selectedEntryPhotos.length === 2
-                            ? "grid-cols-2"
-                            : "grid-cols-3",
-                      )}
-                    >
-                      {selectedEntryPhotos.map((url, idx) => (
-                        <button
-                          key={url}
-                          type="button"
-                          onClick={() => openLightboxForEntry(selectedEntry, url)}
-                          className={cn(
-                            "overflow-hidden rounded-2xl bg-surface-subtle transition-opacity active:opacity-80",
-                            selectedEntryPhotos.length === 1
-                              ? "aspect-[16/10]"
-                              : "aspect-square",
-                          )}
-                        >
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={url}
-                            alt={`${formatDateKorean(selectedDate)} 일상 사진 ${idx + 1}`}
-                            className="size-full object-cover"
-                          />
-                        </button>
-                      ))}
-                    </div>
+                    <DailyPhotoCarousel
+                      key={`${selectedDogId}-${selectedDate}`}
+                      photos={selectedEntryPhotos}
+                      altPrefix={formatDateKorean(selectedDate)}
+                    />
                   )}
 
                   {/* 일기 본문 전문 */}
@@ -816,18 +756,14 @@ export function DailyCalendarClient({
                             )}
                           </div>
                           {s.photoUrl && (
-                            <button
-                              type="button"
-                              onClick={() => openLightboxForEntry(selectedEntry, s.photoUrl!)}
-                              className="size-12 shrink-0 overflow-hidden rounded-xl bg-surface transition-opacity active:opacity-80"
-                            >
+                            <div className="size-12 shrink-0 overflow-hidden rounded-xl bg-surface">
                               {/* eslint-disable-next-line @next/next/no-img-element */}
                               <img
                                 src={s.photoUrl}
                                 alt={`${STICKER_LABEL[s.kind] ?? s.kind} 사진`}
                                 className="size-full object-cover"
                               />
-                            </button>
+                            </div>
                           )}
                         </li>
                       ))}

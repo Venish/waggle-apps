@@ -95,7 +95,7 @@ export function AppSegmented<T extends string>({
   return (
     <div className={cn("w-full", className)}>
       {label && <p className="mb-1.5 text-xs font-semibold text-ink">{label}</p>}
-      <div className="rounded-3xl bg-surface-subtle px-0.5 py-1">
+      <div className="rounded-3xl bg-ink/[0.07] p-1 dark:bg-white/[0.06]">
         <div
           role={useTabRole ? "tablist" : "radiogroup"}
           aria-label={groupLabel}
@@ -105,47 +105,46 @@ export function AppSegmented<T extends string>({
           {activeIndex >= 0 && (
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute inset-y-0 left-0 px-0.5 transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)]"
+              className="pointer-events-none absolute inset-y-0 left-0 transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)]"
               style={{
                 width: `${100 / options.length}%`,
                 transform: `translateX(${activeIndex * 100}%)`,
               }}
             >
-              <span className="block h-full w-full rounded-2xl bg-surface shadow-xs" />
+              <span className="block h-full w-full rounded-2xl bg-surface shadow-sm ring-1 ring-ink/[0.06] dark:bg-white/[0.14] dark:ring-white/[0.1]" />
             </span>
           )}
           {options.map((opt) => {
             const active = opt.value === value;
             return (
-              <div key={opt.value} className="px-0.5">
-                <button
-                  type="button"
-                  role={useTabRole ? "tab" : "radio"}
-                  aria-selected={useTabRole ? active : undefined}
-                  aria-checked={!useTabRole ? active : undefined}
-                  onClick={() => onChange(opt.value)}
-                  className={cn(
-                    "relative z-10 flex h-10 w-full items-center justify-center gap-1 rounded-2xl text-sm text-ink transition-colors duration-200 active:scale-[0.96]",
-                    active
-                      ? "font-bold"
-                      : "font-normal hover:bg-ink/[0.045]",
-                  )}
-                >
-                  <span>{opt.label}</span>
-                  {opt.count !== undefined && opt.count > 0 && (
-                    <span
-                      className={cn(
-                        "rounded-full px-1.5 py-0.5 text-xs font-bold leading-none tabular-nums",
-                        active
-                          ? "bg-brand-soft text-brand-strong"
-                          : "bg-ink/[0.06] text-ink-muted",
-                      )}
-                    >
-                      {opt.count}
-                    </span>
-                  )}
-                </button>
-              </div>
+              <button
+                key={opt.value}
+                type="button"
+                role={useTabRole ? "tab" : "radio"}
+                aria-selected={useTabRole ? active : undefined}
+                aria-checked={!useTabRole ? active : undefined}
+                onClick={() => onChange(opt.value)}
+                className={cn(
+                  "relative z-10 flex h-10 w-full items-center justify-center gap-1 rounded-2xl text-sm transition-colors duration-200 active:scale-[0.96]",
+                  active
+                    ? "font-bold text-ink"
+                    : "font-medium text-ink-muted hover:text-ink",
+                )}
+              >
+                <span>{opt.label}</span>
+                {opt.count !== undefined && opt.count > 0 && (
+                  <span
+                    className={cn(
+                      "rounded-full px-1.5 py-0.5 text-xs font-bold leading-none tabular-nums",
+                      active
+                        ? "bg-brand-soft text-brand-strong"
+                        : "bg-ink/[0.08] text-ink-muted",
+                    )}
+                  >
+                    {opt.count}
+                  </span>
+                )}
+              </button>
             );
           })}
         </div>

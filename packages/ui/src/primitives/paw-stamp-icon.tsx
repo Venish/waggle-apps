@@ -11,11 +11,11 @@ export interface PawStampIconProps extends SVGProps<SVGSVGElement> {
 
 /**
  * 와글 공용 강아지 발바닥 도장 SVG 프리미티브 (currentColor 테마 자동 연동)
- * - 20등분 둥근 점선 원형 스탬프 테두리 + -12deg 기울어진 몰랑 발바닥 조합
+ * - 외곽 실선 원 + 안쪽 20등분 둥근 점선 원 이중 도장 테두리 + -12deg 기울어진 몰랑 발바닥 조합
  * - 캘린더 기록일 / 산책 완료 도장 / 출석 스탬프 등 공용 사용
  */
 export function PawStampIcon({
-  ringOpacity = 0.85,
+  ringOpacity = 1,
   pawFill = "currentColor",
   pawOpacity = 1,
   className = "size-11",
@@ -30,20 +30,31 @@ export function PawStampIcon({
       className={className}
       {...rest}
     >
+      {/* 외곽 실선 도장 프레임 */}
       <circle
         cx="22"
         cy="22"
-        r="19.5"
+        r="20.6"
         stroke="currentColor"
-        strokeWidth="1.6"
-        strokeDasharray="3 3.126"
+        strokeWidth="1.5"
+        strokeOpacity={ringOpacity}
+      />
+      {/* 안쪽 20등분 둥근 점선 링 */}
+      <circle
+        cx="22"
+        cy="22"
+        r="17.6"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeDasharray="2.4 3.129"
         strokeLinecap="round"
         strokeOpacity={ringOpacity}
       />
+      {/* 중앙 기울어진 발바닥 도장 */}
       <g
         fill={pawFill}
         fillOpacity={pawOpacity}
-        transform="translate(22 22) rotate(-12) scale(0.94) translate(-20 -17)"
+        transform="translate(22 22) rotate(-12) scale(0.84) translate(-20 -17)"
       >
         <ellipse cx="10" cy="15" rx="3.5" ry="4" />
         <ellipse cx="16" cy="8.5" rx="3.5" ry="4.5" />

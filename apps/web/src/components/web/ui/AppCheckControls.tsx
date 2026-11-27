@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { cn } from "@repo/ui";
 
 interface AppCheckboxProps {
@@ -159,19 +159,23 @@ interface AppSwitchProps {
   onChange: (checked: boolean) => void;
   label: string;
   description?: string;
+  leading?: ReactNode;
   disabled?: boolean;
   className?: string;
   labelClassName?: string;
 }
 
 /**
- * iOS / Toss 스타일 슬라이딩 그린 토글 스위치 (ON/OFF 설정 전용)
+ * iOS 표준 비율(28×48px / 노브 24×24px / 여백 2px) 슬라이딩 토글 스위치 SSOT
+ * - Tailwind v4 `translate` 독립 속성 애니메이션(`transition-[translate]`) 적용
+ * - 라이트/다크 모드 모두 선명한 화이트 노브 + OFF 트랙 대비 유지
  */
 export function AppSwitch({
   checked,
   onChange,
   label,
   description,
+  leading,
   disabled = false,
   className,
   labelClassName,
@@ -188,20 +192,26 @@ export function AppSwitch({
         className,
       )}
     >
-      <span className="min-w-0 flex-1">
-        <span className={cn("block text-sm font-medium text-ink", labelClassName)}>{label}</span>
-        {description && <span className="mt-0.5 block text-xs text-ink-muted">{description}</span>}
+      <span className="flex min-w-0 flex-1 items-center gap-3.5">
+        {leading && <span className="shrink-0">{leading}</span>}
+        <span className="min-w-0 flex-1">
+          <span className={cn("block text-sm font-medium text-ink", labelClassName)}>{label}</span>
+          {description && <span className="mt-0.5 block text-xs text-ink-muted">{description}</span>}
+        </span>
       </span>
       <span
+        aria-hidden="true"
         className={cn(
-          "relative inline-flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors duration-200",
-          checked ? "bg-brand" : "bg-ink/[0.12] group-hover:bg-ink/[0.17]",
+          "relative inline-flex h-7 w-12 shrink-0 items-center rounded-full p-0.5 transition-colors duration-200 ease-out",
+          checked
+            ? "bg-brand"
+            : "bg-ink/[0.18] group-hover:bg-ink/[0.24] dark:bg-ink/[0.22] dark:group-hover:bg-ink/[0.28]",
         )}
       >
         <span
           className={cn(
-            "h-5 w-5 rounded-full bg-surface shadow-xs transition-[transform,width] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-active:w-6",
-            checked ? "translate-x-5 group-active:translate-x-4" : "translate-x-0",
+            "pointer-events-none block size-6 shrink-0 rounded-full bg-white shadow-sm ring-1 ring-black/[0.06] transition-[translate] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] dark:ring-black/[0.18]",
+            checked ? "translate-x-5" : "translate-x-0",
           )}
         />
       </span>
